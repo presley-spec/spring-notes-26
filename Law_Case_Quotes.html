@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Quotes - Law School Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0b12;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #d4af37, #f4e4c1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #1a1a24;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #d4af37;
+        }
+
+        .stat-label {
+            font-size: 0.75em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .game-area {
+            background: #1a1a24;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 30px 20px;
+            margin-bottom: 20px;
+        }
+
+        .quote-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quote-mark {
+            font-size: 3em;
+            color: #d4af37;
+            line-height: 0.5;
+            margin-bottom: 10px;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            line-height: 1.6;
+            color: #f0f0f0;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .course-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #2a4a7c;
+            color: #a3d5ff;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .guess-input-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .guess-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0a0b12;
+            border: 2px solid #333;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1em;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .guess-input:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #2a2a35;
+            border: 1px solid #333;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-dropdown.active {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.9em;
+            color: #b0b0b0;
+        }
+
+        .autocomplete-item:hover {
+            background: #3a3a45;
+            color: #d4af37;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .guess-button {
+            background: linear-gradient(135deg, #d4af37, #f4e4c1);
+            color: #0a0b12;
+            grid-column: 1;
+        }
+
+        .guess-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .guess-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .skip-button {
+            background: #333;
+            color: #b0b0b0;
+            grid-column: 2;
+        }
+
+        .skip-button:hover {
+            background: #444;
+            color: #d0d0d0;
+        }
+
+        .guesses-left {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        .guesses-left.danger {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .clues-container {
+            margin: 20px 0;
+        }
+
+        .clue-card {
+            background: #0a0b12;
+            border-left: 4px solid #d4af37;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .clue-label {
+            font-weight: 600;
+            color: #d4af37;
+            margin-right: 8px;
+        }
+
+        .result-message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .correct {
+            background: #1a4620;
+            color: #5ff05f;
+            border: 1px solid #2d7a2d;
+        }
+
+        .incorrect {
+            background: #4a1a1a;
+            color: #ff6b6b;
+            border: 1px solid #7a2d2d;
+        }
+
+        .case-card {
+            background: linear-gradient(135deg, #2a3a4a, #1a2a3a);
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .case-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4em;
+            color: #d4af37;
+            margin-bottom: 8px;
+        }
+
+        .case-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .case-meta-item {
+            background: #0a0b12;
+            padding: 8px 10px;
+            border-radius: 4px;
+            border-left: 3px solid #d4af37;
+        }
+
+        .case-meta-label {
+            color: #888;
+            font-size: 0.8em;
+        }
+
+        .case-meta-value {
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+        .case-significance {
+            color: #c0c0c0;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .next-button {
+            width: 100%;
+            background: linear-gradient(135deg, #d4af37, #f4e4c1);
+            color: #0a0b12;
+            padding: 12px;
+            margin-top: 15px;
+        }
+
+        .menu-area {
+            text-align: center;
+        }
+
+        .menu-button {
+            background: linear-gradient(135deg, #d4af37, #f4e4c1);
+            color: #0a0b12;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .menu-text {
+            color: #888;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+        }
+
+        .streak-highlight {
+            color: #ffd700;
+            font-weight: 700;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .guess-history {
+            margin: 15px 0;
+            padding: 10px;
+            background: #0a0b12;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        .guess-item {
+            color: #888;
+            margin: 5px 0;
+            padding: 3px 0;
+        }
+
+        .guess-item.wrong {
+            color: #ff6b6b;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .quote-text {
+                font-size: 1.1em;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Menu -->
+        <div id="menuSection" class="menu-area">
+            <header>
+                <h1>Case Quotes</h1>
+                <p class="subtitle">Holding Hunt</p>
+            </header>
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-value" id="gamesPlayedStat">0</div>
+                    <div class="stat-label">Games</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="streakStat">0</div>
+                    <div class="stat-label">Streak</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="accuracyStat">—</div>
+                    <div class="stat-label">Avg Guesses</div>
+                </div>
+            </div>
+            <button class="menu-button" onclick="startNewGame()">Start Game</button>
+            <p class="menu-text">Can you identify famous legal cases from their most iconic quotes and holdings? Test your law school knowledge across Constitutional Law, Criminal Law, and Property Law.</p>
+        </div>
+
+        <!-- Game -->
+        <div id="gameSection" class="hidden">
+            <header>
+                <h1>Case Quotes</h1>
+            </header>
+
+            <div class="game-area">
+                <div class="quote-display">
+                    <div class="quote-mark">"</div>
+                    <div class="quote-text" id="quoteText"></div>
+                    <span class="course-badge" id="courseBadge"></span>
+                </div>
+
+                <div id="resultMessage" class="hidden"></div>
+
+                <div class="input-section" id="inputSection">
+                    <div class="guess-input-wrapper">
+                        <input
+                            type="text"
+                            id="guessInput"
+                            class="guess-input"
+                            placeholder="Type case name..."
+                            autocomplete="off"
+                            onkeyup="handleInputChange(event)"
+                            onkeypress="handleInputKeypress(event)"
+                        >
+                        <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+                    </div>
+
+                    <div class="guesses-left">
+                        Guesses remaining: <strong id="guessesRemaining">6</strong>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="guess-button" id="guessButton" onclick="submitGuess()">Guess</button>
+                        <button class="skip-button" onclick="skipRound()">Skip</button>
+                    </div>
+                </div>
+
+                <div id="cluesContainer" class="clues-container"></div>
+                <div id="guessHistory" class="guess-history hidden"></div>
+
+                <div id="caseCardContainer"></div>
+
+                <div id="nextRoundSection" class="hidden">
+                    <button class="next-button" onclick="nextRound()">Next Round</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // COMPREHENSIVE CASE DATABASE
+        const casesDatabase = [
+            // Constitutional Law (12)
+            { name: "Marbury v. Madison", year: 1803, court: "Supreme Court", topic: "Judicial Review", course: "Con Law", quote: "It is emphatically the province and duty of the Judicial Department to say what the law is." },
+            { name: "McCulloch v. Maryland", year: 1819, court: "Supreme Court", topic: "Federal Supremacy", course: "Con Law", quote: "The power to tax involves the power to destroy." },
+            { name: "Gibbons v. Ogden", year: 1824, court: "Supreme Court", topic: "Commerce Clause", course: "Con Law", quote: "Commerce among the states...cannot stop at the external boundary line of each State, but may be introduced into the interior." },
+            { name: "Wickard v. Filburn", year: 1942, court: "Supreme Court", topic: "Commerce Clause", course: "Con Law", quote: "Even if appellee's activity be local and though it may not be regarded as commerce, it may still...be reached by Congress if it exerts a substantial economic effect on interstate commerce." },
+            { name: "United States v. Carolene Products", year: 1938, court: "Supreme Court", topic: "Footnote Four/Scrutiny", course: "Con Law", quote: "There is a 'presumption of constitutionality' for legislation...unless the legislation restricts those political processes which can ordinarily be expected to bring about repeal of undesirable legislation." },
+            { name: "West Coast Hotel v. Parrish", year: 1937, court: "Supreme Court", topic: "Rational Basis", course: "Con Law", quote: "If the legislature has acted within its scope of power, the court will not inquire into the motives behind the legislation." },
+            { name: "Brown v. Board of Education", year: 1954, court: "Supreme Court", topic: "Equal Protection", course: "Con Law", quote: "Separate educational facilities are inherently unequal." },
+            { name: "Bolling v. Sharpe", year: 1954, court: "Supreme Court", topic: "Equal Protection/Due Process", course: "Con Law", quote: "The liberty protected by the Fifth Amendment's Due Process Clause contains within it the prohibition against denying to any person the equal protection of the laws." },
+            { name: "Loving v. Virginia", year: 1967, court: "Supreme Court", topic: "Due Process/Equal Protection", course: "Con Law", quote: "The freedom to marry has long been recognized as one of the vital personal rights essential to the orderly pursuit of happiness by free men." },
+            { name: "United States v. Lopez", year: 1995, court: "Supreme Court", topic: "Commerce Clause", course: "Con Law", quote: "The possession of firearms in a school zone is in no sense an economic activity that might...substantially affect any sort of interstate commerce." },
+            { name: "Regents of University of California v. Bakke", year: 1978, court: "Supreme Court", topic: "Affirmative Action", course: "Con Law", quote: "One who is combating discrimination is not combating discrimination by also discriminating." },
+            { name: "NFIB v. Sebelius", year: 2012, court: "Supreme Court", topic: "Commerce Clause", course: "Con Law", quote: "The individual mandate cannot be sustained under the Commerce Clause...The Framers gave Congress the power to regulate commerce, not to compel it." },
+
+            // Criminal Law (10)
+            { name: "Martin v. State", year: 1944, court: "Alabama Court of Appeals", topic: "Actus Reus/Voluntariness", course: "Criminal Law", quote: "The defendant's act must be voluntary to form the basis of criminal liability." },
+            { name: "Jones v. United States", year: 1962, court: "D.C. Circuit", topic: "Omission Liability", course: "Criminal Law", quote: "An omission to act can only be a basis for criminal liability when there is a legal duty to act." },
+            { name: "Global-Tech v. SEB S.A.", year: 2011, court: "Supreme Court", topic: "Willful Blindness/Knowledge", course: "Criminal Law", quote: "Knowledge is established when a person is aware of a high probability of the fact's existence, unless he actually believes it does not exist." },
+            { name: "Commonwealth v. Welansky", year: 1944, court: "Massachusetts Supreme Court", topic: "Involuntary Manslaughter", course: "Criminal Law", quote: "The wanton or reckless conduct resulting in deaths...was the proximate cause of the deaths." },
+            { name: "Girouard v. State", year: 1991, court: "Maryland Court of Appeals", topic: "Voluntary Manslaughter", course: "Criminal Law", quote: "Adequate provocation...must be such as might naturally cause a reasonable person in the passion of the moment to lose self-control and act on impulse without reflection." },
+            { name: "People v. Ewing", year: 1999, court: "State Court", topic: "Assault", course: "Criminal Law", quote: "Criminal liability requires an act. Thoughts alone are never punishable." },
+            { name: "Model Penal Code §2.02", year: 1962, court: "ALI", topic: "Mens Rea", course: "Criminal Law", quote: "Purposely means it was the defendant's conscious object to engage in such conduct or cause such a result." },
+            { name: "Model Penal Code §2.01", year: 1962, court: "ALI", topic: "Voluntary Act", course: "Criminal Law", quote: "A person is not guilty of an offense unless his liability is based on conduct that includes a voluntary act or the omission to perform an act of which he is physically capable." },
+            { name: "People v. Stamp", year: 1969, court: "California Court of Appeal", topic: "Felony Murder", course: "Criminal Law", quote: "The felony-murder rule holds a defendant strictly liable for any death that occurs during the commission of an inherently dangerous felony." },
+            { name: "Model Penal Code §2.02(2)(c)", year: 1962, court: "ALI", topic: "Recklessness", course: "Criminal Law", quote: "Recklessness requires a conscious disregard of a substantial and unjustifiable risk that constitutes a gross deviation from the standard of conduct a law-abiding person would observe." },
+
+            // Property Law (8)
+            { name: "Pierson v. Post", year: 1805, court: "New York Supreme Court", topic: "Rule of Capture", course: "Property", quote: "Being a wild animal, property in the fox became vested in Pierson, who intercepted and killed it." },
+            { name: "Boomer v. Atlantic Cement", year: 1970, court: "New York Court of Appeals", topic: "Nuisance/Balancing", course: "Property", quote: "We hold that a court must balance the relative hardships to the parties in deciding whether to grant injunctive relief." },
+            { name: "Nome 2000 v. Fagerstrom", year: 1990, court: "Alaska Supreme Court", topic: "Adverse Possession", course: "Property", quote: "A private person may not acquire a right to another's property by trespass...unless the elements of adverse possession are met." },
+            { name: "Kaiser Aetna v. United States", year: 1979, court: "Supreme Court", topic: "Bundle of Rights", course: "Property", quote: "The right to exclude others is one of the most essential sticks in the bundle of property rights." },
+            { name: "Pennsylvania Coal v. Mahon", year: 1922, court: "Supreme Court", topic: "Regulatory Takings", course: "Property", quote: "A taking occurs when government regulation goes too far." },
+            { name: "Loretto v. Teleprompter Manhattan CATV Corp.", year: 1982, court: "Supreme Court", topic: "Per Se Takings", course: "Property", quote: "The government may not require an individual to permit the permanent physical occupation of her property without just compensation." },
+            { name: "Kelo v. City of New London", year: 2005, court: "Supreme Court", topic: "Eminent Domain", course: "Property", quote: "Promoting economic development is a traditional and long accepted function of government...The city's plan serves a public purpose." },
+            { name: "Javins v. First National Realty Corp.", year: 1970, court: "D.C. Circuit", topic: "Implied Warranty of Habitability", course: "Property", quote: "The implied warranty of habitability requires that the landlord maintain the premises in a condition fit for human habitation." },
+
+            // Additional filler cases for autocomplete (common law school cases)
+            { name: "Dred Scott v. Sandford", year: 1857, court: "Supreme Court", topic: "Citizenship", course: "Con Law", quote: "" },
+            { name: "Plessy v. Ferguson", year: 1896, court: "Supreme Court", topic: "Equal Protection", course: "Con Law", quote: "" },
+            { name: "Lochner v. New York", year: 1905, court: "Supreme Court", topic: "Economic Liberty", course: "Con Law", quote: "" },
+            { name: "Hammer v. Dagenhart", year: 1918, court: "Supreme Court", topic: "Commerce Clause", course: "Con Law", quote: "" },
+            { name: "United States v. Darby", year: 1941, court: "Supreme Court", topic: "Commerce Clause", course: "Con Law", quote: "" },
+            { name: "Heart of Atlanta Motel v. United States", year: 1964, court: "Supreme Court", topic: "Commerce Clause", course: "Con Law", quote: "" },
+            { name: "Gideon v. Wainwright", year: 1963, court: "Supreme Court", topic: "Right to Counsel", course: "Criminal Law", quote: "" },
+            { name: "Miranda v. Arizona", year: 1966, court: "Supreme Court", topic: "Right to Counsel", course: "Criminal Law", quote: "" },
+            { name: "In re Winship", year: 1970, court: "Supreme Court", topic: "Burden of Proof", course: "Criminal Law", quote: "" },
+            { name: "United States v. Watson", year: 1976, court: "Supreme Court", topic: "Arrest", course: "Criminal Law", quote: "" },
+            { name: "Mappa v. Ohio", year: 1961, court: "Supreme Court", topic: "Search & Seizure", course: "Criminal Law", quote: "" },
+            { name: "Texas v. Johnson", year: 1989, court: "Supreme Court", topic: "First Amendment", course: "Con Law", quote: "" },
+            { name: "New York v. Ferber", year: 1982, court: "Supreme Court", topic: "First Amendment", course: "Con Law", quote: "" },
+            { name: "Reed v. Town of Gilbert", year: 2015, court: "Supreme Court", topic: "First Amendment", course: "Con Law", quote: "" },
+            { name: "Employment Division v. Smith", year: 1990, court: "Supreme Court", topic: "Free Exercise", course: "Con Law", quote: "" },
+            { name: "Church of Lukumi Babalu Aye v. City of Hialeah", year: 1993, court: "Supreme Court", topic: "Free Exercise", course: "Con Law", quote: "" },
+            { name: "United States v. O'Brien", year: 1968, court: "Supreme Court", topic: "First Amendment", course: "Con Law", quote: "" },
+            { name: "Lemon v. Kurtzman", year: 1971, court: "Supreme Court", topic: "Establishment Clause", course: "Con Law", quote: "" },
+            { name: "Shelby County v. Holder", year: 2013, court: "Supreme Court", topic: "Voting Rights", course: "Con Law", quote: "" },
+            { name: "Washington v. Davis", year: 1976, court: "Supreme Court", topic: "Equal Protection", course: "Con Law", quote: "" },
+            { name: "Buckley v. Valeo", year: 1976, court: "Supreme Court", topic: "Campaign Finance", course: "Con Law", quote: "" },
+            { name: "Obergefell v. Hodges", year: 2015, court: "Supreme Court", topic: "Due Process/Equal Protection", course: "Con Law", quote: "" },
+            { name: "United States v. Denno", year: 1962, court: "Supreme Court", topic: "Voluntariness", course: "Criminal Law", quote: "" },
+            { name: "Jacobson v. Massachusetts", year: 1905, court: "Supreme Court", topic: "Police Power", course: "Con Law", quote: "" },
+            { name: "Roe v. Wade", year: 1973, court: "Supreme Court", topic: "Due Process", course: "Con Law", quote: "" },
+            { name: "Griswold v. Connecticut", year: 1965, court: "Supreme Court", topic: "Privacy", course: "Con Law", quote: "" },
+            { name: "Furman v. Georgia", year: 1972, court: "Supreme Court", topic: "Death Penalty", course: "Criminal Law", quote: "" },
+            { name: "Gregg v. Georgia", year: 1976, court: "Supreme Court", topic: "Death Penalty", course: "Criminal Law", quote: "" },
+            { name: "In re Gault", year: 1967, court: "Supreme Court", topic: "Juvenile Justice", course: "Criminal Law", quote: "" },
+            { name: "United States v. Cruikshank", year: 1876, court: "Supreme Court", topic: "Second Amendment", course: "Con Law", quote: "" },
+            { name: "McDonald v. Chicago", year: 2010, court: "Supreme Court", topic: "Second Amendment", course: "Con Law", quote: "" },
+            { name: "New York State Rifle & Pistol Association v. Bruen", year: 2022, court: "Supreme Court", topic: "Second Amendment", course: "Con Law", quote: "" },
+            { name: "Powers v. Ohio", year: 1991, court: "Supreme Court", topic: "Peremptory Challenges", course: "Criminal Law", quote: "" },
+            { name: "J.E.B. v. Alabama", year: 1994, court: "Supreme Court", topic: "Peremptory Challenges", course: "Criminal Law", quote: "" },
+            { name: "Batson v. Kentucky", year: 1986, court: "Supreme Court", topic: "Peremptory Challenges", course: "Criminal Law", quote: "" },
+            { name: "Penal Code §187", year: 1872, court: "California", topic: "Murder", course: "Criminal Law", quote: "" },
+            { name: "Penal Code §20", year: 1872, court: "California", topic: "Aiding & Abetting", course: "Criminal Law", quote: "" },
+            { name: "United States v. Russell", year: 1973, court: "Supreme Court", topic: "Entrapment", course: "Criminal Law", quote: "" },
+            { name: "Sorrells v. United States", year: 1932, court: "Supreme Court", topic: "Entrapment", course: "Criminal Law", quote: "" },
+            { name: "Shelley v. Kraemer", year: 1948, court: "Supreme Court", topic: "State Action", course: "Con Law", quote: "" },
+            { name: "Jackson v. Metropolitan Edison Co.", year: 1974, court: "Supreme Court", topic: "State Action", course: "Con Law", quote: "" },
+            { name: "Paul v. Davis", year: 1976, court: "Supreme Court", topic: "Due Process", course: "Con Law", quote: "" },
+            { name: "Mathews v. Eldridge", year: 1976, court: "Supreme Court", topic: "Due Process", course: "Con Law", quote: "" },
+            { name: "O'Malley v. Woodrough", year: 1939, court: "Supreme Court", topic: "Judicial Power", course: "Con Law", quote: "" },
+            { name: "Marvin v. Marvin", year: 1976, court: "California Supreme Court", topic: "Family Law", course: "Property", quote: "" },
+            { name: "Hadley v. Hadley", year: 1992, court: "State Court", topic: "Adverse Possession", course: "Property", quote: "" },
+            { name: "Sheldon v. Metro-Goldwyn Pictures", year: 1981, court: "Supreme Court", topic: "Intellectual Property", course: "Con Law", quote: "" }
+        ];
+
+        // Game state
+        let gameState = {
+            currentRound: 0,
+            currentCase: null,
+            guessesRemaining: 6,
+            guessHistory: [],
+            gamesPlayed: 0,
+            gamesWon: 0,
+            totalGuesses: 0,
+            currentStreak: 0,
+            answeredCases: new Set(),
+            allCases: casesDatabase.filter(c => c.quote)
+        };
+
+        function initStats() {
+            const saved = localStorage.getItem('caseQuotesStats');
+            if (saved) {
+                const stats = JSON.parse(saved);
+                gameState.gamesPlayed = stats.gamesPlayed || 0;
+                gameState.gamesWon = stats.gamesWon || 0;
+                gameState.totalGuesses = stats.totalGuesses || 0;
+                gameState.currentStreak = stats.currentStreak || 0;
+            }
+            updateStatsDisplay();
+        }
+
+        function saveStats() {
+            localStorage.setItem('caseQuotesStats', JSON.stringify({
+                gamesPlayed: gameState.gamesPlayed,
+                gamesWon: gameState.gamesWon,
+                totalGuesses: gameState.totalGuesses,
+                currentStreak: gameState.currentStreak
+            }));
+            updateStatsDisplay();
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('gamesPlayedStat').textContent = gameState.gamesPlayed;
+            document.getElementById('streakStat').textContent = gameState.currentStreak;
+            const avgGuesses = gameState.gamesPlayed > 0
+                ? (gameState.totalGuesses / gameState.gamesWon).toFixed(1)
+                : '—';
+            document.getElementById('accuracyStat').textContent = avgGuesses;
+        }
+
+        function startNewGame() {
+            document.getElementById('menuSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
+            gameState.gamesPlayed++;
+            gameState.answeredCases.clear();
+            nextRound();
+        }
+
+        function nextRound() {
+            gameState.currentRound++;
+            gameState.guessesRemaining = 6;
+            gameState.guessHistory = [];
+            gameState.currentCase = selectRandomCase();
+
+            document.getElementById('guessInput').value = '';
+            document.getElementById('guessInput').disabled = false;
+            document.getElementById('quoteText').textContent = gameState.currentCase.quote;
+            document.getElementById('courseBadge').textContent = gameState.currentCase.course;
+            document.getElementById('resultMessage').classList.add('hidden');
+            document.getElementById('inputSection').classList.remove('hidden');
+            document.getElementById('cluesContainer').innerHTML = '';
+            document.getElementById('guessHistory').classList.add('hidden');
+            document.getElementById('caseCardContainer').innerHTML = '';
+            document.getElementById('nextRoundSection').classList.add('hidden');
+
+            updateGuessesDisplay();
+            focusInput();
+        }
+
+        function selectRandomCase() {
+            let availableCases = gameState.allCases.filter(c => !gameState.answeredCases.has(c.name));
+            if (availableCases.length === 0) {
+                gameState.answeredCases.clear();
+                availableCases = gameState.allCases;
+            }
+            const randomCase = availableCases[Math.floor(Math.random() * availableCases.length)];
+            gameState.answeredCases.add(randomCase.name);
+            return randomCase;
+        }
+
+        function focusInput() {
+            document.getElementById('guessInput').focus();
+        }
+
+        function handleInputChange(event) {
+            const input = event.target.value.toLowerCase();
+            const dropdown = document.getElementById('autocompleteDropdown');
+
+            if (input.length === 0) {
+                dropdown.classList.remove('active');
+                return;
+            }
+
+            const matches = casesDatabase.filter(c =>
+                c.name.toLowerCase().includes(input)
+            ).slice(0, 8);
+
+            if (matches.length === 0) {
+                dropdown.classList.remove('active');
+                return;
+            }
+
+            dropdown.innerHTML = matches.map(c =>
+                `<div class="autocomplete-item" onclick="selectAutocompleteSuggestion('${c.name}')">${c.name}</div>`
+            ).join('');
+            dropdown.classList.add('active');
+        }
+
+        function handleInputKeypress(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                submitGuess();
+            }
+        }
+
+        function selectAutocompleteSuggestion(caseName) {
+            document.getElementById('guessInput').value = caseName;
+            document.getElementById('autocompleteDropdown').classList.remove('active');
+            focusInput();
+        }
+
+        function submitGuess() {
+            const guessInput = document.getElementById('guessInput');
+            const guessCaseName = guessInput.value.trim();
+
+            if (!guessCaseName) return;
+
+            guessInput.value = '';
+            document.getElementById('autocompleteDropdown').classList.remove('active');
+
+            // Find the guessed case
+            const guessedCase = casesDatabase.find(c =>
+                c.name.toLowerCase() === guessCaseName.toLowerCase()
+            );
+
+            if (!guessedCase) {
+                showResultMessage("Case not found in database", "incorrect");
+                gameState.guessesRemaining--;
+                gameState.guessHistory.push({ name: guessCaseName, found: false });
+                updateGuessHistory();
+                updateGuessesDisplay();
+                return;
+            }
+
+            // Check if correct
+            if (guessedCase.name === gameState.currentCase.name) {
+                endRound(true, guessedCase);
+                return;
+            }
+
+            // Wrong guess - show clues
+            gameState.guessesRemaining--;
+            gameState.guessHistory.push({ name: guessedCase.name, found: false });
+
+            showClues(guessedCase);
+            updateGuessHistory();
+            updateGuessesDisplay();
+
+            // Check if out of guesses
+            if (gameState.guessesRemaining === 0) {
+                endRound(false, gameState.currentCase);
+            }
+
+            focusInput();
+        }
+
+        function showClues(guessedCase) {
+            const container = document.getElementById('cluesContainer');
+            const clues = [];
+
+            // Year clue
+            if (guessedCase.year < gameState.currentCase.year) {
+                clues.push(`<span class="clue-label">Year:</span> The mystery case is NEWER than ${guessedCase.year}`);
+            } else if (guessedCase.year > gameState.currentCase.year) {
+                clues.push(`<span class="clue-label">Year:</span> The mystery case is OLDER than ${guessedCase.year}`);
+            } else {
+                clues.push(`<span class="clue-label">Year:</span> SAME year - ${guessedCase.year}`);
+            }
+
+            // Court clue
+            if (guessedCase.court === gameState.currentCase.court) {
+                clues.push(`<span class="clue-label">Court:</span> SAME court - ${guessedCase.court}`);
+            } else {
+                clues.push(`<span class="clue-label">Court:</span> DIFFERENT court (you guessed ${guessedCase.court})`);
+            }
+
+            // Topic clue
+            if (guessedCase.topic === gameState.currentCase.topic) {
+                clues.push(`<span class="clue-label">Topic:</span> SAME topic - ${guessedCase.topic}`);
+            } else {
+                clues.push(`<span class="clue-label">Topic:</span> DIFFERENT topic`);
+            }
+
+            // Course clue
+            if (guessedCase.course === gameState.currentCase.course) {
+                clues.push(`<span class="clue-label">Course:</span> SAME course - ${guessedCase.course}`);
+            } else {
+                clues.push(`<span class="clue-label">Course:</span> DIFFERENT course (you guessed ${guessedCase.course})`);
+            }
+
+            container.innerHTML = clues.map(c => `<div class="clue-card">${c}</div>`).join('');
+        }
+
+        function updateGuessHistory() {
+            const historyDiv = document.getElementById('guessHistory');
+            if (gameState.guessHistory.length === 0) {
+                historyDiv.classList.add('hidden');
+                return;
+            }
+            historyDiv.classList.remove('hidden');
+            historyDiv.innerHTML = '<strong>Previous Guesses:</strong>' + gameState.guessHistory.map((g, i) =>
+                `<div class="guess-item ${!g.found ? 'wrong' : ''}">${i + 1}. ${g.name}</div>`
+            ).join('');
+        }
+
+        function updateGuessesDisplay() {
+            const remaining = document.getElementById('guessesRemaining');
+            remaining.textContent = gameState.guessesRemaining;
+
+            const guessesLeftDiv = document.querySelector('.guesses-left');
+            if (gameState.guessesRemaining <= 2) {
+                guessesLeftDiv.classList.add('danger');
+            } else {
+                guessesLeftDiv.classList.remove('danger');
+            }
+        }
+
+        function showResultMessage(message, type) {
+            const resultDiv = document.getElementById('resultMessage');
+            resultDiv.textContent = message;
+            resultDiv.className = `result-message ${type}`;
+            resultDiv.classList.remove('hidden');
+        }
+
+        function endRound(isCorrect, caseToShow) {
+            document.getElementById('inputSection').classList.add('hidden');
+            document.getElementById('guessInput').disabled = true;
+            document.getElementById('cluesContainer').innerHTML = '';
+
+            if (isCorrect) {
+                const guessCount = 6 - gameState.guessesRemaining;
+                gameState.gamesWon++;
+                gameState.totalGuesses += guessCount;
+                gameState.currentStreak++;
+                showResultMessage(`Correct! You got it in ${guessCount} guess${guessCount !== 1 ? 'es' : ''}!`, 'correct');
+                celebrateCorrect();
+            } else {
+                gameState.currentStreak = 0;
+                showResultMessage(`Out of guesses! The answer was ${caseToShow.name}.`, 'incorrect');
+            }
+
+            showCaseCard(caseToShow);
+            document.getElementById('nextRoundSection').classList.remove('hidden');
+            saveStats();
+        }
+
+        function showCaseCard(caseData) {
+            const container = document.getElementById('caseCardContainer');
+            container.innerHTML = `
+                <div class="case-card">
+                    <div class="case-name">${caseData.name}</div>
+                    <div class="case-meta">
+                        <div class="case-meta-item">
+                            <div class="case-meta-label">Year</div>
+                            <div class="case-meta-value">${caseData.year}</div>
+                        </div>
+                        <div class="case-meta-item">
+                            <div class="case-meta-label">Court</div>
+                            <div class="case-meta-value">${caseData.court}</div>
+                        </div>
+                        <div class="case-meta-item">
+                            <div class="case-meta-label">Topic</div>
+                            <div class="case-meta-value">${caseData.topic}</div>
+                        </div>
+                        <div class="case-meta-item">
+                            <div class="case-meta-label">Course</div>
+                            <div class="case-meta-value">${caseData.course}</div>
+                        </div>
+                    </div>
+                    <div class="case-significance">
+                        <strong>Significance:</strong> A seminal ${caseData.course} case decided by the ${caseData.court} in ${caseData.year}, establishing important precedent in ${caseData.topic}.
+                    </div>
+                </div>
+            `;
+        }
+
+        function skipRound() {
+            endRound(false, gameState.currentCase);
+        }
+
+        function celebrateCorrect() {
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.textContent = i % 2 === 0 ? '✦' : '✓';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = -10 + 'px';
+                confetti.style.color = Math.random() > 0.5 ? '#d4af37' : '#f4e4c1';
+                confetti.style.fontSize = (10 + Math.random() * 20) + 'px';
+                confetti.style.opacity = '1';
+                confetti.style.animation = `fall ${2 + Math.random() * 2}s linear forwards`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        // Add animation for falling confetti
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                to {
+                    transform: translateY(100vh) rotateZ(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize on load
+        window.addEventListener('load', initStats);
+    </script>
+</body>
+</html>

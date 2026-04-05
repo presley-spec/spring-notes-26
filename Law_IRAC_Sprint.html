@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRAC Sprint - Timed Essay Writing Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0b12;
+            color: #e4e6eb;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #8a8d99;
+        }
+
+        /* Difficulty Selection Screen */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .difficulty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .difficulty-card {
+            padding: 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .difficulty-card:hover {
+            transform: translateY(-4px);
+            border-color: currentColor;
+        }
+
+        .difficulty-card.green {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .difficulty-card.gold {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .difficulty-card.red {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .difficulty-time {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .difficulty-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .difficulty-desc {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        /* Course Tabs */
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 16px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab.active {
+            background-color: #0099ff;
+            border-color: #0099ff;
+        }
+
+        /* Planning Buffer */
+        .planning-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .planning-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .planning-timer {
+            font-size: 64px;
+            font-weight: 700;
+            color: #0099ff;
+            margin: 40px 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .planning-text {
+            font-size: 16px;
+            color: #8a8d99;
+            margin-bottom: 32px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .button {
+            padding: 12px 24px;
+            background-color: #0099ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .button:hover {
+            background-color: #0077cc;
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #e4e6eb;
+        }
+
+        .button.secondary:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Game Screen */
+        .timer-bar {
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background-color: #0099ff;
+            transition: background-color 0.3s ease;
+        }
+
+        .timer-fill.amber {
+            background-color: #f59e0b;
+        }
+
+        .timer-fill.red {
+            background-color: #ef4444;
+        }
+
+        .timer-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: #0099ff;
+        }
+
+        .timer-display.amber {
+            color: #f59e0b;
+        }
+
+        .timer-display.red {
+            color: #ef4444;
+        }
+
+        .fact-pattern {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .fact-pattern-label {
+            font-size: 12px;
+            color: #8a8d99;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .fact-pattern-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #e4e6eb;
+        }
+
+        .textarea-wrapper {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .textarea-label {
+            font-size: 12px;
+            color: #8a8d99;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .word-count {
+            font-size: 13px;
+            color: #8a8d99;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 400px;
+            background-color: #0f1218;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e4e6eb;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            padding: 16px;
+            resize: vertical;
+            transition: border-color 0.2s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #0099ff;
+        }
+
+        textarea::placeholder {
+            color: rgba(228, 230, 235, 0.2);
+        }
+
+        .scaffolding-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #8a8d99;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+
+        .checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #0099ff;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .button.submit {
+            flex: 1;
+            background-color: #10b981;
+        }
+
+        .button.submit:hover {
+            background-color: #059669;
+        }
+
+        .button.cancel {
+            flex: 1;
+            background-color: #6b7280;
+        }
+
+        .button.cancel:hover {
+            background-color: #4b5563;
+        }
+
+        /* Review Screen */
+        .comparison-container {
+            display: grid;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .answer-section {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .answer-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #8a8d99;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .answer-text {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #e4e6eb;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .model-answer-container {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .section-block {
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid;
+        }
+
+        .section-block.issue {
+            border-left-color: #3b82f6;
+        }
+
+        .section-block.rule {
+            border-left-color: #10b981;
+        }
+
+        .section-block.application {
+            border-left-color: #f59e0b;
+        }
+
+        .section-block.conclusion {
+            border-left-color: #a855f7;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+
+        .section-block.issue .section-label {
+            color: #3b82f6;
+        }
+
+        .section-block.rule .section-label {
+            color: #10b981;
+        }
+
+        .section-block.application .section-label {
+            color: #f59e0b;
+        }
+
+        .section-block.conclusion .section-label {
+            color: #a855f7;
+        }
+
+        .section-content {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #e4e6eb;
+        }
+
+        /* Rubric */
+        .rubric-section {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .rubric-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e4e6eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .rubric-title:hover {
+            color: #0099ff;
+        }
+
+        .rubric-toggle {
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
+
+        .rubric-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .rubric-content {
+            margin-top: 16px;
+            display: none;
+        }
+
+        .rubric-content.open {
+            display: block;
+        }
+
+        .rubric-item {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .rubric-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .rubric-item-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0099ff;
+            margin-bottom: 4px;
+        }
+
+        .rubric-item-text {
+            font-size: 13px;
+            color: #8a8d99;
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0099ff;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #8a8d99;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Break Screen */
+        .break-screen {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .break-emoji {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+
+        .break-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .break-text {
+            font-size: 15px;
+            color: #8a8d99;
+            margin-bottom: 32px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .difficulty-grid {
+                grid-template-columns: 1fr;
+            }
+
+            textarea {
+                min-height: 300px;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">IRAC Sprint</div>
+            <div class="subtitle">Timed Essay Writing Game</div>
+        </header>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="screen active">
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 18px; margin-bottom: 12px; color: #e4e6eb;">Select Difficulty</h2>
+                <p style="font-size: 14px; color: #8a8d99; margin-bottom: 24px;">Choose your sprint duration and issue complexity</p>
+            </div>
+
+            <div class="difficulty-grid">
+                <div class="difficulty-card green" onclick="startGame(3, 'property')">
+                    <div class="difficulty-time">3 min</div>
+                    <div class="difficulty-label">Single Issue</div>
+                    <div class="difficulty-desc">One focused legal issue to analyze and apply</div>
+                </div>
+                <div class="difficulty-card gold" onclick="startGame(5, 'property')">
+                    <div class="difficulty-time">5 min</div>
+                    <div class="difficulty-label">Two Issues</div>
+                    <div class="difficulty-desc">Multiple related issues to balance and explain</div>
+                </div>
+                <div class="difficulty-card red" onclick="startGame(8, 'property')">
+                    <div class="difficulty-time">8 min</div>
+                    <div class="difficulty-label">Multi-Issue</div>
+                    <div class="difficulty-desc">Complex fact pattern with 3+ interconnected issues</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 32px; margin-bottom: 16px;">
+                <h3 style="font-size: 16px; margin-bottom: 16px; color: #e4e6eb;">Select Course</h3>
+                <div class="tabs">
+                    <div class="tab active" onclick="setSelectedCourse('all')">All Courses</div>
+                    <div class="tab" onclick="setSelectedCourse('property')">Property</div>
+                    <div class="tab" onclick="setSelectedCourse('conlaw')">Con Law</div>
+                    <div class="tab" onclick="setSelectedCourse('crimlaw')">Criminal Law</div>
+                </div>
+            </div>
+
+            <div style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; margin-top: 32px;">
+                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #e4e6eb;">Game Features</h3>
+                <ul style="font-size: 13px; color: #8a8d99; line-height: 1.8; margin-left: 20px;">
+                    <li>Optional 30-second planning buffer before each sprint</li>
+                    <li>Gentle timer with visual escalation (amber at 1 min, red at 30 sec)</li>
+                    <li>Optional IRAC scaffolding labels as writing aids</li>
+                    <li>Side-by-side comparison with color-coded model answer</li>
+                    <li>Professor's rubric showing point-earning elements</li>
+                    <li>Track your progress: sprints completed and average word count</li>
+                </ul>
+            </div>
+
+            <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; margin-top: 24px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <input type="checkbox" id="planningBuffer" class="checkbox" checked>
+                    <label for="planningBuffer" style="cursor: pointer; font-size: 14px; color: #e4e6eb;">Enable 30-second planning buffer before timer starts</label>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <input type="checkbox" id="scaffolding" class="checkbox" checked>
+                    <label for="scaffolding" style="cursor: pointer; font-size: 14px; color: #e4e6eb;">Show IRAC scaffolding labels in writing area</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Planning Buffer Screen -->
+        <div id="planningScreen" class="screen">
+            <div class="planning-screen">
+                <div class="planning-title">Plan Your Answer</div>
+                <div class="planning-text">Take 30 seconds to outline your approach. Sketch your issues, rules, and key facts you'll apply.</div>
+                <div class="planning-timer" id="planningTimer">30</div>
+                <button class="button" onclick="skipPlanning()">Skip & Start Writing</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="timer-display" id="timerDisplay">0:00</div>
+            <div class="timer-bar">
+                <div class="timer-fill" id="timerFill"></div>
+            </div>
+
+            <div class="fact-pattern">
+                <div class="fact-pattern-label">Fact Pattern</div>
+                <div class="fact-pattern-text" id="factPatternText"></div>
+            </div>
+
+            <div class="textarea-wrapper">
+                <div class="textarea-label">
+                    <span>Your IRAC Response</span>
+                    <span class="word-count" id="wordCount">0 words</span>
+                </div>
+                <textarea id="essayTextarea" placeholder="Write your IRAC analysis here..."></textarea>
+                <div class="scaffolding-toggle" id="scaffoldingToggle" style="display: none;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0;">
+                        <input type="checkbox" class="checkbox" id="showScaffolding" checked onchange="toggleScaffolding()">
+                        <span>Show IRAC labels</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="button submit" onclick="submitEssay()">Submit Answer</button>
+                <button class="button cancel" onclick="resetGame()">Start Over</button>
+            </div>
+        </div>
+
+        <!-- Break Screen -->
+        <div id="breakScreen" class="screen">
+            <div class="break-screen">
+                <div class="break-emoji">💪</div>
+                <div class="break-title">Great Job!</div>
+                <div class="break-text">You've completed a sprint. Take a quick break and come back strong for the next round.</div>
+                <button class="button" onclick="resetGame()">Next Sprint</button>
+            </div>
+        </div>
+
+        <!-- Review Screen -->
+        <div id="reviewScreen" class="screen">
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 20px; margin-bottom: 8px; color: #e4e6eb;">Sprint Review</h2>
+                <p style="font-size: 14px; color: #8a8d99;">Compare your response with the model answer</p>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="sprintStats">0</div>
+                    <div class="stat-label">Sprints Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="yourWordCount">0</div>
+                    <div class="stat-label">Your Word Count</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgWordCount">0</div>
+                    <div class="stat-label">Average Words</div>
+                </div>
+            </div>
+
+            <div class="rubric-section">
+                <div class="rubric-title" onclick="toggleRubric()">
+                    <span>Professor's Rubric: What Earns Points</span>
+                    <span class="rubric-toggle" id="rubricToggle">▼</span>
+                </div>
+                <div class="rubric-content" id="rubricContent">
+                    <div class="rubric-item">
+                        <div class="rubric-item-label">Issue (20%)</div>
+                        <div class="rubric-item-text">Identify all distinct legal questions. State issues clearly as "Whether..." questions. Avoid stating conclusions.</div>
+                    </div>
+                    <div class="rubric-item">
+                        <div class="rubric-item-label">Rule (30%)</div>
+                        <div class="rubric-item-text">State applicable law precisely. Include elements, tests, or standards. Cite the source (statute, case, doctrine). Explain multi-step rules fully.</div>
+                    </div>
+                    <div class="rubric-item">
+                        <div class="rubric-item-label">Application (35%)</div>
+                        <div class="rubric-item-text">Apply facts to each element. Explain your reasoning. Address counterarguments. Show how rules map to specific facts. Distinguish unfavorable authority if needed.</div>
+                    </div>
+                    <div class="rubric-item">
+                        <div class="rubric-item-label">Conclusion (15%)</div>
+                        <div class="rubric-item-text">State your final answer concisely. Should flow logically from your application. Avoid new arguments or unsupported claims.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison-container">
+                <div class="answer-section">
+                    <div class="answer-section-title">Your Response</div>
+                    <div class="answer-text" id="yourAnswerDisplay"></div>
+                </div>
+
+                <div class="model-answer-container">
+                    <div class="answer-section-title">Model Answer (Color-Coded)</div>
+                    <div id="modelAnswerDisplay"></div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 32px;">
+                <button class="button" style="flex: 1; background-color: #10b981;" onclick="resetGame()">Next Sprint</button>
+                <button class="button secondary" style="flex: 1;" onclick="goToStart()">Back to Start</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hypo Database
+        const hypos = {
+            property: [
+                {
+                    time: 3,
+                    title: "Neighbor's Fence",
+                    facts: "Alex built a fence 2 feet onto Beth's property 15 years ago. Alex maintained the enclosed area and grew vegetables there. The statutory period is 10 years. Beth just noticed and demands removal.",
+                    modelAnswer: `[ISSUE] The issue is whether Alex has acquired title to the strip of land through adverse possession.
+[RULE] Adverse possession requires: (1) actual possession, (2) open and notorious, (3) exclusive, (4) continuous for the statutory period, and (5) hostile/without permission.
+[APPLICATION] Here, Alex's fence and vegetable garden constitute actual possession of the 2-foot strip. The fence is visible and satisfies open and notorious. Alex alone used the area (exclusive). Fifteen years of continuous use exceeds the 10-year statutory period. Alex built without Beth's permission, satisfying the hostility requirement.
+[CONCLUSION] Alex likely has acquired title through adverse possession and need not remove the fence.`
+                },
+                {
+                    time: 3,
+                    title: "Broken Heater",
+                    facts: "Tenant rents an apartment with a lease. In January, the heating system breaks. Tenant notifies landlord in writing. Landlord does nothing for 6 weeks. Tenant wants to withhold rent.",
+                    modelAnswer: `[ISSUE] The issue is whether the landlord has breached the implied warranty of habitability, entitling tenant to withhold rent.
+[RULE] The implied warranty of habitability requires landlords to maintain residential premises in a condition fit for human habitation. A breach occurs when there is a substantial defect, the landlord has notice, and fails to repair within a reasonable time. Rent withholding is a recognized tenant remedy.
+[APPLICATION] No heat in January is a substantial defect affecting habitability. Tenant provided written notice, and landlord failed to act for 6 weeks—well beyond reasonable. The warranty cannot be waived, and tenant may withhold rent proportional to the diminished value.
+[CONCLUSION] Tenant is likely entitled to withhold rent due to landlord's breach of the implied warranty of habitability.`
+                },
+                {
+                    time: 3,
+                    title: "The Shortcut",
+                    facts: "For 25 years, hikers have used a trail across Farmer's land to reach a public lake. The trail is visible and well-worn. Farmer never objected. New owner buys the land and posts 'No Trespassing' signs.",
+                    modelAnswer: `[ISSUE] The issue is whether the hikers have acquired an easement by prescription (prescriptive easement).
+[RULE] A prescriptive easement arises when a user exercises a right over another's land that is: (1) open and notorious, (2) continuous and uninterrupted, (3) without permission (adverse), and (4) for the statutory period (here, 20+ years).
+[APPLICATION] The hiking trail is open and visible—any owner would notice it. Use is continuous and regular over 25 years, far exceeding the statutory period. The original owner never objected, meaning use was adverse. The trail is permanent and used for the same purpose (access).
+[CONCLUSION] The hikers likely have a prescriptive easement and may continue using the trail despite the new owner's posted signs.`
+                },
+                {
+                    time: 3,
+                    title: "The Gift Deed",
+                    facts: "Owner sells Blackacre to A on Monday. A doesn't record. Owner then sells to B (who pays full price and has no knowledge of A's deed) on Friday. B records immediately. Race-notice jurisdiction.",
+                    modelAnswer: `[ISSUE] The issue is whether B, as a subsequent purchaser, has priority over A's unrecorded deed under the race-notice recording act.
+[RULE] In a race-notice jurisdiction, a subsequent bona fide purchaser (BFP) prevails over a prior unrecorded deed if the BFP: (1) purchases for value, (2) without notice of the prior deed, and (3) records before the prior purchaser.
+[APPLICATION] B is a BFP: B paid full price and had no knowledge of A's deed. B recorded on Friday, before A recorded. A's failure to record places A at risk.
+[CONCLUSION] B has superior title to Blackacre. A's unrecorded deed does not bind B.`
+                },
+                {
+                    time: 5,
+                    title: "Loud Neighbors",
+                    facts: "Factory operates 24/7 next to residential area producing loud noise and chemical odors. Homeowner sues. Factory has operated for 40 years; homeowner bought 5 years ago. City zoning permits industrial use.",
+                    modelAnswer: `[ISSUE] First, whether the factory's operations constitute a private nuisance. Second, whether the homeowner's choice to move next to the factory bars recovery under the coming-to-the-nuisance defense.
+[RULE] Private nuisance is a substantial and unreasonable interference with another's use and enjoyment of land. Reasonableness is balanced: (1) severity and character of harm, (2) social utility of conduct, (3) burden to cease. The coming-to-the-nuisance doctrine—moving into a nuisance—may reduce or eliminate recovery, though most modern courts reject it.
+[APPLICATION] The 24/7 noise and odors clearly cause substantial interference. However, the factory's 40-year operation with city zoning approval gives significant social utility. The homeowner's recent purchase means they came to the nuisance. Courts split: some bar recovery entirely, others reduce damages. The prior zoning approval favors the factory.
+[CONCLUSION] The homeowner may recover for nuisance, but damages would likely be limited or reduced due to coming-to-the-nuisance and the zoning approval.`
+                },
+                {
+                    time: 5,
+                    title: "The Subdivision",
+                    facts: "Developer's CC&Rs restrict all lots to 'single-family residential use.' New buyer wants to operate a home daycare. CC&Rs say they bind 'all successors.' Neighborhood now has 3 home businesses.",
+                    modelAnswer: `[ISSUE] First, whether the CC&R covenant runs with the land and binds the buyer. Second, whether changed neighborhood conditions make the covenant unenforceable.
+[RULE] A covenant runs with the land if: (1) it touches and concerns the land (affects use or value), (2) there is privity of estate, and (3) the burdened party has notice. Changed conditions doctrine allows a court to refuse enforcement when the neighborhood has changed so materially that the covenant's purpose is lost.
+[APPLICATION] The covenant touches and concerns land by restricting use. Privity exists through successor ownership. Notice is constructive through the recorded CC&Rs. However, three existing home businesses in the neighborhood suggest a change in character. The covenant's purpose—ensuring single-family character—may be undermined if enforcement is inconsistent.
+[CONCLUSION] The covenant likely runs with the land, but changed conditions may provide the buyer a defense to enforcement, particularly if enforcement is selective.`
+                },
+                {
+                    time: 5,
+                    title: "The Landlord's Response",
+                    facts: "Tenant complains about roaches to city housing inspector. Two days later, landlord serves eviction notice for 'lease violations.' Tenant has been current on rent with no prior complaints.",
+                    modelAnswer: `[ISSUE] First, whether the roach infestation breaches the implied warranty of habitability. Second, whether the landlord's eviction constitutes illegal retaliation.
+[RULE] Implied warranty of habitability requires landlords to maintain premises fit for human habitation. Roach infestations are typically substantial defects. Retaliatory eviction statutes in most jurisdictions prohibit evictions within a set period (e.g., 90 days) after a tenant reports code violations or asserts habitability rights.
+[APPLICATION] Roaches in an apartment are a habitability breach. Tenant gave proper notice to authorities. The timing—two days after the complaint—strongly suggests retaliation. Tenant has been current on rent, so 'lease violations' appear pretextual. The statute's purpose is to protect tenants who assert their rights.
+[CONCLUSION] The landlord has likely breached habitability and engaged in illegal retaliation. The eviction notice is likely unenforceable, and the tenant may have counterclaims for damages.`
+                },
+                {
+                    time: 8,
+                    title: "Beach House Battle",
+                    facts: "Owner buys beachfront property planning resort development. City then passes ordinance prohibiting all construction within 200ft of shoreline, reducing property value by 90%. Owner's entire lot is within the zone. Neighbor has been parking boats on Owner's beach for 12 years (statutory period is 10). The boat parking is clearly visible. Owner also discovers previous owner granted a verbal easement to neighbor for beach access.",
+                    modelAnswer: `[ISSUE] First, whether the city ordinance effects a regulatory taking requiring compensation under the Fifth Amendment. Second, whether the neighbor has acquired a prescriptive easement for boat parking. Third, whether the verbal easement is enforceable under the statute of frauds.
+[RULE] A regulatory taking occurs when government action eliminates all economically viable use or substantially advances a legitimate state interest with a burden unjustly imposed on the property owner. Lucas per se taking applies when a regulation deprives property of all economically beneficial use. Prescriptive easement requires: (1) open and notorious use, (2) without permission, (3) continuous and uninterrupted, (4) for the statutory period. The statute of frauds requires interests in land to be in writing; oral grants of easements are typically unenforceable.
+[APPLICATION] The 90% value reduction and loss of all economically viable use on the entire lot suggests a per se taking under Lucas, possibly requiring compensation. The boat parking for 12 years (exceeding the 10-year period) in plain sight and without permission satisfies prescriptive easement elements. The verbal easement from the prior owner is unenforceable under the statute of frauds—the neighbor has no property right from the oral grant, but does from prescription.
+[CONCLUSION] Owner likely has a taking claim against the city. The neighbor has a prescriptive easement but cannot enforce the verbal easement grant. The regulatory ordinance is likely a compensable taking.`
+                },
+                {
+                    time: 8,
+                    title: "The Inheritance",
+                    facts: "Grandmother's will leaves her house 'to my son for life, then to his children who graduate college.' Son has 2 children: one in college (age 20), one in middle school (age 12). Uncle claims the remainder violates RAP. Meanwhile, Son rents the house out and keeps all income. Daughter (age 20) wants her share.",
+                    modelAnswer: `[ISSUE] First, whether the remainder interest granted to the children violates the rule against perpetuities (RAP). Second, whether Son, as life tenant, is committing waste by renting out the house. Third, whether Daughter, as a remainderman, has a right to share income from the property.
+[RULE] RAP requires all interests vest within lives in being plus 21 years. An interest vests when the holder and all conditions are ascertainable. Waste occurs when a life tenant damages the property's value through misuse. Remaindermen have no right to current income; all rents belong to the life tenant during the term.
+[APPLICATION] The children's interest vests when they graduate college, which will occur within the lives of Son and the children themselves plus 21 years (well within RAP). The eldest is already in college. Both children are "lives in being" at the grandmother's death. RAP is satisfied. Son, as life tenant, has the right to rent the property and retain income—this is his economic benefit as life tenant. Renting maintains rather than damages the property, so no waste. Daughter has no claim to current income despite being a remainderman.
+[CONCLUSION] The remainder does not violate RAP. Son is not committing waste and may keep rental income. Daughter has no right to current income, only a future interest upon Son's death.`
+                },
+                {
+                    time: 8,
+                    title: "Moving Day Disaster",
+                    facts: "Tenant breaks lease with 2 years remaining and moves out. Landlord doesn't attempt to re-rent for 6 months. Landlord sues for all remaining rent. Tenant argues landlord failed to mitigate. Separately, tenant left behind personal property that landlord threw away.",
+                    modelAnswer: `[ISSUE] First, whether landlord owed a duty to mitigate damages after tenant's breach. Second, whether landlord violated tenant's rights by discarding abandoned personal property. Third, what remedies are available to each party.
+[RULE] Landlords, like all contract parties, must take reasonable steps to mitigate damages; they cannot sit idle and demand full rent. Reasonable mitigation includes marketing and showing the unit. The duty is triggered upon the tenant's breach (move-out). Abandoned personal property rules vary: some jurisdictions require landlords to hold property for a set period (30–60 days) before disposal; others require notice to the tenant.
+[APPLICATION] Landlord failed to re-rent for 6 months—a substantial delay suggesting no mitigation effort. A reasonable landlord would list and show the property within days or weeks. Landlord's claim for full remaining rent is reduced by the damages that could have been mitigated (likely significant rent for 6 months). Tenant's abandoned property: if the jurisdiction requires notice and holding, landlord violated the law by immediate disposal. Even without notice requirements, a brief holding period is standard.
+[CONCLUSION] Landlord's recovery is substantially reduced due to failure to mitigate. Damages equal (if any rent collected during the 2-year period) minus full damages mitigated from the 6-month delay. Tenant may have a claim for damages related to improperly disposed personal property, or damages for unlawful property destruction.`
+                }
+            ],
+            conlaw: [
+                {
+                    time: 3,
+                    title: "The Wheat Farmer",
+                    facts: "Congress passes a law limiting how much wheat a farmer can grow, even wheat consumed entirely on the farm. Farmer grows 200 extra bushels for personal use and challenges the law.",
+                    modelAnswer: `[ISSUE] Whether Congress has constitutional authority under the Commerce Clause to regulate wheat produced for personal consumption.
+[RULE] The Commerce Clause grants Congress authority to regulate interstate commerce. In Wickard v. Filburn, the Supreme Court held that even purely intrastate activity—wheat grown for personal consumption—substantially affects interstate commerce in aggregate. Congress may regulate such activity as rationally related to interstate commerce.
+[APPLICATION] Wheat for personal consumption was historically viewed as non-commercial. However, under Wickard's aggregation principle, millions of farmers growing personal wheat collectively affect the interstate wheat market. Farmer's 200 bushels, though personal, contribute to reduced interstate commerce in wheat. Congress reasonably determined that regulating this activity is necessary to control interstate wheat markets and prices.
+[CONCLUSION] Congress likely has constitutional authority to regulate the farmer's personal wheat production under the Commerce Clause.`
+                },
+                {
+                    time: 3,
+                    title: "The State Wine Ban",
+                    facts: "State prohibits direct shipment of wine from out-of-state wineries to consumers but allows in-state wineries to ship directly. Out-of-state winery challenges.",
+                    modelAnswer: `[ISSUE] Whether the state law violates the dormant Commerce Clause by facially discriminating against interstate commerce.
+[RULE] The dormant Commerce Clause prohibits state laws that facially discriminate against interstate commerce. Laws discriminating by origin are subject to strict scrutiny: the state must show that the law serves a legitimate local purpose and that the purpose cannot be served by non-discriminatory means. Few laws survive this test.
+[APPLICATION] The law explicitly favors in-state wineries (allowed to ship) over out-of-state wineries (prohibited from shipping). This is facial discrimination on the basis of interstate origin. The state's asserted interest—alcohol regulation or tax collection—could be served by allowing all wineries to ship or by requiring in-state shipping licenses. Non-discriminatory alternatives exist.
+[CONCLUSION] The law violates the dormant Commerce Clause under strict scrutiny and is likely unconstitutional.`
+                },
+                {
+                    time: 3,
+                    title: "Expelled Student",
+                    facts: "Public university student posts controversial political views on personal social media. University expels student under 'community values' policy.",
+                    modelAnswer: `[ISSUE] Whether the university's expulsion violates the student's First Amendment free speech rights.
+[RULE] The First Amendment protects free speech and is enforceable against government entities (state action). Public universities are state actors. Content-based restrictions on speech are subject to strict scrutiny. However, the government may regulate speech that falls into narrow categories (incitement, true threats, defamation). The government cannot regulate speech merely because it is controversial or offensive.
+[APPLICATION] The student's off-campus social media posts are political speech—core First Amendment protection. The 'community values' policy is content-based and vague, targeting the viewpoint without narrowing to a specific harm. The university offers no evidence that the speech constituted a true threat or incitement to imminent harm. Expulsion is a severe sanction based on the speech's content.
+[CONCLUSION] The expulsion likely violates the First Amendment because it restricts protected political speech based on content absent a compelling interest.`
+                },
+                {
+                    time: 5,
+                    title: "The Gun Law",
+                    facts: "Congress passes a law making it a federal crime to possess a firearm within 1000 feet of a school. No congressional findings accompany the law. The statute contains no jurisdictional element.",
+                    modelAnswer: `[ISSUE] First, whether the law exceeds Congress's enumerated powers under the Commerce Clause because the activity regulated is non-economic. Second, whether the law is a valid exercise of the Necessary and Proper Clause even if the underlying Commerce Clause power is limited.
+[RULE] In United States v. Lopez, the Court held that the Commerce Clause does not authorize Congress to regulate non-economic, criminal activity (gun possession at schools). The law must substantially affect interstate commerce. In United States v. Morrison, the Court struck down the Violence Against Women Act, holding that intrastate violence is not economic activity. The Necessary and Proper Clause authorizes laws that are incidental to an enumerated power, but cannot independently extend federal authority.
+[APPLICATION] Firearm possession near a school is not economic activity. The law lacks a jurisdictional element (nexus to interstate commerce) and contains no congressional findings connecting the activity to interstate commerce. Unlike Wickard (agricultural production affecting wheat markets), school gun possession does not inherently affect interstate commerce. The law regulates purely criminal, non-commercial conduct.
+[CONCLUSION] The law likely exceeds the Commerce Clause under Lopez and is not saved by the Necessary and Proper Clause, which cannot supply independent authority.`
+                },
+                {
+                    time: 5,
+                    title: "The Protest Permit",
+                    facts: "City requires permits for demonstrations in public parks. Permits routinely granted for community events but denied for political protests. Activist group challenges.",
+                    modelAnswer: `[ISSUE] First, whether the park is a public forum, semi-public forum, or non-public forum. Second, whether the permit denial constitutes content-based or viewpoint discrimination in violation of the First Amendment.
+[RULE] Traditional public forums (parks, sidewalks) are open to all protected speech; government cannot restrict speech based on content or viewpoint without a compelling interest and narrow tailoring (strict scrutiny). Even in non-public forums, the government cannot deny access based on viewpoint (though content discrimination may be permitted if reasonable and viewpoint-neutral).
+[APPLICATION] Parks are traditional public forums open to expression. The permit system itself is viewpoint-neutral and content-neutral (all demonstrations require permits). However, granting permits for community events but denying them for political protests constitutes viewpoint discrimination—the city is targeting the political message. This violates the First Amendment regardless of forum analysis because viewpoint discrimination is never permissible.
+[CONCLUSION] The selective denial of permits to political protests likely violates the First Amendment as viewpoint discrimination.`
+                },
+                {
+                    time: 5,
+                    title: "The Affirmative Action Plan",
+                    facts: "State police department uses race as a factor in hiring to increase minority representation. White applicant with higher test scores is passed over.",
+                    modelAnswer: `[ISSUE] First, whether the race-based hiring policy violates Equal Protection. Second, whether diversity in law enforcement constitutes a compelling governmental interest justifying strict scrutiny.
+[RULE] The Equal Protection Clause prohibits government from denying any person equal protection of the laws. Race-based classifications are subject to strict scrutiny: the government must show the law serves a compelling interest and is narrowly tailored. In Regents v. Bakke, the Court held that promoting diversity in education is a compelling interest, but rigid quotas are not narrowly tailored. Race can be a factor among many considerations.
+[APPLICATION] The policy uses race as a factor in hiring decisions. This is a race-based classification subject to strict scrutiny. The state asserts diversity in policing as the interest—improving community relations, reflecting the population served, and ensuring fair law enforcement. These goals are arguably compelling. However, the policy's implementation must be narrowly tailored: is it flexible (race as one factor) or rigid (quotas)? If flexible and temporary, it may survive. If rigid, it fails.
+[CONCLUSION] The policy's constitutionality depends on narrow tailoring. If race is one flexible factor reviewed individually, it likely survives strict scrutiny. If applied rigidly as a quota, it fails.`
+                },
+                {
+                    time: 8,
+                    title: "The Federal Mandate",
+                    facts: "Congress passes law requiring all states to implement a new environmental monitoring program, threatening to withhold 100% of highway funding for noncompliance. State refuses, claiming commandeering. The law also requires state environmental agencies to submit reports to a federal database. Industry group challenges the underlying regulation as exceeding Commerce Clause power.",
+                    modelAnswer: `[ISSUE] First, whether the law violates the anti-commandeering doctrine by forcing states to administer a federal program. Second, whether the threat to withhold highway funding constitutes unconstitutional coercion of the states under the Spending Clause. Third, whether the underlying regulation is authorized by the Commerce Clause.
+[RULE] The anti-commandeering doctrine, established in Printz v. United States and Murphy v. NCAA, prohibits Congress from forcing states to administer federal laws. However, Congress may condition federal funding on state compliance if the condition is not coercive. In NFIB v. Sebelius, the Court held that threatening to withhold 100% of Medicaid funding was coercive and thus unconstitutional. The Commerce Clause authorizes regulation of economic activity substantially affecting interstate commerce.
+[APPLICATION] The requirement that states implement the monitoring program and submit reports to federal databases is analogous to the commandeering of state agencies in Printz. States are forced to use state resources and personnel. The 100% withholding of highway funding is coercive—a threat so severe that it crosses the line from incentive to compulsion (following NFIB). The withholding is not narrowly tailored to the environmental program (highway funding is unrelated). Environmental monitoring likely affects interstate commerce in environmental goods and interstate trade, supporting Commerce Clause authority, but the commandeering and coercive spending are constitutional defects.
+[CONCLUSION] The law likely violates both the anti-commandeering doctrine and the Spending Clause (coercion). Even if the regulation itself is authorized by the Commerce Clause, the implementation mechanism is unconstitutional.`
+                },
+                {
+                    time: 8,
+                    title: "Campus Controversy",
+                    facts: "Public university bans all religious student organizations from meeting in campus buildings, citing separation of church and state. Christian student group sues. University argues buildings are limited public forums and religious groups can meet elsewhere. Student group argues this is viewpoint discrimination and violates Free Exercise.",
+                    modelAnswer: `[ISSUE] First, whether the ban constitutes viewpoint discrimination on a limited public forum. Second, whether the ban violates the Free Exercise Clause. Third, whether the Establishment Clause supports the university's exclusion of religious groups.
+[RULE] Viewpoint discrimination is never permissible in any forum, including non-public forums, if the government is regulating speech based on disagreement with the message. In Rosenberger v. University of Virginia, the Court held that excluding religious student publications from generally available funding constitutes viewpoint discrimination. Free Exercise protects religious exercise from government burden. Establishment Clause concerns do not justify viewpoint discrimination or selective exclusion of religious speech.
+[APPLICATION] The university opens its buildings to all student organizations for meetings—a limited public forum or non-public forum dedicated to student groups. By banning religious organizations from this forum while allowing secular clubs (political, cultural, hobby-based), the university discriminates based on viewpoint (religious vs. secular perspective). The university cannot justify this by citing Establishment Clause concerns; the Establishment Clause does not require hostility to religion or viewpoint discrimination. Free Exercise is also burdened: the group is singled out and excluded from equal access.
+[CONCLUSION] The ban likely violates the First Amendment as viewpoint discrimination and infringes Free Exercise. The Establishment Clause does not support the exclusion.`
+                },
+                {
+                    time: 8,
+                    title: "The Emergency Powers",
+                    facts: "Governor issues executive order seizing private medical supply companies during pandemic, directing them to produce specific equipment. No state legislation authorizes the seizure. Companies sue under due process and takings clauses.",
+                    modelAnswer: `[ISSUE] First, whether the executive order violates the state constitutional separation of powers. Second, whether the seizure constitutes a taking of private property requiring just compensation. Third, whether the seizure violates substantive due process rights.
+[RULE] State constitutions require separation of powers; executives typically cannot seize property without legislative authorization. A taking occurs when government physically appropriates private property or regulations deprive an owner of substantially all economically beneficial use. Taking claims require just compensation. Substantive due process protects fundamental rights and economic liberty from arbitrary government action; heightened scrutiny applies when fundamental rights are burdened.
+[APPLICATION] The governor's executive order directs companies to produce equipment—a seizure of control and operation without legislative delegation or authorization. This exceeds executive power and violates separation of powers. The physical seizure is a per se taking under Cedar Point Nursery (government physically appropriates property). No compensation was offered. Substantive due process: if the state constitution protects economic liberty, the arbitrary seizure without due process (notice, hearing) is arbitrary and capricious.
+[CONCLUSION] The executive order likely exceeds the governor's authority, violates separation of powers, and constitutes an uncompensated taking. The companies have valid takings and due process claims.`
+                },
+                {
+                    time: 8,
+                    title: "Election Law Challenge",
+                    facts: "State passes voter ID law requiring photo ID at polls. Free IDs available at DMV offices (only open M-F 9-5). Data shows 15% of Black voters lack qualifying ID vs 4% of white voters. No evidence of in-person voter fraud in state history.",
+                    modelAnswer: `[ISSUE] First, whether the voter ID law violates Equal Protection by having a disparate impact on Black voters. Second, whether the law burdens the fundamental right to vote. Third, what level of scrutiny applies and whether the law survives.
+[RULE] Equal Protection prohibits intentional discrimination (disparate intent) but not policies with disparate impact absent discriminatory intent. Voting is a fundamental right; laws burdening this right are subject to strict scrutiny under Anderson v. Elrod (or heightened scrutiny per Burdick balancing). The Burdick test weighs the severity of the burden against the state's interest in election integrity.
+[APPLICATION] The 15% to 4% ID gap suggests disparate impact, but without evidence of intent to discriminate, this does not invoke strict scrutiny. However, the fundamental right to vote is burdened: free IDs with limited availability (M-F 9-5) create barriers for working voters. No evidence of in-person voter fraud undermines the state's interest in election integrity. The burden is severe (losing voting rights), while the state's interest is speculative (no documented fraud). The DMV's limited hours disproportionately burden working and minority voters. Under Burdick balancing, the law likely fails.
+[CONCLUSION] The voter ID law likely violates the fundamental right to vote as an unjustified burden under strict or heightened scrutiny, and may violate Equal Protection if discriminatory intent is shown or through application.`
+                }
+            ],
+            crimlaw: [
+                {
+                    time: 3,
+                    title: "The Wrong House",
+                    facts: "Defendant, extremely intoxicated, enters what he believes is his own home (it's his neighbor's) and falls asleep on the couch. Charged with burglary.",
+                    modelAnswer: `[ISSUE] Whether the defendant's voluntary intoxication and mistake of fact negate the specific intent required for burglary.
+[RULE] Burglary requires specific intent to commit a crime inside (typically theft). Burglary also requires breaking and entering a dwelling of another. Voluntary intoxication may negate specific intent if it prevents the defendant from forming the required mental state. Mistake of fact (e.g., thinking you own the house) negates specific intent if the mistake is honest, even if unreasonable.
+[APPLICATION] The defendant entered the house thinking it was his own—an honest mistake of fact. This negates the specific intent to enter the dwelling of another. Additionally, extreme intoxication may prevent the defendant from forming the specific intent to steal or commit a crime inside. Without specific intent, burglary cannot be proven.
+[CONCLUSION] The defendant likely has valid defenses based on mistake of fact and voluntary intoxication negating specific intent. Burglary charges will likely fail.`
+                },
+                {
+                    time: 3,
+                    title: "The Bar Fight",
+                    facts: "Victim called Defendant's mother a vile name. Defendant immediately punched Victim. Victim fell, hit his head, and died.",
+                    modelAnswer: `[ISSUE] Whether the defendant is guilty of murder or only voluntary manslaughter based on adequate provocation and heat of passion.
+[RULE] Voluntary manslaughter (not murder) applies when the defendant acts in a heat of passion caused by adequate provocation, with no cooling period. Provocation is adequate if it would enrage a reasonable person. Words alone are rarely adequate provocation, even insults. Adequate provocation requires an act (e.g., assault, cuckoldry). Heat of passion requires immediate response without time to cool. A cooling period defeats the defense.
+[APPLICATION] Victim's insult to defendant's mother is harsh but words alone. Most jurisdictions hold that words, no matter how offensive, do not constitute adequate provocation for murder. Defendant's immediate punch shows heat of passion (no cooling period). However, words alone cannot support the manslaughter defense.
+[CONCLUSION] Defendant is likely guilty of murder (possibly second-degree), not voluntary manslaughter, because words alone do not constitute adequate provocation.`
+                },
+                {
+                    time: 3,
+                    title: "The Getaway",
+                    facts: "A and B plan to rob a convenience store. A stays in the car while B goes inside. B panics and shoots the clerk. A had no idea B had a gun.",
+                    modelAnswer: `[ISSUE] Whether A is liable for the clerk's death through accomplice liability or felony murder despite not knowing about the gun.
+[RULE] Accomplice liability: an accomplice aids or abets the principal's crime with knowledge of the crime and intent to facilitate it. If A aids a robbery knowing B will commit it, A is liable for the robbery. Felony murder: if death occurs during the commission of a dangerous felony (here, robbery), all participants are liable for murder under felony murder rule (some states require foreseeability). Pinkerton conspiracy liability: co-conspirators are liable for foreseeable crimes committed in furtherance of the conspiracy.
+[APPLICATION] A and B conspired to rob; A provided transportation and acted as lookout. A aided and abetted robbery. During the robbery, B (in a panic) shot the clerk. Under felony murder, A is liable for murder because the death occurred during a dangerous felony. Under Pinkerton, if the shooting was foreseeable during an armed robbery, A is liable. A's ignorance of the gun does not defeat accomplice or felony murder liability—A chose to facilitate robbery, a dangerous felony. Shooting during a robbery is foreseeable.
+[CONCLUSION] A is likely liable for murder under felony murder and accomplice liability, despite not knowing about the gun.`
+                },
+                {
+                    time: 5,
+                    title: "The Drug Sting",
+                    facts: "Undercover officer befriends Defendant over 3 months, repeatedly asking Defendant to sell marijuana. Defendant refuses each time, saying he doesn't sell drugs. Officer implies Defendant's family could face trouble if he doesn't cooperate. Defendant finally agrees and is arrested.",
+                    modelAnswer: `[ISSUE] First, whether the officer's conduct constitutes entrapment. Second, whether the threat to Defendant's family constitutes duress.
+[RULE] Entrapment requires: (1) inducement by government, (2) beyond mere opportunity, and (3) predisposition to commit the crime. Under the subjective test, inducement may negate predisposition. Duress requires: (1) threat of death or serious harm, (2) to defendant or family, (3) immediate threat, (4) reasonable fear of threat, (5) no reasonable opportunity to escape, (6) no prior wrongdoing to expose defendant to threat.
+[APPLICATION] The officer's 3-month persistence after repeated refusals shows excessive inducement beyond mere opportunity. Defendant explicitly stated he doesn't sell drugs—no evidence of predisposition. The officer's implied threat (family could face trouble) is coercive and goes beyond entrapment into duress. Defendant feared for his family's safety. The threat was ongoing and immediate. Defendant had no reasonable escape because the officer could follow through.
+[CONCLUSION] Defendant has valid entrapment and duress defenses. The officer's conduct was improper government inducement and coercion. Charges should be dismissed or defendant acquitted.`
+                },
+                {
+                    time: 5,
+                    title: "The Planned Revenge",
+                    facts: "Defendant discovers spouse's affair on Monday. Defendant is furious but goes to work normally for 3 days. On Thursday, Defendant buys a weapon, goes to the lover's house, and kills them. Charged with first-degree murder.",
+                    modelAnswer: `[ISSUE] First, whether Defendant's actions satisfy the premeditation and deliberation required for first-degree murder. Second, whether the voluntary manslaughter defense (adequate provocation, heat of passion) applies despite the time lag.
+[RULE] First-degree murder requires premeditation (decision to kill before the act) and deliberation (cool and careful consideration, not passionate reaction). A cooling period of days defeats heat-of-passion manslaughter. Voluntary manslaughter requires adequate provocation and heat of passion without cooling. Discovery of adultery may be adequate provocation, but a 3-day delay allows for cooling.
+[APPLICATION] Monday discovery of the affair would trigger heat of passion. However, Defendant went to work for 3 days—behavior suggesting reflection and cooling, not passion. On Thursday, Defendant purchased a weapon (planning the killing) and traveled to the lover's house. This sequence shows premeditation: Defendant had time to cool and instead planned the murder. The weapon purchase is deliberate. The 3-day gap and intermediate planning negate the heat-of-passion defense.
+[CONCLUSION] Defendant is likely guilty of first-degree murder. The time gap between discovery and killing, combined with weapon purchase and travel, demonstrates premeditation and deliberation, defeating the voluntary manslaughter defense.`
+                },
+                {
+                    time: 5,
+                    title: "The Robbery Gone Wrong",
+                    facts: "Three defendants agree to rob a jewelry store. During the robbery, a security guard draws his gun. Defendant A grabs a hostage. Defendant B shoots the guard. Defendant C was the lookout outside. The guard dies.",
+                    modelAnswer: `[ISSUE] First, whether all three are liable for the guard's murder under felony murder. Second, whether accomplice liability applies to all participants. Third, whether Defendant C, the lookout, is liable for the shooting.",
+                    modelAnswer: `[ISSUE] First, whether all three are liable for the guard's murder under felony murder. Second, whether accomplice liability applies to all participants. Third, whether Defendant C, the lookout, is liable for the shooting.
+[RULE] Felony murder: death during a dangerous felony (robbery) makes all participants liable for murder. All participants in the robbery are parties to the felony. Accomplice liability requires aiding and abetting with knowledge and intent to facilitate. Liability extends to foreseeable crimes committed in furtherance of the conspiracy (Pinkerton). A lookout aids the robbery by providing security and escape assistance.
+[APPLICATION] A and B jointly committed robbery, A with hostage-taking, B with the shooting. C served as lookout—a clear aid to the robbery. The guard's death occurred during the robbery, a dangerous felony. Under felony murder, all three are liable. C's liability for the shooting depends on foreseeability: is it foreseeable that a guard might be armed and confronted during a robbery? Yes. C thus faces felony murder liability. All three face murder charges based on felony murder.
+[CONCLUSION] All three defendants are likely liable for murder under felony murder rule because the death occurred during the robbery and C's role aided the felony.`
+                },
+                {
+                    time: 8,
+                    title: "The Party",
+                    facts: "Host provides alcohol to guests at a party, including 19-year-old Guest who is visibly intoxicated. Guest insists on driving home. Host lends Guest his car. Guest drives 80mph through residential area, runs a red light, killing a pedestrian and a passenger. Guest survives. Investigate liability for Host and Guest.",
+                    modelAnswer: `[ISSUE FOR GUEST: First, whether Guest's intoxication negates mens rea for involuntary manslaughter or murder. Second, whether transferred intent applies to killing a passenger vs. pedestrian. FOR HOST: First, whether Host is an accomplice to the driving and deaths. Second, whether Host's provision of the car to a visibly intoxicated minor satisfies accomplice liability. Third, what criminal liability Host faces.
+[RULE FOR GUEST] Involuntary manslaughter requires a reckless act. Voluntary intoxication does not negate recklessness; it may enhance it if impaired judgment led to dangerous conduct. Driving while severely intoxicated at 80mph through residential streets is inherently reckless. If a death results, Guest may face involuntary manslaughter or depraved-heart murder. Transferred intent: if Guest intends to harm one person and kills another, intent transfers. Guest did not intend harm but was reckless—transferred intent may not apply, but recklessness can apply to both victim and bystander.
+[RULE FOR HOST] Host is an accomplice if Host aided or abetted Guest's driving with knowledge and intent to facilitate. Providing a car to a visibly intoxicated minor with knowledge the minor will drive home is substantial assistance. Host knew of the risk of death or serious injury. Accomplice liability may extend to manslaughter and murder depending on Host's awareness of the danger and intent.
+[APPLICATION FOR GUEST] Guest was severely intoxicated, but this does not excuse the reckless driving. Driving at 80mph through a residential area while intoxicated shows extreme recklessness regarding human life. The deaths (pedestrian and passenger) are foreseeable consequences. Guest faces involuntary manslaughter or depraved-heart murder. Transferred intent may not strictly apply, but Guest's recklessness applies to both deaths.
+[APPLICATION FOR HOST] Host provided alcohol, witnessed Guest's intoxication, knew Guest would drive (Guest "insisted"), and handed Guest the keys. This is substantial aid to the driving with Host's intent to facilitate (allowing the guest to get home). Host knew the risk: intoxicated driving kills. Host is an accomplice to Guest's reckless driving. Under Pinkerton, Host is liable for foreseeable deaths. Host faces accomplice liability for involuntary manslaughter or potentially murder depending on the jurisdiction and Host's knowledge of the extreme danger.
+[CONCLUSION] Guest is guilty of involuntary manslaughter or depraved-heart murder. Host is an accomplice and faces involuntary manslaughter or murder charges for aiding and abetting Guest's reckless driving.`
+                },
+                {
+                    time: 8,
+                    title: "Self-Defense Chain",
+                    facts: "A insults B. B pushes A. A pulls a knife. B grabs a chair to defend himself. A drops the knife and tries to retreat. B hits A with the chair, seriously injuring A. A grabs the knife again and stabs B fatally.",
+                    modelAnswer: `[ISSUE] First, whether A is an aggressor who cannot claim self-defense. Second, whether B's self-defense against the knife is justified. Third, whether A can regain self-defense rights by withdrawing. Fourth, whether B's use of the chair is proportional. Fifth, whether A's final stabbing is justified self-defense or murder.
+[RULE] Self-defense requires: (1) reasonable belief of imminent harm, (2) reasonable force to prevent harm, (3) no initiation of the confrontation. Aggressors who initiate cannot claim self-defense unless they fully withdraw. Proportionality: response must match the threat. If defender escalates beyond threat level, use of force may be excessive.
+[APPLICATION] Exchange: A insults B (verbal, non-threatening). B pushes A (first physical force). A pulls a knife (escalation to deadly force). At this point, A is an aggressor—A initiated physical violence by introducing a deadly weapon to a push. B's right to self-defense is clear: B is defending against deadly force (the knife). B grabs a chair, a non-deadly object to defend against deadly force. This is proportional and reasonable.
+A drops the knife and tries to retreat—an attempt to withdraw from aggression. If withdrawal is full and clear, A regains the right to self-defend against B's continued force. However, A's grabbing the knife again shows renewed aggression, not peaceful withdrawal. Stabbing B with the knife is renewed initiation, not self-defense.
+B's final injury to A occurs during B's use of the chair after A's knife drop—B is still defending against the armed threat. B's force is reasonable and proportional.
+[CONCLUSION] A is the initial aggressor and cannot claim self-defense for pulling the knife or the final stabbing. B's self-defense against the knife is justified and proportional. A's attempted withdrawal is negated by renewed aggression (grabbing the knife again). B's use of the chair is proportional self-defense. A is guilty of assault with a deadly weapon or attempted murder; B's actions are justified self-defense, and B's injuries to A are lawful.`
+                },
+                {
+                    time: 8,
+                    title: "The Heist Conspiracy",
+                    facts: "A, B, and C agree to rob a bank. A cases the bank. B steals a getaway car. C provides firearms. Night before, C texts A and B: 'I'm out, don't do it.' A and B rob the bank anyway. During the escape, B shoots a police officer. The officer dies.",
+                    modelAnswer: `[ISSUE] First, whether C's withdrawal from the conspiracy is effective and breaks liability for subsequent crimes. Second, whether C is liable under Pinkerton conspiracy for the robbery and murder. Third, whether B and A face felony murder for the officer's death. Fourth, whether A faces accomplice liability for the shooting.
+[RULE] Conspiracy requires agreement and overt act in furtherance. Withdrawal from conspiracy requires: (1) clear notice to all co-conspirators, (2) affirmative action to disavow or prevent the crime. Mere non-participation is insufficient. Pinkerton liability makes co-conspirators liable for foreseeable crimes committed in furtherance of the conspiracy. Felony murder: death during a dangerous felony makes all participants liable for murder.
+[APPLICATION] C agreed to the robbery and provided firearms—an overt act. C's text saying "I'm out, don't do it" is a bare statement of non-participation, not affirmative action to prevent the crime. The text does not notify all conspirators (we don't know if A received it), and it does not disavow prior aid (firearms are still available). C's withdrawal is likely ineffective. C remains liable for the conspiracy. Under Pinkerton, C is liable for foreseeable crimes: the robbery is the agreed crime; the shooting during escape is foreseeable when firearms are provided. Murder is foreseeable.
+A and B robbed the bank—guilty of robbery. B shot the officer during the robbery escape—felony murder for both A and B. The officer's death is foreseeable during an armed robbery. A did not shoot but aided the robbery; A is liable for felony murder.
+[CONCLUSION] C is liable for conspiracy and Pinkerton liability for robbery and murder, despite the withdrawal attempt. A and B are liable for robbery and felony murder. B is additionally liable for murder as the shooter.`
+                },
+                {
+                    time: 8,
+                    title: "The Mistake",
+                    facts: "Defendant picks up an identical-looking briefcase at a coffee shop, honestly believing it is his. Inside are stolen documents. Police arrest Defendant for possession of stolen property. Defendant also discovers drugs in the briefcase pocket. Defendant is charged with possession of stolen property and drug possession.",
+                    modelAnswer: `[ISSUE] First, whether Defendant's honest mistake of fact negates the mens rea (knowledge requirement) for possession of stolen property. Second, whether Defendant's knowledge is required for drug possession and whether mistake of fact applies. Third, whether willful blindness or negligence in failing to discover the contents affects liability. Fourth, whether Defendant had sufficient voluntary act for possession.
+[RULE] Possession requires: (1) actual or constructive possession, (2) knowledge of possession, and (3) intent to exercise control. Stolen property requires knowledge that the property is stolen. Mistake of fact negates mens rea if honest, even if unreasonable. Drug possession requires knowledge of possession and knowledge of the substance's nature (aware it is a drug). Willful blindness or negligent failure to inquire may constitute knowledge. Voluntary act: possessing an object requires knowing you possess it.
+[APPLICATION FOR STOLEN DOCUMENTS] Defendant honestly believed the briefcase was his—a mistake of fact. This negates knowledge that the property was stolen. Defendant did not know the documents existed until after police opened the briefcase. Possession of stolen property requires knowledge of the stolen status. Defendant likely lacks the mens rea and cannot be convicted of this crime.
+[APPLICATION FOR DRUGS] If Defendant was unaware the briefcase contained drugs before arrest, Defendant lacked knowledge of possession of the drug. Upon discovering the drugs in the pocket, Defendant possessed knowledge. However, if Defendant never knew he had the briefcase's contents (police revealed them), he may lack knowledge of possession. If Defendant knew he possessed the briefcase and was willfully blind to its contents (failed to open or inspect despite obvious bulges), willful blindness may constitute knowledge. Negligent failure to open the case is typically insufficient; knowledge or willful blindness is required.
+[CONCLUSION] Defendant is likely not guilty of possession of stolen property due to mistake of fact negating knowledge of stolen status. For drug possession, Defendant is guilty only if Defendant had knowledge of possession and the nature of the substance, or willful blindness. Mere negligence in failing to inspect the briefcase is insufficient.`
+                }
+            ]
+        };
+
+        // Game State
+        let gameState = {
+            currentDifficulty: null,
+            currentCourse: 'property',
+            selectedCourse: 'all',
+            startTime: null,
+            totalSeconds: 0,
+            essayText: '',
+            currentHypo: null,
+            sprintsCompleted: 0,
+            wordCounts: [],
+            showPlanning: true,
+            showScaffolding: true
+        };
+
+        function setSelectedCourse(course) {
+            gameState.selectedCourse = course;
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function startGame(difficulty, course) {
+            gameState.currentDifficulty = difficulty;
+            gameState.currentCourse = course;
+            gameState.showPlanning = document.getElementById('planningBuffer').checked;
+            gameState.showScaffolding = document.getElementById('scaffolding').checked;
+
+            // Select hypo based on course and difficulty
+            selectHypo();
+
+            if (gameState.showPlanning) {
+                showScreen('planningScreen');
+                startPlanningTimer();
+            } else {
+                startWritingTimer();
+                showScreen('gameScreen');
+            }
+        }
+
+        function selectHypo() {
+            let coursePool = [];
+            if (gameState.selectedCourse === 'all') {
+                coursePool = [
+                    ...hypos.property,
+                    ...hypos.conlaw,
+                    ...hypos.crimlaw
+                ].filter(h => h.time === gameState.currentDifficulty);
+            } else {
+                coursePool = hypos[gameState.selectedCourse].filter(h => h.time === gameState.currentDifficulty);
+            }
+            gameState.currentHypo = coursePool[Math.floor(Math.random() * coursePool.length)];
+            document.getElementById('factPatternText').textContent = gameState.currentHypo.facts;
+        }
+
+        function startPlanningTimer() {
+            let seconds = 30;
+            const timerInterval = setInterval(() => {
+                document.getElementById('planningTimer').textContent = seconds;
+                seconds--;
+                if (seconds < 0) {
+                    clearInterval(timerInterval);
+                    startWritingTimer();
+                    showScreen('gameScreen');
+                    document.getElementById('essayTextarea').focus();
+                }
+            }, 1000);
+        }
+
+        function skipPlanning() {
+            startWritingTimer();
+            showScreen('gameScreen');
+            document.getElementById('essayTextarea').focus();
+        }
+
+        function startWritingTimer() {
+            gameState.totalSeconds = gameState.currentDifficulty * 60;
+            gameState.startTime = Date.now();
+            updateTimer();
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const remaining = Math.max(0, gameState.totalSeconds - elapsed);
+
+            const minutes = Math.floor(remaining / 60);
+            const seconds = remaining % 60;
+            const display = `${minutes}:${String(seconds).padStart(2, '0')}`;
+
+            document.getElementById('timerDisplay').textContent = display;
+
+            const progress = (elapsed / gameState.totalSeconds) * 100;
+            const fill = document.getElementById('timerFill');
+            fill.style.width = progress + '%';
+
+            if (remaining <= 30) {
+                fill.classList.add('red');
+                document.getElementById('timerDisplay').classList.add('red');
+            } else if (remaining <= 60) {
+                fill.classList.add('amber');
+                document.getElementById('timerDisplay').classList.add('amber');
+            }
+
+            if (remaining > 0) {
+                requestAnimationFrame(updateTimer);
+            } else {
+                submitEssay();
+            }
+        }
+
+        function updateWordCount() {
+            const text = document.getElementById('essayTextarea').value.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            document.getElementById('wordCount').textContent = words + ' words';
+            gameState.essayText = text;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('essayTextarea').addEventListener('input', updateWordCount);
+        });
+
+        function toggleScaffolding() {
+            // In a real implementation, this would show/hide scaffolding labels
+        }
+
+        function submitEssay() {
+            gameState.essayText = document.getElementById('essayTextarea').value;
+            const wordCount = gameState.essayText.trim() ? gameState.essayText.trim().split(/\s+/).length : 0;
+
+            gameState.sprintsCompleted++;
+            gameState.wordCounts.push(wordCount);
+
+            displayReview(wordCount);
+            showScreen('reviewScreen');
+        }
+
+        function displayReview(wordCount) {
+            document.getElementById('yourAnswerDisplay').textContent = gameState.essayText;
+
+            // Parse and color-code model answer
+            const modelText = gameState.currentHypo.modelAnswer;
+            const sections = modelText.match(/\[(ISSUE|RULE|APPLICATION|CONCLUSION)\](.*?)(?=\[|$)/gs);
+
+            let coloredModel = '';
+            if (sections) {
+                sections.forEach(section => {
+                    const match = section.match(/\[(\w+)\](.*)/);
+                    if (match) {
+                        const label = match[1];
+                        const content = match[2].trim();
+                        const sectionClass = label.toLowerCase();
+                        coloredModel += `
+                            <div class="section-block ${sectionClass}">
+                                <div class="section-label">${label}</div>
+                                <div class="section-content">${content}</div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            document.getElementById('modelAnswerDisplay').innerHTML = coloredModel;
+
+            // Update stats
+            document.getElementById('sprintStats').textContent = gameState.sprintsCompleted;
+            document.getElementById('yourWordCount').textContent = wordCount;
+            const avgWords = Math.round(gameState.wordCounts.reduce((a, b) => a + b, 0) / gameState.wordCounts.length);
+            document.getElementById('avgWordCount').textContent = avgWords;
+        }
+
+        function toggleRubric() {
+            const content = document.getElementById('rubricContent');
+            const toggle = document.getElementById('rubricToggle');
+            content.classList.toggle('open');
+            toggle.classList.toggle('open');
+        }
+
+        function resetGame() {
+            document.getElementById('essayTextarea').value = '';
+            document.getElementById('wordCount').textContent = '0 words';
+            document.getElementById('timerDisplay').classList.remove('amber', 'red');
+            document.getElementById('timerFill').classList.remove('amber', 'red');
+            gameState.essayText = '';
+            showScreen('startScreen');
+        }
+
+        function goToStart() {
+            resetGame();
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Initialize
+        showScreen('startScreen');
+    </script>
+</body>
+</html>

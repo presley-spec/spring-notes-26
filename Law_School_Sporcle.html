@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Law School Sporcle - Finals Edition</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #242836;
+    --border: #2e3347;
+    --text: #e8eaf0;
+    --text-dim: #8b8fa3;
+    --accent: #6c5ce7;
+    --accent-light: #a29bfe;
+    --green: #00b894;
+    --green-bg: rgba(0,184,148,0.12);
+    --red: #ff6b6b;
+    --red-bg: rgba(255,107,107,0.12);
+    --orange: #fdcb6e;
+    --orange-bg: rgba(253,203,110,0.12);
+    --blue: #74b9ff;
+    --property: #e17055;
+    --conlaw: #0984e3;
+    --criminal: #6c5ce7;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== TOP NAV ===== */
+  .top-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,17,23,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-light), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .logo span { font-size: 13px; opacity: 0.6; -webkit-text-fill-color: var(--text-dim); margin-left: 8px; font-family: 'Inter', sans-serif; font-weight: 500; }
+  .nav-stats {
+    display: flex; gap: 24px; align-items: center;
+  }
+  .stat-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px; font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .stat-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ===== MAIN LAYOUT ===== */
+  .app { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+  /* ===== HOME SCREEN ===== */
+  .home-hero {
+    text-align: center; padding: 48px 0 32px;
+  }
+  .home-hero h1 {
+    font-size: 42px; font-weight: 800; letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  .home-hero p { color: var(--text-dim); font-size: 16px; max-width: 500px; margin: 0 auto; }
+
+  /* Course Filter Tabs */
+  .course-tabs {
+    display: flex; justify-content: center; gap: 10px;
+    margin: 32px 0 24px; flex-wrap: wrap;
+  }
+  .course-tab {
+    padding: 8px 20px; border-radius: 24px;
+    border: 1.5px solid var(--border);
+    background: transparent; color: var(--text-dim);
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .course-tab:hover { border-color: var(--accent); color: var(--text); }
+  .course-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .course-tab[data-course="property"].active { background: var(--property); border-color: var(--property); }
+  .course-tab[data-course="conlaw"].active { background: var(--conlaw); border-color: var(--conlaw); }
+  .course-tab[data-course="criminal"].active { background: var(--criminal); border-color: var(--criminal); }
+
+  /* Game Cards Grid */
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .game-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .game-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(108,92,231,0.15);
+  }
+  .game-card .card-top {
+    display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;
+  }
+  .game-type-badge {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    padding: 4px 10px; border-radius: 6px;
+  }
+  .badge-match { background: rgba(116,185,255,0.15); color: var(--blue); }
+  .badge-type { background: rgba(108,92,231,0.15); color: var(--accent-light); }
+  .badge-mc { background: rgba(0,184,148,0.15); color: var(--green); }
+  .badge-fill { background: rgba(253,203,110,0.15); color: var(--orange); }
+  .badge-speed { background: rgba(255,107,107,0.15); color: var(--red); }
+
+  .course-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .game-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .game-card p { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+  .game-card .card-footer {
+    margin-top: 16px; display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--text-dim);
+  }
+  .q-count { background: var(--surface2); padding: 3px 10px; border-radius: 10px; font-weight: 600; }
+  .best-score { color: var(--green); font-weight: 600; }
+
+  /* ===== GAME SCREEN ===== */
+  .game-screen { display: none; }
+  .game-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+  }
+  .game-header h2 { font-size: 24px; font-weight: 800; }
+  .back-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 18px; border-radius: 10px;
+    cursor: pointer; font-size: 14px; font-weight: 600;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { border-color: var(--accent); }
+
+  /* Timer Bar */
+  .timer-bar {
+    width: 100%; height: 6px;
+    background: var(--surface2);
+    border-radius: 3px; margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .timer-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--green), var(--accent));
+    transition: width 1s linear;
+  }
+  .timer-fill.warning { background: linear-gradient(90deg, var(--orange), var(--red)); }
+
+  .game-stats-bar {
+    display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .game-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+  .game-stat strong { color: var(--accent-light); }
+
+  /* ===== MATCHING GAME ===== */
+  .match-container {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  .match-col h4 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-dim); margin-bottom: 12px; font-weight: 700;
+  }
+  .match-item {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .match-item:hover { border-color: var(--accent); }
+  .match-item.selected { border-color: var(--accent); background: rgba(108,92,231,0.1); box-shadow: 0 0 0 1px var(--accent); }
+  .match-item.correct { border-color: var(--green); background: var(--green-bg); pointer-events: none; opacity: 0.7; }
+  .match-item.wrong { border-color: var(--red); background: var(--red-bg); animation: shake 0.4s; }
+
+  /* ===== MULTIPLE CHOICE ===== */
+  .mc-question {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .mc-question .q-label {
+    font-size: 12px; color: var(--accent-light); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+  }
+  .mc-question .q-text {
+    font-size: 18px; font-weight: 600; line-height: 1.5; margin-bottom: 24px;
+  }
+  .mc-options { display: flex; flex-direction: column; gap: 10px; }
+  .mc-opt {
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .mc-opt:hover { border-color: var(--accent); }
+  .mc-opt .opt-letter {
+    width: 28px; height: 28px; flex-shrink: 0;
+    border-radius: 8px; background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; color: var(--text-dim);
+  }
+  .mc-opt.correct { border-color: var(--green); background: var(--green-bg); }
+  .mc-opt.correct .opt-letter { background: var(--green); color: #fff; }
+  .mc-opt.wrong { border-color: var(--red); background: var(--red-bg); }
+  .mc-opt.wrong .opt-letter { background: var(--red); color: #fff; }
+  .mc-opt.disabled { pointer-events: none; opacity: 0.5; }
+
+  .mc-explanation {
+    margin-top: 16px; padding: 16px;
+    background: var(--surface2); border-radius: 10px;
+    font-size: 14px; line-height: 1.6; color: var(--text-dim);
+    display: none;
+  }
+  .mc-explanation.show { display: block; }
+
+  .next-btn {
+    background: var(--accent);
+    color: #fff; border: none;
+    padding: 12px 32px; border-radius: 12px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+    margin-top: 16px;
+  }
+  .next-btn:hover { background: var(--accent-light); }
+
+  /* ===== TYPE-IN / FILL GAME ===== */
+  .fill-prompt {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+  }
+  .fill-prompt .category-label {
+    font-size: 12px; color: var(--accent-light); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+  }
+  .fill-prompt .prompt-text {
+    font-size: 20px; font-weight: 700; margin-bottom: 24px; line-height: 1.5;
+  }
+  .fill-input-row {
+    display: flex; gap: 10px; max-width: 500px; margin: 0 auto;
+  }
+  .fill-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-size: 16px; font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .fill-input:focus { border-color: var(--accent); }
+  .fill-input.correct { border-color: var(--green); background: var(--green-bg); }
+  .fill-input.wrong { border-color: var(--red); background: var(--red-bg); }
+  .submit-btn {
+    background: var(--accent); color: #fff; border: none;
+    padding: 14px 24px; border-radius: 12px;
+    font-weight: 700; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .submit-btn:hover { background: var(--accent-light); }
+
+  .answers-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px; margin-top: 24px;
+  }
+  .answer-slot {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .answer-slot .slot-num {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--text-dim); flex-shrink: 0;
+  }
+  .answer-slot.found { border-color: var(--green); }
+  .answer-slot.found .slot-num { background: var(--green); color: #fff; }
+  .answer-slot .slot-text { color: var(--text-dim); font-style: italic; }
+  .answer-slot.found .slot-text { color: var(--text); font-style: normal; font-weight: 600; }
+
+  /* ===== RESULTS ===== */
+  .results-screen {
+    text-align: center; padding: 48px 0;
+  }
+  .results-screen h2 {
+    font-size: 36px; font-weight: 800; margin-bottom: 8px;
+  }
+  .results-screen .score-big {
+    font-size: 72px; font-weight: 900;
+    background: linear-gradient(135deg, var(--accent-light), var(--green));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin: 16px 0;
+  }
+  .results-screen .score-label { color: var(--text-dim); font-size: 16px; margin-bottom: 32px; }
+  .results-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .results-actions button {
+    padding: 12px 28px; border-radius: 12px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; border: none;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-light); }
+  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border) !important; }
+  .btn-secondary:hover { border-color: var(--accent) !important; }
+
+  /* Animations */
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  @keyframes pop {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .game-card { animation: pop 0.3s ease-out; }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .match-container { grid-template-columns: 1fr; }
+    .home-hero h1 { font-size: 28px; }
+    .games-grid { grid-template-columns: 1fr; }
+    .top-bar { padding: 0 16px; }
+    .nav-stats { gap: 8px; }
+    .stat-pill { font-size: 12px; padding: 4px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">LawSporcle <span>Finals Edition</span></div>
+  <div class="nav-stats">
+    <div class="stat-pill"><div class="dot" style="background:var(--green)"></div> <span id="total-correct">0</span> correct</div>
+    <div class="stat-pill"><div class="dot" style="background:var(--orange)"></div> <span id="games-played">0</span> played</div>
+  </div>
+</div>
+
+<div class="app">
+  <!-- HOME SCREEN -->
+  <div id="home-screen">
+    <div class="home-hero">
+      <h1>Study. Play. Ace Finals.</h1>
+      <p>Sporcle-style games built from your Property, Con Law, and Criminal Law materials</p>
+    </div>
+
+    <div class="course-tabs">
+      <button class="course-tab active" data-course="all" onclick="filterCourse('all')">All Games</button>
+      <button class="course-tab" data-course="property" onclick="filterCourse('property')">Property</button>
+      <button class="course-tab" data-course="conlaw" onclick="filterCourse('conlaw')">Con Law</button>
+      <button class="course-tab" data-course="criminal" onclick="filterCourse('criminal')">Criminal</button>
+    </div>
+
+    <div class="games-grid" id="games-grid"></div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="game-screen">
+    <div class="game-header">
+      <h2 id="game-title"></h2>
+      <button class="back-btn" onclick="goHome()">← Back</button>
+    </div>
+    <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+    <div class="game-stats-bar">
+      <div class="game-stat">Score: <strong id="live-score">0</strong>/<span id="live-total">0</span></div>
+      <div class="game-stat">Time: <strong id="live-timer">0:00</strong></div>
+    </div>
+    <div id="game-body"></div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="results-screen" class="results-screen" style="display:none;">
+    <h2 id="results-title">Game Over!</h2>
+    <div class="score-big" id="results-score">0%</div>
+    <div class="score-label" id="results-detail"></div>
+    <div class="results-actions">
+      <button class="btn-primary" id="retry-btn" onclick="retryGame()">Play Again</button>
+      <button class="btn-secondary" onclick="goHome()">All Games</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===========================
+// MASSIVE QUESTION DATABASE
+// ===========================
+
+const GAMES = [
+
+// =====================
+// PROPERTY LAW GAMES
+// =====================
+{
+  id: "prop-cases",
+  title: "Property: Name That Case",
+  desc: "Type the case name from the description. Can you name all the landmark property cases?",
+  course: "property",
+  type: "fill",
+  badge: "fill",
+  items: [
+    { answer: "Johnson v. McIntosh", hint: "Doctrine of Discovery — Europeans acquired title to Native American lands through 'discovery'" },
+    { answer: "Pierson v. Post", hint: "Fox hunting case — mere pursuit of a wild animal doesn't establish possession; requires capture or mortal wounding" },
+    { answer: "Ghen v. Rich", hint: "Whale hunting case — custom of community (bomb-lance whaling) determines possession rules" },
+    { answer: "Popov v. Hayashi", hint: "Barry Bonds baseball case — equitable division when both parties have claims to contested property" },
+    { answer: "Keeble v. Hickeringill", hint: "Duck decoy pond case — malicious interference with trade/livelihood is actionable" },
+    { answer: "Armory v. Delamirie", hint: "Chimney sweep's boy found a jewel — finder has superior title against all but the true owner" },
+    { answer: "Bridges v. Hawkesworth", hint: "Found banknotes on shop floor — finder of lost property in public area keeps against landowner" },
+    { answer: "Hannah v. Peel", hint: "Soldier found brooch in requisitioned house — owner who never occupied has weaker claim than finder" },
+    { answer: "McAvoy v. Medina", hint: "Pocketbook left on barber shop table — mislaid property goes to premises owner, not finder" },
+    { answer: "Van Valkenburgh v. Lutz", hint: "Adverse possession case in Yonkers — cultivating land and building a shack; dispute over 'actual' occupation" },
+    { answer: "Mannillo v. Gorski", hint: "Concrete steps encroachment — minor border encroachment; court addresses good faith adverse possession" },
+    { answer: "Howard v. Kunto", hint: "Summer home adverse possession — tacking allowed between successive owners in privity" },
+    { answer: "Brown v. Gobble", hint: "Adverse possession by building a fence — use of a two-foot strip for decades established claim" },
+    { answer: "Nome 2000 v. Fagerstrom", hint: "Alaska adverse possession — rural land use (building a picnic area, reindeer pen) can constitute hostile claim" },
+    { answer: "Willcox v. Stroup", hint: "Civil War letters case — donor intent controls; letters physically given remain property of recipient's estate" },
+    { answer: "Gruen v. Gruen", hint: "Father's gift of painting to son — valid inter vivos gift requires intent + delivery + acceptance; symbolic delivery OK" },
+    { answer: "Newman v. Bost", hint: "Deathbed gift (gift causa mortis) — handing keys to furniture didn't deliver the life insurance policy inside" },
+  ]
+},
+{
+  id: "prop-match-doctrines",
+  title: "Property: Match the Doctrine",
+  desc: "Match each property law doctrine to its correct definition.",
+  course: "property",
+  type: "match",
+  badge: "match",
+  pairs: [
+    { left: "Bundle of Rights", right: "Property as a collection of enforceable rights between people regarding resources" },
+    { left: "Doctrine of Discovery", right: "European nations acquired exclusive rights to Native lands through exploration" },
+    { left: "Rule of Capture", right: "Property in wild animals obtained by occupancy/possession, not mere pursuit" },
+    { left: "Ratione Soli", right: "Landowner has constructive possession of wild animals on their land" },
+    { left: "Adverse Possession", right: "Acquiring title through continuous, open, hostile, exclusive use for statutory period" },
+    { left: "Tacking", right: "Successive adverse possessors in privity can combine time periods" },
+    { left: "Color of Title", right: "Claim based on a document that appears valid but is legally defective" },
+    { left: "Constructive Possession", right: "Legal possession without physical occupancy through document or right" },
+    { left: "Gift Inter Vivos", right: "Gift made during donor's lifetime requiring intent, delivery, and acceptance" },
+    { left: "Gift Causa Mortis", right: "Gift made in contemplation of imminent death; revocable if donor survives" },
+  ]
+},
+{
+  id: "prop-mc-elements",
+  title: "Property: Elements & Rules",
+  desc: "Multiple choice on the elements, rules, and tests in Property Law.",
+  course: "property",
+  type: "mc",
+  badge: "mc",
+  questions: [
+    {
+      q: "Which of the following is NOT one of the elements of adverse possession?",
+      opts: ["Continuous and uninterrupted", "Open and notorious", "Payment of property taxes in all jurisdictions", "Hostile and under claim of right"],
+      correct: 2,
+      explain: "Payment of taxes is required in SOME jurisdictions but not all. The universal elements are: actual possession, continuous, open & notorious, hostile, and exclusive for the statutory period."
+    },
+    {
+      q: "In Pierson v. Post, why did Pierson (the interceptor) win?",
+      opts: ["He owned the land the fox was on", "Mere pursuit doesn't establish possession — capture or mortal wounding is required", "He had been hunting longer", "The court applied ratione soli"],
+      correct: 1,
+      explain: "The court held that property in wild animals requires actual physical capture or at least mortal wounding — mere pursuit (even hot pursuit) is insufficient."
+    },
+    {
+      q: "What is the 'labor theory' of property associated with?",
+      opts: ["Jeremy Bentham", "John Locke", "Thomas Hobbes", "William Blackstone"],
+      correct: 1,
+      explain: "John Locke's labor theory holds that mixing one's labor with a natural resource creates property rights in that resource."
+    },
+    {
+      q: "For a valid inter vivos gift, which three elements must be satisfied?",
+      opts: ["Intent, delivery, and acceptance", "Consideration, writing, and acceptance", "Intent, consideration, and delivery", "Writing, delivery, and recording"],
+      correct: 0,
+      explain: "A valid gift inter vivos requires: (1) donative intent, (2) delivery (actual, constructive, or symbolic), and (3) acceptance by the donee."
+    },
+    {
+      q: "In Popov v. Hayashi (the Barry Bonds baseball case), what did the court order?",
+      opts: ["Popov keeps the ball as first possessor", "Hayashi keeps it as the one who secured it", "The ball is sold and proceeds split equally", "The ball is returned to the stadium"],
+      correct: 2,
+      explain: "The court applied equitable division — since both had legitimate but incomplete claims, the ball was to be sold and proceeds divided equally."
+    },
+    {
+      q: "What distinguishes 'lost' property from 'mislaid' property?",
+      opts: ["Lost property is more valuable", "Mislaid property was intentionally placed and forgotten; lost property was accidentally dropped", "There is no legal distinction", "Lost property can only be found outdoors"],
+      correct: 1,
+      explain: "Mislaid property was voluntarily placed somewhere and then forgotten (goes to premises owner). Lost property was accidentally and involuntarily parted with (goes to finder)."
+    },
+    {
+      q: "What does 'hostile' mean in the context of adverse possession?",
+      opts: ["The possessor must be angry or aggressive", "Without the true owner's permission", "The possessor must have threatened the owner", "The property must be in a dispute"],
+      correct: 1,
+      explain: "'Hostile' simply means without the owner's permission — it's a legal term, not an emotional one. The possessor treats the land as their own."
+    },
+    {
+      q: "In Gruen v. Gruen, why was the father's letter sufficient for delivery of the painting?",
+      opts: ["Because the painting was too heavy to move", "Because delivery of a letter expressing present intent can constitute symbolic delivery when physical delivery is impractical", "Because gifts don't actually require delivery", "Because the son already had the painting"],
+      correct: 1,
+      explain: "The court allowed symbolic delivery via letter because physical delivery would have defeated the purpose of the gift (father retained life estate). The letter expressed present donative intent."
+    },
+    {
+      q: "What is 'tacking' in adverse possession?",
+      opts: ["Adding improvements to increase property value", "Combining successive occupants' time periods when in privity", "Posting legal notices on the property", "Filing successive court claims"],
+      correct: 1,
+      explain: "Tacking allows successive adverse possessors to combine their periods of possession to meet the statutory period, provided there is privity (a reasonable connection) between them."
+    },
+    {
+      q: "According to the positivist theory of property, where do property rights come from?",
+      opts: ["Natural law and God-given rights", "First possession of resources", "Law — rights exist only as recognized and enforced by legal systems", "The labor one invests in a resource"],
+      correct: 2,
+      explain: "Positivism holds that property rights are created by law and exist only insofar as they are recognized and enforced by the legal system."
+    },
+  ]
+},
+{
+  id: "prop-fill-vocab",
+  title: "Property: Key Vocabulary",
+  desc: "Type the correct property law term from the clue. How many can you get in 5 minutes?",
+  course: "property",
+  type: "fill",
+  badge: "speed",
+  timeLimit: 300,
+  items: [
+    { answer: "Fee Simple Absolute", hint: "The most complete form of ownership — potentially infinite duration, freely transferable" },
+    { answer: "Life Estate", hint: "Ownership interest that lasts only for the duration of a person's life" },
+    { answer: "Remainder", hint: "A future interest in a third party that takes effect after the natural termination of a prior estate" },
+    { answer: "Reversion", hint: "Future interest retained by the grantor when they convey less than their full estate" },
+    { answer: "Easement", hint: "A nonpossessory right to use another's land for a specific purpose" },
+    { answer: "Adverse Possession", hint: "Acquiring ownership by possessing property openly, continuously, and hostilely for a statutory period" },
+    { answer: "Eminent Domain", hint: "Government power to take private property for public use with just compensation" },
+    { answer: "Constructive Delivery", hint: "Handing over a key or means of access instead of the item itself to satisfy delivery requirement" },
+    { answer: "Ratione Soli", hint: "Latin doctrine: landowner has constructive possession of wild animals on their land" },
+    { answer: "Equitable Division", hint: "Court-ordered splitting of property or proceeds when multiple parties have valid claims" },
+    { answer: "Donative Intent", hint: "The mental state required of a gift-giver — a present intention to make a gratuitous transfer" },
+    { answer: "Color of Title", hint: "A claim to real property based on a document that appears valid but is legally defective" },
+  ]
+},
+
+// =====================
+// CON LAW GAMES
+// =====================
+{
+  id: "con-cases",
+  title: "Con Law: Name That Case",
+  desc: "Type the case name from the holding or description.",
+  course: "conlaw",
+  type: "fill",
+  badge: "fill",
+  items: [
+    { answer: "Marbury v. Madison", hint: "Established judicial review — the Supreme Court can strike down laws that violate the Constitution" },
+    { answer: "McCulloch v. Maryland", hint: "Implied powers under Necessary and Proper Clause; states cannot tax federal instrumentalities" },
+    { answer: "Martin v. Hunter's Lessee", hint: "Supreme Court has appellate jurisdiction over state courts on federal law questions" },
+    { answer: "Wickard v. Filburn", hint: "Farmer growing wheat for personal use — aggregation principle; cumulative effect on interstate commerce" },
+    { answer: "United States v. Lopez", hint: "Gun-Free School Zones Act struck down — non-economic activity cannot be aggregated under Commerce Clause" },
+    { answer: "United States v. Morrison", hint: "Violence Against Women Act struck down — gender-based violence not economic activity regulable under Commerce Clause" },
+    { answer: "NFIB v. Sebelius", hint: "ACA individual mandate — Congress can't compel commerce; can't regulate inactivity; upheld as tax" },
+    { answer: "United States v. E.C. Knight", hint: "Sugar Trust Case — manufacturing distinguished from commerce; formalistic pre-New Deal approach" },
+    { answer: "Dred Scott v. Sandford", hint: "African Americans could never be citizens; Missouri Compromise unconstitutional; worst Supreme Court decision" },
+    { answer: "Lochner v. New York", hint: "Struck down baker maximum hours law — liberty of contract under substantive due process" },
+    { answer: "West Coast Hotel v. Parrish", hint: "Minimum wage for women upheld — ended Lochner era; liberty of contract not in Constitution" },
+    { answer: "Fletcher v. Peck", hint: "State cannot rescind land grants — Contract Clause; even if originally obtained through bribery" },
+    { answer: "Prigg v. Pennsylvania", hint: "Fugitive Slave Act preempts state law — federal right to recapture escaped slaves" },
+    { answer: "Nebbia v. New York", hint: "Milk price controls upheld — rational basis standard; law must not be unreasonable or arbitrary" },
+    { answer: "Trump v. Anderson", hint: "Colorado cannot enforce Section 3 (insurrection clause) against federal officials without congressional action" },
+    { answer: "Champion v. Ames", hint: "Federal Lottery Act upheld — moral motivation irrelevant if statute targets interstate commerce channels" },
+  ]
+},
+{
+  id: "con-match-tests",
+  title: "Con Law: Match the Standard of Review",
+  desc: "Match each standard/test to its correct description or application.",
+  course: "conlaw",
+  type: "match",
+  badge: "match",
+  pairs: [
+    { left: "Rational Basis", right: "Law upheld if rationally related to any legitimate government interest; burden on challenger" },
+    { left: "Strict Scrutiny", right: "Government must show compelling interest + narrowly tailored means; burden on government" },
+    { left: "McCulloch Test", right: "End legitimate? Means appropriate and plainly adapted? Consistent with Constitution's spirit?" },
+    { left: "Substantial Effects Test", right: "Commerce Clause: activity substantially affects interstate commerce" },
+    { left: "Aggregation Principle", right: "Individual trivial effects can be summed; applies only to economic activities after Lopez" },
+    { left: "Footnote 4 (Carolene Products)", right: "Heightened review for laws targeting discrete/insular minorities or political process" },
+    { left: "Political Question Doctrine", right: "Some constitutional questions are for political branches to decide, not courts" },
+    { left: "Presumption of Constitutionality", right: "Legislation is presumed valid; challenger bears burden of showing it's irrational" },
+  ]
+},
+{
+  id: "con-mc-powers",
+  title: "Con Law: Powers & Limits",
+  desc: "Multiple choice on constitutional powers, federalism, and landmark holdings.",
+  course: "conlaw",
+  type: "mc",
+  badge: "mc",
+  questions: [
+    {
+      q: "What did Marbury v. Madison establish?",
+      opts: ["The right to habeas corpus", "Judicial review — courts can strike down unconstitutional laws", "Congress's spending power", "The President's war powers"],
+      correct: 1,
+      explain: "Marshall's opinion established that the Supreme Court has the power and duty to review acts of Congress and declare them void if they conflict with the Constitution."
+    },
+    {
+      q: "Under McCulloch v. Maryland, why could Maryland not tax the national bank?",
+      opts: ["The bank was on federal land", "The power to tax is the power to destroy — states can't impede federal instrumentalities", "Maryland didn't have taxing power", "The tax was too high"],
+      correct: 1,
+      explain: "Marshall's famous reasoning: 'the power to tax involves the power to destroy.' Allowing state taxation of federal instruments would subordinate federal authority to state control."
+    },
+    {
+      q: "What was the key innovation in Wickard v. Filburn?",
+      opts: ["The court banned growing wheat", "Non-economic activity can always be regulated", "Even purely local, personal activity can be aggregated to show substantial effect on interstate commerce", "The Commerce Clause was limited to navigation"],
+      correct: 2,
+      explain: "Filburn's homegrown wheat, while trivial alone, when aggregated with similar farmers, substantially affected the interstate wheat market — establishing the aggregation principle."
+    },
+    {
+      q: "Why was the Gun-Free School Zones Act struck down in United States v. Lopez?",
+      opts: ["Guns are protected by the Second Amendment", "Possessing a gun near a school is not economic activity and lacks substantial connection to interstate commerce", "Congress didn't have proper evidence", "The President vetoed it"],
+      correct: 1,
+      explain: "Lopez was the first case in 60 years to limit Commerce Clause power. The Court held that possessing a gun near a school is not economic activity and can't be aggregated."
+    },
+    {
+      q: "In NFIB v. Sebelius, why did the Court reject the Commerce Clause argument for the ACA individual mandate?",
+      opts: ["Health insurance isn't commerce", "Congress can regulate existing activity but cannot compel people to enter commerce", "The ACA was a state law issue", "The Tenth Amendment prohibited it"],
+      correct: 1,
+      explain: "The Court drew a line between regulating existing commercial activity (permissible) and compelling people to engage in commerce (impermissible) — you can't regulate inactivity."
+    },
+    {
+      q: "What was Carolene Products Footnote 4 about?",
+      opts: ["The proper way to label food products", "Suggesting heightened judicial scrutiny for laws affecting discrete/insular minorities and the political process", "Establishing strict scrutiny for all laws", "Protecting economic rights"],
+      correct: 1,
+      explain: "Footnote 4 is the most famous footnote in constitutional law. It suggested that while economic legislation gets rational basis review, laws targeting minorities or the political process may need more searching judicial inquiry."
+    },
+    {
+      q: "What is the Supremacy Clause?",
+      opts: ["The President is supreme over Congress", "The Supreme Court is the highest court", "The Constitution and federal laws made in pursuance thereof are the supreme law of the land", "States can nullify federal laws they disagree with"],
+      correct: 2,
+      explain: "Article VI, Clause 2 establishes that the Constitution, federal statutes, and treaties are the 'supreme Law of the Land,' binding on state judges."
+    },
+    {
+      q: "In Dred Scott v. Sandford, what was the Court's (now-repudiated) holding on citizenship?",
+      opts: ["All people born in the US are citizens", "African Americans could never be US citizens", "Only property owners could be citizens", "Citizenship required naturalization"],
+      correct: 1,
+      explain: "Taney's opinion held that people of African descent, whether enslaved or free, could never be citizens of the United States — a holding later overturned by the 13th and 14th Amendments."
+    },
+    {
+      q: "What ended the Lochner era of substantive due process protection for economic liberty?",
+      opts: ["The Civil War", "West Coast Hotel v. Parrish — upholding minimum wage and rejecting liberty of contract", "The New Deal legislation alone", "Marbury v. Madison"],
+      correct: 1,
+      explain: "West Coast Hotel v. Parrish (1937) is the 'switch in time that saved nine.' The Court upheld Washington's minimum wage for women, finding no constitutional right to 'liberty of contract.'"
+    },
+    {
+      q: "What are the six types of constitutional argument Professor Cohen identifies?",
+      opts: ["Text, structure, history, precedent, prudential, national ethos", "Text, intent, purpose, policy, custom, morality", "Originalism, textualism, pragmatism, moralism, structuralism, precedent", "None of these"],
+      correct: 0,
+      explain: "The six modalities of constitutional argument are: textual, structural, historical, precedential (doctrinal), prudential/consequentialist, and national ethos."
+    },
+  ]
+},
+{
+  id: "con-match-clauses",
+  title: "Con Law: Match the Clause",
+  desc: "Match each constitutional clause to its function or content.",
+  course: "conlaw",
+  type: "match",
+  badge: "match",
+  pairs: [
+    { left: "Necessary and Proper Clause", right: "Grants Congress implied powers to carry out enumerated powers" },
+    { left: "Commerce Clause", right: "Congress can regulate commerce among the several states" },
+    { left: "Supremacy Clause", right: "Federal law is the supreme law of the land, binding state judges" },
+    { left: "Contract Clause", right: "States cannot pass laws impairing the obligation of contracts" },
+    { left: "Ex Post Facto Clause", right: "Prohibits retroactive criminal laws" },
+    { left: "Three-Fifths Clause", right: "Counted enslaved persons as 3/5 of a person for representation" },
+    { left: "Fugitive Slave Clause", right: "Required return of escaped enslaved persons to their states" },
+    { left: "Tenth Amendment", right: "Powers not delegated to the federal government are reserved to the states or people" },
+    { left: "Fourteenth Amendment Section 3", right: "Bars from office those who engaged in insurrection after swearing an oath" },
+    { left: "Spending Clause", right: "Congress can tax and spend for the general welfare" },
+  ]
+},
+{
+  id: "con-commerce-timeline",
+  title: "Con Law: Commerce Clause Timeline",
+  desc: "Type the case name for each Commerce Clause development. Can you get them all?",
+  course: "conlaw",
+  type: "fill",
+  badge: "speed",
+  timeLimit: 240,
+  items: [
+    { answer: "E.C. Knight", hint: "1895 — Manufacturing ≠ commerce; sugar trust escaped federal regulation using formalistic categories" },
+    { answer: "Champion v. Ames", hint: "1903 — Federal Lottery Act upheld; moral motivation irrelevant if targeting interstate channels" },
+    { answer: "Hammer v. Dagenhart", hint: "1918 — Child labor act struck down; production before transportation not reachable by commerce power" },
+    { answer: "Schechter v. United States", hint: "1935 — 'Sick Chicken' case; direct/indirect test; NIRA struck down as exceeding commerce power" },
+    { answer: "NLRB v. Jones & Laughlin", hint: "1937 — Large interstate industry; labor relations substantially affect commerce" },
+    { answer: "United States v. Darby", hint: "1941 — Fair Labor Standards Act upheld; overruled Hammer v. Dagenhart" },
+    { answer: "Wickard v. Filburn", hint: "1942 — Homegrown wheat; aggregation principle; even personal use affects interstate market" },
+    { answer: "United States v. Lopez", hint: "1995 — Gun-Free School Zones Act struck down; non-economic activity can't be aggregated" },
+    { answer: "United States v. Morrison", hint: "2000 — VAWA struck down; gender-based violence isn't economic activity" },
+    { answer: "NFIB v. Sebelius", hint: "2012 — ACA mandate; can't compel entry into commerce; inactivity isn't regulable" },
+  ]
+},
+
+// =====================
+// CRIMINAL LAW GAMES
+// =====================
+{
+  id: "crim-cases",
+  title: "Criminal Law: Name That Case",
+  desc: "Type the case name from the holding or key facts.",
+  course: "criminal",
+  type: "fill",
+  badge: "fill",
+  items: [
+    { answer: "Martin v. State", hint: "Defendant was carried outside while drunk by police — involuntary conduct cannot be the actus reus" },
+    { answer: "Regina v. Faulkner", hint: "Sailor tried to steal rum, accidentally set ship on fire — culpability must apply to all objective elements" },
+    { answer: "People v. Ryan", hint: "'Knowingly' applies to the weight element of drug possession, not just the substance" },
+    { answer: "Commonwealth v. Welansky", hint: "Nightclub fire — owner liable for reckless homicide from failure to maintain proper exits (Cocoanut Grove)" },
+    { answer: "People v. Brooks", hint: "Heat of passion — two hours of continuous excited state was acceptable cooling time" },
+    { answer: "Commonwealth v. Gould", hint: "Paranoid schizophrenic — mental disorder evidence admissible to negate premeditation even without insanity defense" },
+    { answer: "Dudley and Stephens", hint: "Sailors killed cabin boy to survive at sea — necessity defense rejected for intentional killing of innocent" },
+    { answer: "Solem v. Helm", hint: "Life without parole for forging a $100 check was grossly disproportionate — 8th Amendment three-factor test" },
+    { answer: "Ewing v. California", hint: "25-to-life for stealing golf clubs under Three Strikes law upheld — deference to legislative judgment" },
+    { answer: "Mullaney v. Wilbur", hint: "Provocation is element of murder — burden of proof cannot be shifted to the defense" },
+    { answer: "Patterson v. New York", hint: "If provocation characterized as 'excuse' (extreme emotional disturbance), burden CAN shift to defense" },
+    { answer: "In re Winship", hint: "Prosecution must prove every element of a crime beyond a reasonable doubt" },
+    { answer: "Montana v. Egelhoff", hint: "State statute barring consideration of voluntary intoxication for mens rea was upheld" },
+    { answer: "Sandstrom v. Montana", hint: "Jury instruction that presumed intent from voluntary actions violated due process" },
+    { answer: "Harmelin v. Michigan", hint: "Life without parole for first cocaine offense upheld — extreme disproportionality possible but rare" },
+  ]
+},
+{
+  id: "crim-match-mens-rea",
+  title: "Criminal Law: MPC Mental States",
+  desc: "Match each MPC mental state to its definition.",
+  course: "criminal",
+  type: "match",
+  badge: "match",
+  pairs: [
+    { left: "Purpose", right: "Conscious desire to cause a particular result; highest culpability" },
+    { left: "Knowledge", right: "Awareness that conduct is of a particular nature or that a circumstance exists" },
+    { left: "Recklessness", right: "Conscious disregard of a substantial and unjustifiable risk; gross deviation from law-abiding conduct" },
+    { left: "Negligence", right: "Failure to perceive a substantial and unjustifiable risk; should have been aware" },
+    { left: "Strict Liability", right: "No mental state required; liability based solely on the act regardless of intent" },
+    { left: "General Intent (Common Law)", right: "Intent to commit the act itself; voluntary intoxication generally not a defense" },
+    { left: "Specific Intent (Common Law)", right: "Intent to achieve a particular consequence beyond the act; voluntary intoxication can negate" },
+    { left: "Willful Blindness", right: "Deliberately avoiding knowledge of a fact; treated as equivalent to knowledge" },
+  ]
+},
+{
+  id: "crim-mc-homicide",
+  title: "Criminal Law: Homicide Ladder",
+  desc: "Multiple choice on murder degrees, manslaughter, and the elements that distinguish them.",
+  course: "criminal",
+  type: "mc",
+  badge: "mc",
+  questions: [
+    {
+      q: "What three elements distinguish first-degree murder from second-degree murder?",
+      opts: ["Premeditation, deliberation, and malice aforethought", "Intent, motive, and opportunity", "Actus reus, mens rea, and causation", "Planning, execution, and cover-up"],
+      correct: 0,
+      explain: "First-degree murder requires premeditation (forming the decision to kill), deliberation (cool-minded weighing), AND malice aforethought. Second-degree murder lacks premeditation and deliberation."
+    },
+    {
+      q: "What is 'depraved heart' murder?",
+      opts: ["Murder committed by a sociopath", "Killing with extreme recklessness showing utter disregard for human life — second-degree murder", "Any murder committed in anger", "A special category of first-degree murder"],
+      correct: 1,
+      explain: "Depraved heart murder is second-degree murder based on extreme recklessness — acting with such extreme indifference to human life that it manifests a 'depraved heart' or 'abandoned and malignant heart.'"
+    },
+    {
+      q: "What are the four categories of 'malice aforethought'?",
+      opts: ["Planning, preparation, execution, escape", "Intent to kill, intent to cause serious bodily harm, depraved heart, felony murder", "First degree, second degree, voluntary, involuntary", "Motive, intent, premeditation, deliberation"],
+      correct: 1,
+      explain: "Malice aforethought encompasses: (1) intent to kill, (2) intent to cause serious bodily harm, (3) depraved heart/extreme recklessness, and (4) felony murder rule."
+    },
+    {
+      q: "What reduces murder to voluntary manslaughter?",
+      opts: ["Self-defense", "Adequate provocation causing heat of passion with no cooling time", "Accident", "Insanity"],
+      correct: 1,
+      explain: "Voluntary manslaughter is an intentional killing committed in the heat of passion upon adequate provocation, before a reasonable cooling period has elapsed."
+    },
+    {
+      q: "What is the difference between reckless homicide (involuntary manslaughter) and depraved heart murder?",
+      opts: ["There is no difference", "Degree of risk — depraved heart requires extreme recklessness, involuntary manslaughter requires ordinary recklessness", "One requires intent, the other doesn't", "Depraved heart only applies to strangers"],
+      correct: 1,
+      explain: "Both involve recklessness, but depraved heart murder requires a higher degree — extreme recklessness manifesting utter indifference to human life, versus ordinary conscious disregard of substantial risk."
+    },
+    {
+      q: "Under the felony murder rule, when is a defendant liable for murder?",
+      opts: ["Only when they personally kill someone during a felony", "When any death occurs during commission of certain enumerated felonies, regardless of intent to kill", "Only for premeditated killings during felonies", "Only when the victim is a co-felon"],
+      correct: 1,
+      explain: "The felony murder rule imposes murder liability for any death during commission of certain inherently dangerous felonies (arson, rape, robbery, burglary, kidnapping), even without intent to kill."
+    },
+    {
+      q: "In Commonwealth v. Welansky, why was the nightclub owner guilty of involuntary manslaughter?",
+      opts: ["He started the fire", "He recklessly failed to maintain proper exits despite knowing of fire danger", "He served alcohol to minors", "He overcrowded the venue"],
+      correct: 1,
+      explain: "Welansky was liable because his wanton/reckless failure to maintain fire exits and safety measures, despite awareness of the danger, constituted criminal recklessness when patrons died in the fire."
+    },
+    {
+      q: "What is the MPC's approach to involuntary manslaughter?",
+      opts: ["Same as common law", "Recklessness for manslaughter; negligent homicide is a separate, lesser crime", "Only negligence is required", "The MPC doesn't address manslaughter"],
+      correct: 1,
+      explain: "The MPC separates reckless homicide (manslaughter) from negligent homicide (a lesser offense). Common law sometimes lumps both under 'involuntary manslaughter.'"
+    },
+    {
+      q: "What constitutes 'adequate provocation' for voluntary manslaughter?",
+      opts: ["Any insult", "Words alone in most jurisdictions", "Provocation that would cause a reasonable person to lose self-control — e.g., witnessing adultery, assault, mutual combat", "Being fired from a job"],
+      correct: 2,
+      explain: "Traditional categories include: assault/battery, mutual combat, and witnessing spousal adultery. Most jurisdictions hold that words alone are NOT adequate provocation."
+    },
+    {
+      q: "Can premeditation be formed in an instant?",
+      opts: ["No, it requires extensive planning", "Yes, some jurisdictions recognize instantaneous premeditation if there is genuine reflection", "Only in MPC jurisdictions", "Only for second-degree murder"],
+      correct: 1,
+      explain: "Some jurisdictions hold that premeditation can occur in a very brief moment, as long as there was genuine reflection on the gravity of the act — even if that reflection was instantaneous."
+    },
+  ]
+},
+{
+  id: "crim-match-defenses",
+  title: "Criminal Law: Match the Defense",
+  desc: "Match each criminal law defense to its elements or description.",
+  course: "criminal",
+  type: "match",
+  badge: "match",
+  pairs: [
+    { left: "Self-Defense", right: "Imminent threat of death/serious harm + reasonable perception + proportional response" },
+    { left: "Necessity (Choice of Evils)", right: "Emergency requiring choice between two harms; defendant chose lesser evil" },
+    { left: "Duress", right: "Immediate threat of death/serious harm coercing defendant to commit crime; generally not murder" },
+    { left: "Insanity (M'Naghten)", right: "Mental disease causing defendant to not know nature of act or that it was wrong" },
+    { left: "Insanity (MPC/ALI)", right: "Lacked substantial capacity to appreciate criminality or conform conduct to law" },
+    { left: "Diminished Capacity", right: "Mental abnormality negating specific mental state; reduces charge rather than acquitting" },
+    { left: "Voluntary Intoxication", right: "Can negate specific intent but not general intent; not a defense to recklessness" },
+    { left: "Mistake of Fact", right: "Honest and reasonable mistake preventing formation of required mens rea" },
+    { left: "Justification (general)", right: "Conduct was right under the circumstances; no wrong committed" },
+    { left: "Excuse (general)", right: "Wrong was committed but defendant not morally culpable; lacked capacity" },
+  ]
+},
+{
+  id: "crim-mc-defenses",
+  title: "Criminal Law: Defenses Deep Dive",
+  desc: "Multiple choice on justification, excuse, burden of proof, and constitutional limits.",
+  course: "criminal",
+  type: "mc",
+  badge: "mc",
+  questions: [
+    {
+      q: "In The Queen v. Dudley & Stephens, why was the necessity defense rejected?",
+      opts: ["The defendants didn't try hard enough to find food", "The court held necessity cannot justify the intentional killing of an innocent person", "The cabin boy consented", "They were not actually in danger"],
+      correct: 1,
+      explain: "The court rejected necessity for murder, reasoning that allowing private judgment about whose life is worth more would undermine the sanctity of human life. No one can choose to kill an innocent."
+    },
+    {
+      q: "What is the key difference between justification and excuse?",
+      opts: ["Justification applies to felonies, excuse to misdemeanors", "Justification means the act was right/lawful; excuse means the act was wrong but the actor isn't culpable", "There is no difference", "Excuse requires a mental illness"],
+      correct: 1,
+      explain: "Justification (self-defense, necessity) = the act itself was right. Excuse (insanity, duress) = the act was wrong but the person shouldn't be held responsible due to lack of capacity or free will."
+    },
+    {
+      q: "Under Martin v. Ohio, can a state require the defendant to prove self-defense?",
+      opts: ["No, the prosecution always bears the burden", "Yes — self-defense can be an affirmative defense with the burden on the defendant", "Only in federal courts", "Only for misdemeanors"],
+      correct: 1,
+      explain: "The Supreme Court held that self-defense is not an 'element' of the offense, so placing the burden on the defendant to prove it does not violate due process."
+    },
+    {
+      q: "What did Solem v. Helm establish about the Eighth Amendment?",
+      opts: ["The death penalty is unconstitutional", "A three-factor proportionality test for noncapital sentences: gravity vs. penalty, intra-jurisdictional comparison, inter-jurisdictional comparison", "All life sentences are unconstitutional", "Prisoners have a right to rehabilitation"],
+      correct: 1,
+      explain: "Solem established a three-factor test: (1) gravity of offense vs. harshness of penalty, (2) sentences for other crimes in same jurisdiction, (3) sentences for same crime in other jurisdictions."
+    },
+    {
+      q: "According to In re Winship, what is the standard of proof for criminal cases?",
+      opts: ["Preponderance of the evidence", "Clear and convincing evidence", "Beyond a reasonable doubt for every element of the crime", "Probable cause"],
+      correct: 2,
+      explain: "In re Winship established the constitutional requirement that the prosecution must prove every element of a criminal offense beyond a reasonable doubt."
+    },
+    {
+      q: "Why is the distinction between Mullaney v. Wilbur and Patterson v. New York so important?",
+      opts: ["They involve different crimes", "It shows that how a state characterizes a fact (element vs. affirmative defense) determines who bears the burden of proof", "One is federal, one is state", "They were decided by different courts"],
+      correct: 1,
+      explain: "Mullaney said provocation as an element of murder can't be shifted to defendant. Patterson said if extreme emotional disturbance is framed as an excuse/affirmative defense, the burden CAN shift. Drafting matters!"
+    },
+    {
+      q: "What are the four purposes of criminal punishment?",
+      opts: ["Retribution, deterrence, incapacitation, rehabilitation", "Revenge, isolation, education, compensation", "Punishment, prevention, protection, parole", "Justice, mercy, order, peace"],
+      correct: 0,
+      explain: "The four main justifications are: retribution (desert-based), deterrence (general and specific), incapacitation (protecting society), and rehabilitation (reforming the offender)."
+    },
+    {
+      q: "Under Montana v. Egelhoff, can a state prohibit evidence of voluntary intoxication to negate mens rea?",
+      opts: ["No, that always violates due process", "Yes — the Supreme Court upheld Montana's statute barring intoxication evidence for mental state", "Only for misdemeanors", "Only under the MPC"],
+      correct: 1,
+      explain: "In a 5-4 decision, the Court upheld Montana's statute. Justice Ginsburg's concurrence reasoned it effectively adds intoxication as a culpable mental state substitute."
+    },
+  ]
+},
+{
+  id: "crim-fill-elements",
+  title: "Criminal Law: Name the Crime",
+  desc: "Given the elements, type the name of the crime or doctrine.",
+  course: "criminal",
+  type: "fill",
+  badge: "speed",
+  timeLimit: 240,
+  items: [
+    { answer: "First Degree Murder", hint: "Premeditation + deliberation + malice aforethought = intentional killing with cool reflection" },
+    { answer: "Second Degree Murder", hint: "Intentional killing WITHOUT premeditation/deliberation, OR depraved heart killing" },
+    { answer: "Voluntary Manslaughter", hint: "Intentional killing in heat of passion upon adequate provocation before cooling" },
+    { answer: "Involuntary Manslaughter", hint: "Unintentional killing through reckless or grossly negligent conduct" },
+    { answer: "Felony Murder", hint: "Death during commission of inherently dangerous felony — no intent to kill required" },
+    { answer: "Robbery", hint: "Theft from person or presence of victim by force or threat of force" },
+    { answer: "Burglary", hint: "Breaking and entering a dwelling of another at night with intent to commit felony" },
+    { answer: "Attempt", hint: "Specific intent to commit crime + substantial step toward commission" },
+    { answer: "Conspiracy", hint: "Agreement between two or more persons + intent to commit crime + overt act" },
+    { answer: "Solicitation", hint: "Requesting another person to commit a crime with intent that they do so" },
+    { answer: "Accomplice Liability", hint: "Aiding another with knowledge of purpose + intent to facilitate = liable for crime committed" },
+    { answer: "Depraved Heart Murder", hint: "Extreme recklessness showing utter indifference to human life" },
+  ]
+},
+
+// =====================
+// CROSS-COURSE GAMES
+// =====================
+{
+  id: "all-mc-mixed",
+  title: "Mixed Bag: All Three Courses",
+  desc: "Random questions from Property, Con Law, and Criminal Law. The ultimate review!",
+  course: "all",
+  type: "mc",
+  badge: "mc",
+  questions: [
+    {
+      q: "Which case established that the Supreme Court can declare acts of Congress unconstitutional?",
+      opts: ["McCulloch v. Maryland", "Marbury v. Madison", "Martin v. Hunter's Lessee", "Fletcher v. Peck"],
+      correct: 1,
+      explain: "Marbury v. Madison (1803) established judicial review — 'It is emphatically the province and duty of the judicial department to say what the law is.'"
+    },
+    {
+      q: "In property law, what is the difference between actual delivery and constructive delivery?",
+      opts: ["There is no difference", "Actual = physically handing over the item; constructive = handing over a key or means of access", "Actual delivery is for real property; constructive is for personal property", "Constructive delivery requires a written document"],
+      correct: 1,
+      explain: "Actual delivery means physically transferring the object. Constructive delivery substitutes something that gives access to or control over the item (like a key to a safe)."
+    },
+    {
+      q: "Under the MPC, what is the default mens rea when a statute is silent about mental state?",
+      opts: ["Strict liability", "Negligence", "Recklessness", "Purpose"],
+      correct: 2,
+      explain: "When a criminal statute is silent about the required mental state, the MPC defaults to recklessness as the minimum culpability requirement."
+    },
+    {
+      q: "What did the Necessary and Proper Clause allow in McCulloch v. Maryland?",
+      opts: ["Creation of a national bank through implied powers", "State taxation of federal entities", "Direct election of senators", "Federal criminal jurisdiction"],
+      correct: 0,
+      explain: "The Necessary and Proper Clause gave Congress implied powers beyond those enumerated — creating a national bank was 'appropriate' and 'plainly adapted' to carrying out fiscal powers."
+    },
+    {
+      q: "What are the five elements of adverse possession?",
+      opts: ["Open, hostile, continuous, exclusive, and actual for the statutory period", "Written, notarized, filed, served, and recorded", "Intended, delivered, accepted, possessed, and maintained", "Purchased, improved, occupied, defended, and registered"],
+      correct: 0,
+      explain: "OCEAN: Open & notorious, Continuous, Exclusive, Actual, and under claim of right (hostile) — for the full statutory period."
+    },
+    {
+      q: "What is the 'but for' test in criminal law?",
+      opts: ["A test for self-defense", "Cause in fact — the result would not have occurred 'but for' the defendant's conduct", "A test for insanity", "The standard for reasonable doubt"],
+      correct: 1,
+      explain: "The 'but for' test establishes cause in fact (actual cause): the prohibited result would not have happened but for the defendant's action or omission."
+    },
+  ]
+},
+{
+  id: "all-match-amendments",
+  title: "Constitutional Amendments in Your Courses",
+  desc: "Match each amendment to the concept it protects or establishes, as covered in your classes.",
+  course: "all",
+  type: "match",
+  badge: "match",
+  pairs: [
+    { left: "Fifth Amendment (Due Process)", right: "Federal government cannot deprive persons of life, liberty, or property without due process" },
+    { left: "Eighth Amendment", right: "Prohibits cruel and unusual punishment; proportionality in sentencing" },
+    { left: "Fourteenth Amendment (Due Process)", right: "States cannot deprive persons of life, liberty, or property without due process" },
+    { left: "Fourteenth Amendment (Equal Protection)", right: "States must provide equal protection of the laws to all persons" },
+    { left: "Tenth Amendment", right: "Powers not delegated to federal government reserved to states or people" },
+    { left: "Thirteenth Amendment", right: "Abolished slavery and involuntary servitude" },
+    { left: "Article I, Section 8 (Commerce)", right: "Congress can regulate commerce among the several states" },
+    { left: "Article I, Section 10 (Contracts)", right: "States cannot pass laws impairing the obligation of contracts" },
+  ]
+},
+];
+
+// ===========================
+// APP STATE
+// ===========================
+let state = {
+  currentGame: null,
+  score: 0,
+  total: 0,
+  timer: null,
+  secondsLeft: 0,
+  secondsElapsed: 0,
+  totalCorrect: parseInt(localStorage.getItem('lsTotalCorrect') || '0'),
+  gamesPlayed: parseInt(localStorage.getItem('lsGamesPlayed') || '0'),
+  bestScores: JSON.parse(localStorage.getItem('lsBestScores') || '{}'),
+  // match state
+  selectedLeft: null,
+  selectedRight: null,
+  matchedPairs: new Set(),
+  // mc state
+  currentQ: 0,
+  // fill state
+  foundAnswers: new Set(),
+};
+
+function save() {
+  localStorage.setItem('lsTotalCorrect', state.totalCorrect);
+  localStorage.setItem('lsGamesPlayed', state.gamesPlayed);
+  localStorage.setItem('lsBestScores', JSON.stringify(state.bestScores));
+}
+
+// ===========================
+// RENDER HOME
+// ===========================
+function renderHome() {
+  document.getElementById('total-correct').textContent = state.totalCorrect;
+  document.getElementById('games-played').textContent = state.gamesPlayed;
+  const grid = document.getElementById('games-grid');
+  grid.innerHTML = '';
+  const filter = document.querySelector('.course-tab.active')?.dataset.course || 'all';
+
+  GAMES.forEach(g => {
+    if (filter !== 'all' && g.course !== filter && g.course !== 'all') return;
+    const courseColor = g.course === 'property' ? 'var(--property)' : g.course === 'conlaw' ? 'var(--conlaw)' : g.course === 'criminal' ? 'var(--criminal)' : 'var(--accent)';
+    const badgeClass = g.badge === 'match' ? 'badge-match' : g.badge === 'mc' ? 'badge-mc' : g.badge === 'fill' ? 'badge-fill' : 'badge-speed';
+    const typeLabel = g.type === 'match' ? 'Matching' : g.type === 'mc' ? 'Multiple Choice' : g.timeLimit ? 'Speed Round' : 'Type-In';
+    const count = g.type === 'match' ? g.pairs.length + ' pairs' : g.type === 'mc' ? g.questions.length + ' questions' : g.items.length + ' answers';
+    const best = state.bestScores[g.id];
+    const bestHtml = best !== undefined ? `<span class="best-score">Best: ${best}%</span>` : '';
+
+    grid.innerHTML += `
+      <div class="game-card" onclick="startGame('${g.id}')">
+        <div class="card-top">
+          <span class="game-type-badge ${badgeClass}">${typeLabel}</span>
+          <div class="course-dot" style="background:${courseColor}"></div>
+        </div>
+        <h3>${g.title}</h3>
+        <p>${g.desc}</p>
+        <div class="card-footer">
+          <span class="q-count">${count}</span>
+          ${bestHtml}
+        </div>
+      </div>`;
+  });
+}
+
+function filterCourse(c) {
+  document.querySelectorAll('.course-tab').forEach(t => t.classList.toggle('active', t.dataset.course === c));
+  renderHome();
+}
+
+// ===========================
+// START GAME
+// ===========================
+function startGame(id) {
+  const game = GAMES.find(g => g.id === id);
+  if (!game) return;
+  state.currentGame = game;
+  state.score = 0;
+  state.currentQ = 0;
+  state.matchedPairs = new Set();
+  state.selectedLeft = null;
+  state.selectedRight = null;
+  state.foundAnswers = new Set();
+  state.secondsElapsed = 0;
+
+  document.getElementById('home-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'none';
+  const gs = document.getElementById('game-screen');
+  gs.style.display = 'block';
+  document.getElementById('game-title').textContent = game.title;
+
+  if (game.type === 'match') {
+    state.total = game.pairs.length;
+    renderMatch(game);
+  } else if (game.type === 'mc') {
+    state.total = game.questions.length;
+    renderMC(game, 0);
+  } else if (game.type === 'fill') {
+    state.total = game.items.length;
+    renderFill(game);
+  }
+
+  updateStats();
+  startTimer(game.timeLimit || (game.type === 'mc' ? game.questions.length * 30 : game.type === 'match' ? game.pairs.length * 15 : 300));
+}
+
+function startTimer(seconds) {
+  state.secondsLeft = seconds;
+  const fill = document.getElementById('timer-fill');
+  const total = seconds;
+  clearInterval(state.timer);
+  state.timer = setInterval(() => {
+    state.secondsLeft--;
+    state.secondsElapsed++;
+    const pct = (state.secondsLeft / total) * 100;
+    fill.style.width = pct + '%';
+    fill.classList.toggle('warning', pct < 25);
+    document.getElementById('live-timer').textContent = formatTime(state.secondsLeft);
+    if (state.secondsLeft <= 0) { clearInterval(state.timer); endGame(); }
+  }, 1000);
+}
+
+function formatTime(s) { return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); }
+
+function updateStats() {
+  document.getElementById('live-score').textContent = state.score;
+  document.getElementById('live-total').textContent = state.total;
+}
+
+// ===========================
+// MATCHING GAME
+// ===========================
+function renderMatch(game) {
+  const body = document.getElementById('game-body');
+  // Shuffle both columns independently
+  const leftOrder = shuffle([...Array(game.pairs.length).keys()]);
+  const rightOrder = shuffle([...Array(game.pairs.length).keys()]);
+
+  body.innerHTML = `
+    <div class="match-container">
+      <div class="match-col">
+        <h4>Terms</h4>
+        ${leftOrder.map(i => `<div class="match-item match-left" data-idx="${i}" onclick="selectMatch('left',${i})">${game.pairs[i].left}</div>`).join('')}
+      </div>
+      <div class="match-col">
+        <h4>Definitions</h4>
+        ${rightOrder.map(i => `<div class="match-item match-right" data-idx="${i}" onclick="selectMatch('right',${i})">${game.pairs[i].right}</div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function selectMatch(side, idx) {
+  if (state.matchedPairs.has(idx)) return;
+  const game = state.currentGame;
+
+  if (side === 'left') {
+    document.querySelectorAll('.match-left').forEach(el => el.classList.remove('selected'));
+    document.querySelector(`.match-left[data-idx="${idx}"]`).classList.add('selected');
+    state.selectedLeft = idx;
+  } else {
+    document.querySelectorAll('.match-right').forEach(el => el.classList.remove('selected'));
+    document.querySelector(`.match-right[data-idx="${idx}"]`).classList.add('selected');
+    state.selectedRight = idx;
+  }
+
+  if (state.selectedLeft !== null && state.selectedRight !== null) {
+    if (state.selectedLeft === state.selectedRight) {
+      // Correct match!
+      state.score++;
+      state.matchedPairs.add(state.selectedLeft);
+      document.querySelector(`.match-left[data-idx="${state.selectedLeft}"]`).classList.add('correct');
+      document.querySelector(`.match-right[data-idx="${state.selectedRight}"]`).classList.add('correct');
+      document.querySelector(`.match-left[data-idx="${state.selectedLeft}"]`).classList.remove('selected');
+      document.querySelector(`.match-right[data-idx="${state.selectedRight}"]`).classList.remove('selected');
+      updateStats();
+      if (state.matchedPairs.size === game.pairs.length) { clearInterval(state.timer); setTimeout(endGame, 600); }
+    } else {
+      // Wrong
+      const l = document.querySelector(`.match-left[data-idx="${state.selectedLeft}"]`);
+      const r = document.querySelector(`.match-right[data-idx="${state.selectedRight}"]`);
+      l.classList.add('wrong'); r.classList.add('wrong');
+      setTimeout(() => {
+        l.classList.remove('wrong','selected');
+        r.classList.remove('wrong','selected');
+      }, 500);
+    }
+    state.selectedLeft = null;
+    state.selectedRight = null;
+  }
+}
+
+// ===========================
+// MULTIPLE CHOICE
+// ===========================
+function renderMC(game, qIdx) {
+  if (qIdx >= game.questions.length) { clearInterval(state.timer); endGame(); return; }
+  state.currentQ = qIdx;
+  const q = game.questions[qIdx];
+  const body = document.getElementById('game-body');
+  const letters = ['A','B','C','D','E'];
+
+  body.innerHTML = `
+    <div class="mc-question">
+      <div class="q-label">Question ${qIdx+1} of ${game.questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="mc-options">
+        ${q.opts.map((o,i) => `
+          <div class="mc-opt" data-idx="${i}" onclick="answerMC(${i})">
+            <div class="opt-letter">${letters[i]}</div>
+            <div>${o}</div>
+          </div>`).join('')}
+      </div>
+      <div class="mc-explanation" id="mc-explain">${q.explain}</div>
+    </div>
+    <button class="next-btn" id="next-mc-btn" style="display:none" onclick="renderMC(state.currentGame, ${qIdx+1})">Next →</button>`;
+}
+
+function answerMC(idx) {
+  const game = state.currentGame;
+  const q = game.questions[state.currentQ];
+  const opts = document.querySelectorAll('.mc-opt');
+  opts.forEach(o => o.classList.add('disabled'));
+
+  if (idx === q.correct) {
+    state.score++;
+    opts[idx].classList.add('correct');
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+  }
+  updateStats();
+  document.getElementById('mc-explain').classList.add('show');
+  document.getElementById('next-mc-btn').style.display = 'inline-block';
+}
+
+// ===========================
+// FILL / TYPE-IN GAME
+// ===========================
+function renderFill(game) {
+  const body = document.getElementById('game-body');
+  body.innerHTML = `
+    <div class="fill-prompt">
+      <div class="category-label">Type each answer — spelling counts (but case doesn't)</div>
+      <div class="prompt-text" id="fill-hint">${game.items[0].hint}</div>
+      <div class="fill-input-row">
+        <input type="text" class="fill-input" id="fill-input" placeholder="Type your answer..." autocomplete="off" onkeydown="if(event.key==='Enter')checkFill()">
+        <button class="submit-btn" onclick="checkFill()">Go</button>
+      </div>
+      <div id="fill-feedback" style="margin-top:12px;font-size:14px;min-height:24px;"></div>
+    </div>
+    <div class="answers-grid" id="answers-grid">
+      ${game.items.map((item, i) => `
+        <div class="answer-slot" id="slot-${i}">
+          <div class="slot-num">${i+1}</div>
+          <div class="slot-text">${'?'.repeat(Math.min(item.answer.length, 20))}</div>
+        </div>`).join('')}
+    </div>`;
+
+  document.getElementById('fill-input').focus();
+}
+
+function checkFill() {
+  const game = state.currentGame;
+  const input = document.getElementById('fill-input');
+  const val = input.value.trim().toLowerCase();
+  const feedback = document.getElementById('fill-feedback');
+  if (!val) return;
+
+  let found = false;
+  game.items.forEach((item, i) => {
+    if (state.foundAnswers.has(i)) return;
+    const ans = item.answer.toLowerCase();
+    // Allow flexible matching - remove "v." vs "v" differences, extra spaces
+    const normalize = s => s.replace(/\bv\.\b/g,'v').replace(/[^a-z0-9]/g,'');
+    if (normalize(val) === normalize(ans) || val === ans) {
+      found = true;
+      state.foundAnswers.add(i);
+      state.score++;
+      const slot = document.getElementById(`slot-${i}`);
+      slot.classList.add('found');
+      slot.querySelector('.slot-text').textContent = item.answer;
+      feedback.innerHTML = `<span style="color:var(--green)">✓ ${item.answer}</span>`;
+      updateStats();
+
+      if (state.foundAnswers.size === game.items.length) {
+        clearInterval(state.timer);
+        setTimeout(endGame, 600);
+      }
+    }
+  });
+
+  if (!found) {
+    feedback.innerHTML = `<span style="color:var(--red)">✗ Not a match — try again!</span>`;
+    input.classList.add('wrong');
+    setTimeout(() => input.classList.remove('wrong'), 400);
+  }
+
+  input.value = '';
+  input.focus();
+
+  // Show next unanswered hint
+  const nextUnanswered = game.items.findIndex((_, i) => !state.foundAnswers.has(i));
+  if (nextUnanswered >= 0) {
+    document.getElementById('fill-hint').textContent = game.items[nextUnanswered].hint;
+  }
+}
+
+// ===========================
+// END GAME / RESULTS
+// ===========================
+function endGame() {
+  clearInterval(state.timer);
+  const game = state.currentGame;
+  const pct = Math.round((state.score / state.total) * 100);
+
+  // For fill games, reveal unanswered
+  if (game.type === 'fill') {
+    game.items.forEach((item, i) => {
+      if (!state.foundAnswers.has(i)) {
+        const slot = document.getElementById(`slot-${i}`);
+        if (slot) {
+          slot.querySelector('.slot-text').textContent = item.answer;
+          slot.style.opacity = '0.5';
+        }
+      }
+    });
+  }
+
+  // Update stats
+  state.gamesPlayed++;
+  state.totalCorrect += state.score;
+  const prev = state.bestScores[game.id];
+  if (prev === undefined || pct > prev) state.bestScores[game.id] = pct;
+  save();
+
+  // Show results after a brief pause
+  setTimeout(() => {
+    document.getElementById('game-screen').style.display = 'none';
+    const rs = document.getElementById('results-screen');
+    rs.style.display = 'block';
+    document.getElementById('results-score').textContent = pct + '%';
+    document.getElementById('results-detail').textContent = `${state.score} of ${state.total} correct in ${formatTime(state.secondsElapsed)}`;
+    document.getElementById('results-title').textContent = pct === 100 ? 'Perfect Score!' : pct >= 80 ? 'Great Job!' : pct >= 50 ? 'Not Bad!' : 'Keep Studying!';
+  }, game.type === 'fill' ? 2000 : 300);
+}
+
+function retryGame() {
+  if (state.currentGame) startGame(state.currentGame.id);
+}
+
+function goHome() {
+  clearInterval(state.timer);
+  document.getElementById('game-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('home-screen').style.display = 'block';
+  renderHome();
+}
+
+// ===========================
+// UTILS
+// ===========================
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ===========================
+// INIT
+// ===========================
+renderHome();
+</script>
+</body>
+</html>

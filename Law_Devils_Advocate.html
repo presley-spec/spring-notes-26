@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devil's Advocate - Law School Counter-Argument Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0b12;
+            --bg-surface: #12131f;
+            --bg-surface-hover: #16172a;
+            --text-primary: #e8eaed;
+            --text-secondary: #9ca3af;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #10b981;
+            --accent-danger: #ef4444;
+            --accent-warning: #f59e0b;
+            --accent-gold: #fbbf24;
+            --border-color: #2d2e42;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-top: 12px;
+        }
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .settings-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 20px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .settings-btn:hover {
+            background-color: var(--bg-surface);
+            color: var(--accent-primary);
+        }
+
+        /* Course Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .tab {
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            margin-bottom: -13px;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+        }
+
+        /* Main Game Area */
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Scenario Counter */
+        .scenario-counter {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Score Tracking */
+        .score-bar {
+            display: flex;
+            gap: 16px;
+            justify-content: space-around;
+            padding: 12px 16px;
+            background-color: var(--bg-surface);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 12px;
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .score-label {
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .score-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .streak-icon {
+            color: var(--accent-secondary);
+            font-size: 14px;
+        }
+
+        /* Fact Pattern Card */
+        .fact-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            animation: slideInDown 0.3s ease;
+        }
+
+        .card-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .fact-text {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+
+        /* Given Argument Card */
+        .argument-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            animation: slideInDown 0.3s ease 0.1s both;
+        }
+
+        .argument-card::before {
+            content: '"';
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            font-size: 32px;
+            color: var(--accent-primary);
+            opacity: 0.3;
+        }
+
+        .argument-card::after {
+            content: '"';
+            position: absolute;
+            bottom: 4px;
+            right: 12px;
+            font-size: 32px;
+            color: var(--accent-primary);
+            opacity: 0.3;
+        }
+
+        .argument-text {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+            padding: 0 8px;
+        }
+
+        /* Counter Argument Chips */
+        .chips-section {
+            animation: slideInUp 0.3s ease 0.2s both;
+        }
+
+        .chips-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: block;
+        }
+
+        .chips-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip {
+            padding: 10px 14px;
+            border: 2px solid var(--border-color);
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .chip:hover {
+            background-color: var(--bg-surface-hover);
+            border-color: var(--accent-primary);
+        }
+
+        .chip.selected {
+            background-color: rgba(59, 130, 246, 0.15);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+        }
+
+        /* Chip States */
+        .chip.correct {
+            background-color: rgba(16, 185, 129, 0.15);
+            border-color: var(--accent-secondary);
+            color: var(--accent-secondary);
+            animation: pulse 0.6s ease-out;
+        }
+
+        .chip.trap {
+            background-color: rgba(239, 68, 68, 0.15);
+            border-color: var(--accent-danger);
+            color: var(--accent-danger);
+            animation: shake 0.4s ease-out;
+        }
+
+        .chip.missed {
+            background-color: rgba(251, 191, 36, 0.1);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            animation: pulse 0.8s ease-out infinite;
+        }
+
+        /* Countdown Overlay */
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 11, 18, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            z-index: 100;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .countdown-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-primary) 0deg, var(--accent-primary) var(--progress), var(--border-color) var(--progress), var(--border-color) 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            position: relative;
+        }
+
+        .countdown-text {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 280px;
+        }
+
+        /* Buttons */
+        .button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-primary);
+            color: white;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background-color: var(--border-color);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Settings Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 11, 18, 0.7);
+            display: flex;
+            align-items: flex-end;
+            z-index: 50;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal {
+            background-color: var(--bg-surface);
+            border-top: 1px solid var(--border-color);
+            border-radius: 16px 16px 0 0;
+            padding: 24px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideInUp 0.3s ease;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .toggle {
+            width: 44px;
+            height: 24px;
+            background-color: var(--border-color);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle.active {
+            background-color: var(--accent-primary);
+        }
+
+        .toggle-knob {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .toggle.active .toggle-knob {
+            left: 22px;
+        }
+
+        /* Results Screen */
+        .results-screen {
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .results-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .results-score {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+        }
+
+        .results-detail {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+        }
+
+        .detail-value {
+            font-weight: 600;
+        }
+
+        .detail-value.correct {
+            color: var(--accent-secondary);
+        }
+
+        .detail-value.trap {
+            color: var(--accent-danger);
+        }
+
+        /* Model Answer Card */
+        .model-answer-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            animation: slideInUp 0.4s ease;
+        }
+
+        .model-answer-title {
+            font-size: 12px;
+            color: var(--accent-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .model-answer-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-primary);
+            font-style: italic;
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-4px);
+            }
+            75% {
+                transform: translateX(4px);
+            }
+        }
+
+        /* Loading State */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 20px;
+            }
+
+            .tabs {
+                gap: 4px;
+            }
+
+            .tab {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .chips-grid {
+                gap: 8px;
+            }
+
+            .chip {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .results-title {
+                font-size: 28px;
+            }
+
+            .results-score {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">Devil's Advocate</div>
+            <button class="settings-btn" id="settingsBtn" title="Settings">⚙️</button>
+        </div>
+
+        <!-- Course Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-course="property">Property</button>
+            <button class="tab" data-course="conlaw">Con Law</button>
+            <button class="tab" data-course="criminal">Criminal</button>
+        </div>
+
+        <!-- Game Area -->
+        <div class="game-area" id="gameArea">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay hidden" id="settingsModal">
+        <div class="modal">
+            <div class="modal-title">
+                Settings
+                <button class="close-btn" id="closeSettings">✕</button>
+            </div>
+            <div class="setting-item">
+                <label>Reflection Countdown</label>
+                <div class="toggle active" id="countdownToggle">
+                    <div class="toggle-knob"></div>
+                </div>
+            </div>
+            <div class="setting-item">
+                <label>"Say It Out Loud" Prompt</label>
+                <div class="toggle active" id="sayOutLoudToggle">
+                    <div class="toggle-knob"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game Data
+        const gameData = {
+            property: [
+                {
+                    id: 1,
+                    title: "Adverse Possession Dispute",
+                    fact: "Sam built a fence 3 feet onto Nina's land 22 years ago. Sam maintained the area, planted a garden, and paid no additional taxes. Nina just discovered the encroachment.",
+                    given: "Sam cannot claim adverse possession because he never paid taxes on my land, and the encroachment was only 3 feet, which is too minor to constitute 'actual possession.'",
+                    correctCounters: [
+                        "Adverse possession doesn't require tax payment in most jurisdictions",
+                        "The fence plus garden constitutes actual and exclusive possession",
+                        "22 years exceeds most state statutory periods",
+                        "Open and notorious—the fence was clearly visible",
+                        "Continuous use for the entire 22-year period"
+                    ],
+                    traps: [
+                        "Sam had permission from Nina",
+                        "Sam must have had a deed to claim adverse possession",
+                        "Adverse possession requires good faith belief of ownership"
+                    ],
+                    modelAnswer: "Respondent's argument fails on multiple fronts. First, adverse possession does not require tax payment in most jurisdictions—this is a common misconception. Second, the fence and garden together constitute actual and exclusive possession under the applicable standard. Third, Sam's 22 years of continuous, open, and notorious use exceeds the statutory period in virtually all states. The size of the encroachment is immaterial; actual possession can apply to a small parcel. Therefore, all elements for adverse possession are satisfied, and the property interest vests in Sam despite the initial encroachment."
+                },
+                {
+                    id: 2,
+                    title: "Landlord-Tenant: Habitability",
+                    fact: "Maria's apartment has severe mold in the bedroom. She notified her landlord Tom in writing 3 months ago. Tom ignored it. Maria stopped paying rent last month.",
+                    given: "Maria breached the lease by withholding rent. The implied warranty of habitability doesn't apply because Maria should have moved out if conditions were truly uninhabitable.",
+                    correctCounters: [
+                        "Rent withholding is a recognized tenant remedy in most jurisdictions",
+                        "Tenant doesn't have to vacate to invoke implied warranty of habitability",
+                        "Mold constitutes substantial impairment of habitability",
+                        "Landlord received written notice and failed to act",
+                        "Modern constructive eviction doctrine doesn't require vacating first"
+                    ],
+                    traps: [
+                        "Maria waived the warranty by signing the lease",
+                        "Landlord has no duty to repair under common law",
+                        "Maria can only sue for damages, not withhold rent"
+                    ],
+                    modelAnswer: "The landlord's argument misconstrues modern habitability law. Maria is entitled to invoke the implied warranty of habitability, which cannot be waived by lease terms. She is not required to vacate to exercise this right—rent withholding is a recognized remedy. Mold in a bedroom clearly constitutes a substantial impairment of habitability. The landlord's three-month period of knowing non-response to written notice demonstrates willful breach. Under the modern approach adopted by most jurisdictions, Maria's rent withholding is a proper exercise of her remedy and does not itself constitute a breach."
+                },
+                {
+                    id: 3,
+                    title: "Nuisance Balancing",
+                    fact: "A cement factory has operated for 30 years. A new housing development was built nearby 5 years ago. Homeowners sue for private nuisance due to dust and noise.",
+                    given: "The factory's dust and noise substantially interfere with our use and enjoyment of property. The interference is unreasonable under the Restatement balancing test.",
+                    correctCounters: [
+                        "Coming to the nuisance defense—homeowners moved near existing factory",
+                        "Factory has 30-year priority of use",
+                        "Economic impact of shutting factory exceeds residential harm",
+                        "Damages may be appropriate rather than injunction",
+                        "Zoning may have permitted industrial use in that area"
+                    ],
+                    traps: [
+                        "Nuisance claims can't be brought against lawful businesses",
+                        "Homeowners assumed the risk by purchasing the property",
+                        "Factory has a prescriptive right to pollute"
+                    ],
+                    modelAnswer: "Under the Restatement balancing test, the coming to the nuisance defense is material. The cement factory's 30-year operation establishes both priority in time and reliance. The homeowners chose to develop in proximity to an established industrial use. The Boomer approach, adopted by several jurisdictions, recognizes that the factory's economic significance may outweigh the residential harm. Additionally, courts often grant damages rather than injunctive relief in such circumstances. The zoning classification at the time of the factory's operation may also be relevant to the reasonableness inquiry."
+                },
+                {
+                    id: 4,
+                    title: "Easement Dispute",
+                    fact: "For 25 years, the Johnson family used a path across the Smith property to reach the lake. The path was clearly worn and visible. The Smiths never objected. New buyer of Smith property blocks the path.",
+                    given: "I purchased this property with no notice of any easement. There's no recorded easement, and I'm a bona fide purchaser.",
+                    correctCounters: [
+                        "Prescriptive easement doesn't require recording in the deed registry",
+                        "25 years of open use exceeds the statutory period in most states",
+                        "Buyer had inquiry notice from the visibly worn path",
+                        "Prescriptive easement vested before the new purchase",
+                        "All statutory elements are satisfied: open, notorious, continuous, without permission"
+                    ],
+                    traps: [
+                        "Verbal permission was implied by the Smiths' silence",
+                        "Easements must be in writing under the Statute of Frauds",
+                        "Path is too informal or temporary to create a legal interest"
+                    ],
+                    modelAnswer: "A prescriptive easement can arise without a recorded deed. The Johnson family's 25 years of open, notorious, continuous use without permission satisfies all statutory requirements. The path's visible wear constitutes constructive notice to any purchaser—the new buyer cannot claim bona fide purchaser status when the easement is manifest on the property. The easement vested before the new purchase occurred, and subsequent purchasers take subject to visible easements, whether or not they are recorded."
+                },
+                {
+                    id: 5,
+                    title: "Covenant Enforcement",
+                    fact: "A subdivision's CC&Rs require all homes to be single-family residential. Owner Jones wants to convert his home to a bed-and-breakfast. Other homeowners object.",
+                    given: "The neighborhood character has changed—several homes run home offices, and the B&B would increase property values. The covenant should be unenforceable under the changed conditions doctrine.",
+                    correctCounters: [
+                        "Home offices are fundamentally different from commercial lodging",
+                        "B&B brings strangers and increased traffic into residential area",
+                        "Covenant touches and concerns the land",
+                        "Changed conditions doctrine requires pervasive change, not isolated examples",
+                        "Other homeowners relied on covenant when purchasing"
+                    ],
+                    traps: [
+                        "CC&Rs are unconstitutional restrictions on property rights",
+                        "Owner has a constitutional right to use property commercially",
+                        "Covenants expire automatically after 20 years"
+                    ],
+                    modelAnswer: "The changed conditions doctrine does not apply here. While some homeowners operate home offices, this is a fundamentally different use than operating a bed-and-breakfast open to the public. The doctrine requires a pervasive change in the neighborhood character, not merely a few exceptions. Additionally, a B&B creates continuous transient occupancy, substantially increasing traffic and use intensity—precisely the type of commercial activity the covenant restricts. Other homeowners relied on this covenant when purchasing, and enforcement protects their reasonable expectations."
+                },
+                {
+                    id: 6,
+                    title: "Recording Act Priority",
+                    fact: "Owner sells Blackacre to A on Monday (A doesn't record). Owner then sells same land to B on Wednesday (B records immediately). A records on Thursday. This is a race-notice jurisdiction.",
+                    given: "I purchased first in time and should prevail. My deed was validly executed before B's purchase.",
+                    correctCounters: [
+                        "Race-notice requires BOTH recording first AND without notice",
+                        "B recorded first; B likely had no actual notice since A hadn't recorded",
+                        "B qualifies as bona fide purchaser for value without notice",
+                        "First-in-time controls only under common law, not race-notice statute",
+                        "A's failure to record promptly is material under race-notice rule"
+                    ],
+                    traps: [
+                        "A's deed is void because it wasn't recorded immediately",
+                        "B committed fraud by buying property A already owned",
+                        "Race-notice always favors whoever records first regardless of notice"
+                    ],
+                    modelAnswer: "In a race-notice jurisdiction, A prevails only if A both records first and has priority in time without notice to the later purchaser. B recorded before A, even though A had priority in time. Critically, B likely had no notice of A's interest since A failed to record. B qualifies as a bona fide purchaser for value. Under race-notice statutes, B's earlier recording and good faith without notice defeat A's claims, despite the later execution date of B's deed. A's delay in recording is fatal under this recording system."
+                },
+                {
+                    id: 7,
+                    title: "Regulatory Takings",
+                    fact: "City passes new wetlands ordinance preventing any development on properties containing wetlands. Owner's entire 50-acre parcel is classified as wetlands, reducing its value from $2M to $50K.",
+                    given: "This is a valid exercise of police power to protect the environment. No compensation is required because the regulation serves a legitimate public purpose.",
+                    correctCounters: [
+                        "Lucas per se taking—regulation eliminates all economically beneficial use",
+                        "97.5% value reduction far exceeds Penn Central balancing threshold",
+                        "Owner had investment-backed expectations before the ordinance",
+                        "Police power has limits when it effectively appropriates private property",
+                        "Denominating the entire 50 acres is the proper parcel for analysis"
+                    ],
+                    traps: [
+                        "Any regulation reducing property value constitutes a taking",
+                        "The city must prove the land has no value whatsoever",
+                        "Owner should have known about future wetlands regulations"
+                    ],
+                    modelAnswer: "This presents a paradigmatic regulatory taking under Lucas. When a regulation deprives property of all economically beneficial use, compensation is required regardless of the regulation's justification. The owner's 97.5% loss in value satisfies this threshold definitively. The owner held investment-backed expectations when acquiring the parcel, before the ordinance was enacted. While environmental protection is a legitimate state interest, it cannot entirely eliminate property value without compensation. The city's police power is not absolute when exercised in a manner equivalent to a physical appropriation of private property."
+                },
+                {
+                    id: 8,
+                    title: "Fair Housing",
+                    fact: "Landlord refuses to rent to a family with three young children, saying 'the apartment is too small for kids.' The apartment is a 2-bedroom unit in a building with no age restrictions.",
+                    given: "I'm simply making a practical judgment about overcrowding. Local occupancy codes support limiting the number of occupants. This isn't discrimination.",
+                    correctCounters: [
+                        "Familial status is a protected class under the Fair Housing Act",
+                        "Blanket exclusion of families with children is discriminatory",
+                        "Occupancy standards must be reasonable and applied uniformly",
+                        "Landlord didn't cite a specific code violation, just preference",
+                        "HUD guidelines allow 2 persons per bedroom as baseline occupancy"
+                    ],
+                    traps: [
+                        "Small apartments are exempt from the Fair Housing Act",
+                        "Landlords have absolute right to choose tenants",
+                        "Fair Housing Act only applies to race discrimination"
+                    ],
+                    modelAnswer: "The landlord's refusal violates the Fair Housing Act. Familial status is explicitly protected, and blanket exclusions of families with children constitute discrimination. The landlord's stated reason—overcrowding—is pretextual since no actual occupancy code was invoked, and HUD guidelines establish that two persons per bedroom is presumptively reasonable. The landlord must apply occupancy standards uniformly to all applicants, not selectively to families with children. This is actionable discrimination regardless of the landlord's subjective judgment about space."
+                },
+                {
+                    id: 9,
+                    title: "Boundary Dispute / Agreed Boundary",
+                    fact: "Two neighbors have treated a hedge as their property line for 35 years, though a recent survey shows the true boundary is 10 feet east of the hedge. The neighbor whose land is reduced wants to enforce the survey line.",
+                    given: "The survey establishes the true legal boundary. We were simply mistaken about where the line was, and a mistake cannot transfer property rights.",
+                    correctCounters: [
+                        "Doctrine of agreed boundary—long acquiescence to hedge as line",
+                        "35 years may satisfy adverse possession statutory period",
+                        "Practical location doctrine applies when boundary is uncertain",
+                        "Estoppel—both parties relied on hedge for decades",
+                        "Survey wasn't obtained for 35 years, suggesting genuine uncertainty"
+                    ],
+                    traps: [
+                        "Surveys are always conclusive as to legal boundaries",
+                        "Agreed boundary doctrine requires a written agreement",
+                        "Neighbors can never change legal boundaries through conduct"
+                    ],
+                    modelAnswer: "Several doctrines prevent the neighbor from enforcing the survey line. The doctrine of agreed boundary recognizes that long acquiescence to a boundary marker can establish it as the operative boundary, even if inaccurate. The practical location doctrine applies when the original boundary is uncertain or disputed. Estoppel prevents the neighbor from asserting a different boundary after 35 years of reliance, which would unjustly enrich one party at the other's expense. The absence of a survey for 35 years itself suggests that both parties genuinely accepted the hedge as their boundary."
+                },
+                {
+                    id: 10,
+                    title: "Sublease vs Assignment",
+                    fact: "Tenant has 3 years left on a 5-year lease. Tenant transfers all remaining interest to New Tenant. Lease is silent on transfers. New Tenant stops paying rent after 6 months. Landlord sues original Tenant.",
+                    given: "I assigned the entire lease to New Tenant, who assumed all obligations. I have no further liability because an assignment transfers the entire interest.",
+                    correctCounters: [
+                        "Privity of contract remains between original tenant and landlord",
+                        "Original tenant stays liable on the lease contract",
+                        "Assignment creates only privity of estate with new tenant",
+                        "Landlord didn't release original tenant from obligations",
+                        "Lease silence on transfers doesn't create automatic release"
+                    ],
+                    traps: [
+                        "Assignments automatically release the assignor",
+                        "Landlord should have screened New Tenant",
+                        "Tenant can't be liable for someone else's breach"
+                    ],
+                    modelAnswer: "An assignment does not relieve the original tenant of contractual liability. Privity of contract between the original tenant and landlord persists despite the assignment. The new tenant acquires only privity of estate with the landlord, creating a contractual relationship, but this does not release the original tenant. The landlord retained the right to sue either party for breach. The original tenant remains liable for rent and lease obligations unless the landlord explicitly releases them—which did not occur here. The assignment was complete, but the original tenant remains the primary obligor on the original lease contract."
+                }
+            ],
+            conlaw: [
+                {
+                    id: 1,
+                    title: "Dormant Commerce Clause — Wine Shipment",
+                    fact: "State bans out-of-state direct wine shipments to consumers but allows in-state wineries to ship directly. State claims health/safety reasons.",
+                    given: "This facially discriminates against interstate commerce. Under Philadelphia v. New Jersey, it's virtually per se invalid.",
+                    correctCounters: [
+                        "21st Amendment gives states broad authority over alcohol",
+                        "State can argue health and safety is a legitimate local concern",
+                        "Market participant exception may apply if state-run stores exist",
+                        "Congressional authorization via Webb-Kenyon Act provides defense",
+                        "Pike balancing applies even if facial discrimination is found"
+                    ],
+                    traps: [
+                        "States can always regulate alcohol however they choose",
+                        "Dormant Commerce Clause doesn't apply to agricultural products",
+                        "Health and safety are always valid justification without scrutiny"
+                    ],
+                    modelAnswer: "While the law facially discriminates against interstate commerce, the challenger faces significant obstacles. The 21st Amendment grants states substantial authority over alcohol regulation, a sphere of historic state control. Health and safety concerns regarding direct shipment are legitimate. Furthermore, the Webb-Kenyon Act provides Congressional authorization for state alcohol regulation. Although Philadelphia v. New Jersey would normally apply strict scrutiny to facial discrimination, the 21st Amendment creates an exception. Even under Pike balancing, the state's interest in preventing underage access and ensuring tax collection may outweigh the burden on interstate commerce."
+                },
+                {
+                    id: 2,
+                    title: "Commerce Clause — Federal Regulation",
+                    fact: "Congress passes law requiring all restaurants to list calorie counts. Small diner in rural town with no interstate suppliers challenges.",
+                    given: "This is purely local activity with no substantial effect on interstate commerce. Under Lopez, Congress can't regulate non-economic local activity.",
+                    correctCounters: [
+                        "Restaurants are economic/commercial in nature, unlike Lopez",
+                        "Aggregation principle from Wickard—all restaurants combined substantially affect commerce",
+                        "Food supply chain is inherently interstate",
+                        "Rational basis—Congress could reasonably conclude calorie standards affect interstate health care costs",
+                        "Raich supports broad reach for economic activity"
+                    ],
+                    traps: [
+                        "Congress can regulate anything remotely connected to food",
+                        "Diner's small size is irrelevant to commerce power",
+                        "All restaurants are instrumentalities of interstate commerce"
+                    ],
+                    modelAnswer: "Lopez does not bar this regulation. The diner operates a restaurant, an economic and commercial enterprise, unlike the gun-free school zone in Lopez. Under Wickard's aggregation principle, Congress may regulate activities that, in the aggregate, substantially affect interstate commerce. The restaurant industry collectively consumes goods from interstate commerce and generates substantial economic activity. Moreover, Congress could rationally conclude that calorie count transparency affects interstate health care markets and insurance rates. The regulation targets economic activity rather than non-economic conduct, distinguishing it from Lopez's approach."
+                },
+                {
+                    id: 3,
+                    title: "Free Speech — University Hate Speech Policy",
+                    fact: "Public university adopts policy banning 'hateful or demeaning speech targeting identity groups' in all campus spaces. Student expelled for controversial political speech in outdoor plaza.",
+                    given: "The policy serves the compelling interest of creating an inclusive learning environment. The outdoor plaza is university property subject to reasonable regulation.",
+                    correctCounters: [
+                        "Public university outdoor plaza is likely a designated public forum",
+                        "Content-based restriction triggers strict scrutiny",
+                        "Policy is overbroad—sweeps protected political speech",
+                        "Viewpoint discrimination—targets specific ideological positions",
+                        "R.A.V. v. St. Paul—can't single out particular types of offensive speech"
+                    ],
+                    traps: [
+                        "Universities are exempt from First Amendment",
+                        "Hate speech is an established exception to free speech",
+                        "Students waive free speech rights by enrolling"
+                    ],
+                    modelAnswer: "The outdoor plaza in a public university is a designated public forum, where the government cannot impose content-based restrictions without satisfying strict scrutiny. The university's policy bans speech based on its content and viewpoint, not conduct. Even the compelling interest in creating an inclusive environment cannot justify blanket prohibition of speech about identity groups. The policy is fatally overbroad, sweeping in protected political speech. R.A.V. v. City of St. Paul established that the government cannot prohibit entire categories of speech, even offensive speech, based on their subject matter. The student's expulsion likely violates the First Amendment."
+                },
+                {
+                    id: 4,
+                    title: "Equal Protection — Affirmative Action",
+                    fact: "State university uses race as one factor in holistic admissions review to achieve a diverse class. White applicant denied admission sues.",
+                    given: "This is racial classification subject to strict scrutiny. The university cannot use race as a factor—it violates equal protection.",
+                    correctCounters: [
+                        "Grutter recognized diversity as a compelling interest",
+                        "Holistic review with race as one factor can be narrowly tailored",
+                        "Educational benefits of diversity are well-documented",
+                        "Race-neutral alternatives may be insufficient",
+                        "Strict scrutiny is not 'fatal in fact'—race-conscious programs can survive"
+                    ],
+                    traps: [
+                        "Universities have unlimited discretion in admissions",
+                        "Race can be the sole factor if used for diversity",
+                        "Equal protection doesn't apply to higher education"
+                    ],
+                    modelAnswer: "Under Grutter v. Bollinger, universities may consider race as one factor in holistic admissions to achieve student diversity, a compelling educational interest. The educational benefits of diverse student body interaction are well-established. While the use of race triggers strict scrutiny, it can survive if narrowly tailored. A holistic approach using race as one of many factors, without a quota, is more likely to survive than race-neutral alternatives alone. However, Students for Fair Admissions (2023) significantly constrained or eliminated this reasoning, making affirmative action programs targeting racial diversity more vulnerable to challenge."
+                },
+                {
+                    id: 5,
+                    title: "Executive Power — Emergency Action",
+                    fact: "President issues executive order seizing steel mills during wartime, citing national security. Congress has not authorized the seizure.",
+                    given: "The President's commander-in-chief powers and the Take Care Clause authorize emergency action during wartime. National security demands immediate executive response.",
+                    correctCounters: [
+                        "Youngstown Zone 2/3—Congress hasn't authorized or implicitly rejected",
+                        "Youngstown Steel—nearly identical facts, SCOTUS struck it down",
+                        "Seizure of private property requires Congressional authorization",
+                        "Commander-in-chief power doesn't extend to domestic property seizures",
+                        "Take Care Clause requires executing existing laws, not creating new authority"
+                    ],
+                    traps: [
+                        "Presidents have unlimited wartime power",
+                        "National security overrides all constitutional limits",
+                        "Congress can't restrict commander-in-chief power"
+                    ],
+                    modelAnswer: "Youngstown Steel Co. v. Sawyer directly addresses this scenario. The Court held that the President's seizure of steel mills, even during the Korean War and based on national security, violated the separation of powers absent Congressional authorization. The commander-in-chief power is military in nature; it does not extend to domestic property seizure. The Take Care Clause authorizes executing laws passed by Congress, not unilaterally creating new governmental powers. The President occupies Youngstown's weakest position when acting contrary to Congress's will. National security concerns, while weighty, do not override the constitutional requirement for Congressional authorization over domestic property."
+                },
+                {
+                    id: 6,
+                    title: "Substantive Due Process",
+                    fact: "State bans a medical procedure with no exception for health circumstances. Patients challenge under substantive due process.",
+                    given: "There is no fundamental right to this specific medical procedure. Under rational basis review, the state's interest in health regulation is sufficient.",
+                    correctCounters: [
+                        "Bodily autonomy is deeply rooted in history",
+                        "Glucksberg test may recognize broader liberty interest",
+                        "Casey recognized undue burden standard for some medical rights",
+                        "Skinner v. Oklahoma—bodily integrity is fundamental",
+                        "Even under rational basis, total ban with no health exception may be irrational"
+                    ],
+                    traps: [
+                        "All medical procedures are fundamental rights",
+                        "States can never regulate medicine",
+                        "9th Amendment prohibits all such bans"
+                    ],
+                    modelAnswer: "A blanket medical ban with no health exception faces serious constitutional challenge. Bodily autonomy and integrity, established in Skinner v. Oklahoma, are deeply rooted liberty interests. Under the Glucksberg test, courts examine the historical tradition of the right and its fundamental nature. Casey v. Planned Parenthood applied heightened scrutiny to restrictions on abortion, recognizing a liberty interest in bodily autonomy. A total prohibition allowing no exception for health circumstances is likely irrational even under rational basis review. The state's interest in health regulation, while legitimate, must be balanced against the fundamental liberty interest in bodily integrity, particularly when the health of the patient is at stake."
+                },
+                {
+                    id: 7,
+                    title: "Federalism — 10th Amendment",
+                    fact: "Federal law requires state officials to conduct background checks on gun purchasers. State sheriff refuses, claiming commandeering.",
+                    given: "The Supremacy Clause requires state compliance with valid federal law. Background checks are within the commerce power.",
+                    correctCounters: [
+                        "Printz v. United States—can't commandeer state executive officials",
+                        "10th Amendment reserves police power to states",
+                        "Anti-commandeering doctrine prevents forcing states to administer federal programs",
+                        "Congress can incentivize but not compel state compliance",
+                        "Distinction between regulating individuals and commanding state officials"
+                    ],
+                    traps: [
+                        "States must always follow federal law",
+                        "10th Amendment was repealed by the 14th Amendment",
+                        "Commandeering is always permissible for public safety"
+                    ],
+                    modelAnswer: "Printz v. United States directly addresses this scenario, holding that Congress cannot commandeer state executive officials to administer federal programs. Although federal law is supreme over conflicting state law under the Supremacy Clause, Congress cannot compel states to execute federal law using their officials. The 10th Amendment reserves this authority to the states. Congress may instead regulate gun purchasers directly, incentivize states to participate, or deputize federal officials. The anti-commandeering doctrine protects state autonomy even in service of legitimate federal objectives. While the commerce power authorizes federal regulation, it does not extend to commandeering state machinery."
+                },
+                {
+                    id: 8,
+                    title: "State Action Doctrine",
+                    fact: "Private shopping mall bans political protesters from distributing pamphlets on mall property. Protesters claim First Amendment violation.",
+                    given: "The mall functions as a modern public square. Under Marsh v. Alabama, private property serving a public function constitutes state action.",
+                    correctCounters: [
+                        "Hudgens v. NLRB—private malls generally not state actors",
+                        "No government involvement in mall's decision",
+                        "Private property rights include right to exclude",
+                        "Marsh limited to company towns—government function",
+                        "No symbiotic relationship with government"
+                    ],
+                    traps: [
+                        "All businesses open to public are state actors",
+                        "Shopping malls are always public forums",
+                        "Private companies can never restrict speech"
+                    ],
+                    modelAnswer: "The shopping mall is a private actor, not subject to First Amendment constraints. While Marsh v. Alabama applied the First Amendment to a company town that performed governmental functions, Hudgens v. NLRB limited Marsh to that specific context. Modern shopping malls, despite their public-facing nature, are private property operated by private entities for profit. The Constitution restricts government action, not private conduct. The mall owners' right to exclude is a fundamental property right. There is no evidence of symbiotic relationship with government or government compulsion. The protesters have no First Amendment claim against a private mall, though they may have state law remedies if the state recognizes a public access right."
+                },
+                {
+                    id: 9,
+                    title: "Procedural Due Process",
+                    fact: "Public school student suspended for 10 days without any hearing. Student had allegedly threatened a teacher.",
+                    given: "The safety of students and teachers requires immediate action. Schools have broad disciplinary discretion.",
+                    correctCounters: [
+                        "Goss v. Lopez—even short suspensions require notice and opportunity to respond",
+                        "Student has property interest in public education",
+                        "Mathews balancing favors at least informal hearing",
+                        "10 days is substantial deprivation",
+                        "School could have held brief hearing before or shortly after suspension"
+                    ],
+                    traps: [
+                        "Schools have absolute disciplinary authority",
+                        "Students have no due process rights",
+                        "Threatening speech forfeits all constitutional protections"
+                    ],
+                    modelAnswer: "Goss v. Lopez establishes that even short-term suspensions require minimal procedural due process. Students possess a property interest in public education. A 10-day suspension constitutes a substantial deprivation requiring at least notice of charges and an opportunity to respond. The Mathews v. Eldridge balancing test requires balancing the student's interest against the government's interest. While school safety is important, the school could have provided a brief informal hearing before or immediately after suspension. Summary suspension without any hearing violates procedural due process, unless the student posed an immediate danger requiring urgent removal."
+                },
+                {
+                    id: 10,
+                    title: "Preemption",
+                    fact: "City passes strict emissions standards for cars exceeding federal EPA standards. Auto manufacturers challenge as preempted by federal Clean Air Act.",
+                    given: "Federal law occupies the field of emissions regulation. The city's stricter standards create a patchwork of regulations that burden interstate commerce.",
+                    correctCounters: [
+                        "Clean Air Act specifically allows California and adopter states to set stricter standards",
+                        "Presumption against preemption for traditional state police powers",
+                        "Environmental protection is core state function",
+                        "No express preemption in statute",
+                        "Savings clause may preserve state authority"
+                    ],
+                    traps: [
+                        "Federal law always preempts stricter state law",
+                        "Cities can never regulate beyond federal minimums",
+                        "Commerce Clause prohibits all differing state standards"
+                    ],
+                    modelAnswer: "The Clean Air Act expressly preserves state authority and specifically authorizes California and states adopting California standards to set stricter emissions rules than federal minimums. The statutory savings clause demonstrates Congressional intent to preserve state environmental regulation. Courts apply a presumption against preemption in areas of traditional state police power, particularly environmental protection. There is no express preemption language, and the statute's structure affirmatively permits state standards exceeding federal floors. The manufacturer's preemption argument fails given the Clean Air Act's explicit savings clause and Congressional authorization of state standards."
+                }
+            ],
+            criminal: [
+                {
+                    id: 1,
+                    title: "Self-Defense Proportionality",
+                    fact: "Victim threw a punch at Defendant. Defendant pulled a knife and stabbed Victim, killing him. Defendant claims self-defense.",
+                    given: "Defendant used deadly force in response to non-deadly force. Self-defense requires proportional response, and a knife against a fist is disproportionate.",
+                    correctCounters: [
+                        "Defendant may have reasonably feared escalation to deadly force",
+                        "Size disparity may justify deadly force against fists",
+                        "If Defendant was cornered with no retreat, force escalation is reasonable",
+                        "MPC allows honest belief standard—imperfect self-defense reduces to manslaughter",
+                        "Totality of circumstances—prior threats, Defendant's vulnerability"
+                    ],
+                    traps: [
+                        "Any physical attack justifies deadly force",
+                        "Self-defense is absolute once attacked",
+                        "A knife is not deadly force"
+                    ],
+                    modelAnswer: "The prosecutor's argument oversimplifies proportionality. Self-defense analysis requires examining totality of circumstances, not just the initial blow. A reasonable person facing a significantly stronger attacker may justifiably fear escalation to deadly force from a simple punch. Significant size and strength disparity can make a fist attack functionally equivalent to deadly force. Under the MPC, even if Defendant's belief was unreasonable, honest belief in necessity of deadly force reduces the offense to manslaughter. The circumstances—whether Defendant had ability to retreat, prior violence history, and relative physical capacities—matter to the reasonableness inquiry. A blanket rule against escalating force is untenable when the aggressor's force could prove lethal."
+                },
+                {
+                    id: 2,
+                    title: "Felony Murder",
+                    fact: "Defendant and accomplice rob a bank. During the getaway, accomplice runs a red light and kills a pedestrian. Defendant was in the passenger seat.",
+                    given: "Defendant didn't drive, didn't intend to kill anyone, and the death was caused solely by the accomplice's reckless driving, not the robbery itself.",
+                    correctCounters: [
+                        "Felony murder applies to deaths during inherently dangerous felonies",
+                        "Robbery is an enumerated felony in most statutes",
+                        "Death occurred in furtherance of and during the felony",
+                        "Co-felon liability—Defendant liable for accomplice's acts during felony",
+                        "Pinkerton doctrine—foreseeable consequence of conspiracy"
+                    ],
+                    traps: [
+                        "Felony murder requires intent to kill",
+                        "Only the driver can be charged",
+                        "Felony murder doesn't apply to traffic accidents"
+                    ],
+                    modelAnswer: "Felony murder doctrine applies to deaths that occur during the commission of an inherently dangerous felony, regardless of intent to kill. Robbery is a classic felony triggering felony murder liability. The death occurred in the res gestae of the robbery—during the getaway that is part of the felony's commission. Under co-felon liability and the Pinkerton doctrine, Defendant is liable for the accomplice's acts committed in furtherance of their joint criminal objective. That the death resulted from reckless driving rather than a violent act is irrelevant; causation is satisfied by the 'but-for' connection to the underlying felony. The getaway driving was foreseeable and in direct furtherance of the robbery."
+                },
+                {
+                    id: 3,
+                    title: "Voluntary Intoxication",
+                    fact: "Defendant, extremely drunk, broke into a house believing it was his own and fell asleep. He's charged with burglary (specific intent crime).",
+                    given: "Voluntary intoxication is no excuse for criminal behavior. Defendant chose to drink and is responsible for all consequences.",
+                    correctCounters: [
+                        "Voluntary intoxication can negate specific intent for burglary",
+                        "Defendant couldn't form intent to commit crime inside if he believed it was his home",
+                        "Mistake of fact negates mens rea",
+                        "MPC allows intoxication evidence for purpose/knowledge crimes",
+                        "Burglary requires purpose to commit crime therein—intoxication undermines this"
+                    ],
+                    traps: [
+                        "Intoxication is always a complete defense",
+                        "Drunk people can't commit crimes",
+                        "Mistake about which house negates actus reus"
+                    ],
+                    modelAnswer: "Voluntary intoxication can negate specific intent even if the defendant chose to become intoxicated. Burglary requires specific intent to commit a crime inside the dwelling. If the defendant was so intoxicated that he could not form this intent—believing he was entering his own home—intoxication evidence is admissible to negate the required mens rea. This is not a complete defense, but evidence of honest mistake negating purpose. The defendant's intoxication prevented him from forming the specific intent to commit a crime therein because he did not believe he was committing a trespass. The mistake of fact about identity of the house, combined with intoxication preventing formation of criminal purpose, negates an element of the offense."
+                },
+                {
+                    id: 4,
+                    title: "Entrapment",
+                    fact: "Undercover officer repeatedly pressured reluctant defendant over 6 months to sell drugs, providing the drugs and buyer. Defendant finally agreed after officer implied threats.",
+                    given: "Defendant ultimately chose to commit the crime. The government merely provided an opportunity, which defendant freely took.",
+                    correctCounters: [
+                        "Subjective test—Defendant was not predisposed after 6 months of reluctance",
+                        "Objective test—government conduct would induce normally law-abiding person",
+                        "6 months of pressure goes beyond providing opportunity",
+                        "Officer provided drugs—government manufactured the crime",
+                        "Implied threats constitute coercion beyond inducement"
+                    ],
+                    traps: [
+                        "Entrapment requires physical force by police",
+                        "Any willing participant can't claim entrapment",
+                        "Undercover operations are always entrapment"
+                    ],
+                    modelAnswer: "The defendant has a strong entrapment defense. Under the subjective test, defendant's six-month period of resistance demonstrates lack of predisposition. Under the objective test, the government's conduct—months of pressure, implied threats, and furnishing the drugs—would induce a normally law-abiding person to commit the crime. Entrapment does not require physical force; psychological pressure and coercion suffice. The government didn't merely provide opportunity; it manufactured the entire crime by supplying contraband and applying sustained pressure. The implied threats crossed the line from persuasion to coercion. A jury could find entrapment based on either test, particularly given the extended timeframe and intensity of government pressure."
+                },
+                {
+                    id: 5,
+                    title: "Accomplice Withdrawal",
+                    fact: "Defendant planned a robbery with two others. Night before, Defendant texted both saying 'I'm out, don't do this.' The others robbed the store anyway and someone was killed.",
+                    given: "Defendant helped plan the robbery and a text message is insufficient withdrawal. Under Pinkerton, Defendant is liable for foreseeable consequences of the conspiracy.",
+                    correctCounters: [
+                        "Timely withdrawal requires communicating to all co-conspirators—Defendant texted both",
+                        "Withdrawal was before the crime occurred",
+                        "Defendant affirmatively discouraged the crime",
+                        "MPC requires thwarting crime OR warning authorities; texting may suffice",
+                        "Withdrawal terminates Pinkerton liability going forward"
+                    ],
+                    traps: [
+                        "Withdrawal is never a defense to conspiracy",
+                        "Texts don't count as communication",
+                        "Defendant must physically prevent the crime"
+                    ],
+                    modelAnswer: "Effective withdrawal terminates Pinkerton liability for subsequent acts. Defendant communicated withdrawal to all co-conspirators by text the night before the robbery. The communication was timely, clear ('I'm out, don't do this'), and reached the relevant parties. Under the MPC and many jurisdictions, communication to co-conspirators suffices; physical prevention is not required. Withdrawal before the crime's commission is effective. Upon successful withdrawal, Defendant is no longer liable for acts in furtherance of the conspiracy. While Defendant remains liable for the conspiracy itself (as an agreement, a completed offense), the murder committed by others after withdrawal is not attributable to Defendant under Pinkerton. The text message constitutes adequate communication of withdrawal."
+                },
+                {
+                    id: 6,
+                    title: "Provocation / Voluntary Manslaughter",
+                    fact: "Defendant discovered spouse in bed with another person. Defendant left, drove around for 2 hours, then returned and killed the spouse. Charged with first-degree murder.",
+                    given: "Defendant was provoked by discovering spousal infidelity—a classic adequate provocation scenario. This should be voluntary manslaughter.",
+                    correctCounters: [
+                        "2-hour cooling period defeats heat of passion",
+                        "Reasonable person would have cooled off",
+                        "Premeditation can be inferred from leaving and returning",
+                        "Cooling time distinguishes immediate reaction from deliberate killing",
+                        "Modern trend limits adequate provocation for infidelity"
+                    ],
+                    traps: [
+                        "Infidelity is always adequate provocation",
+                        "Cooling time doesn't matter if Defendant was still angry",
+                        "Returning shows premeditation only if weapon was brought"
+                    ],
+                    modelAnswer: "Provocation is negated by the two-hour cooling period. Voluntary manslaughter requires that the defendant act in the immediate heat of passion without time for cool reflection. A reasonable person discovering infidelity might be provoked, but two hours affords ample time for cool reflection. Defendant's departure and two-hour absence demonstrate opportunity to cool off, which most would exercise. Upon returning and killing, Defendant's conduct shows premeditation and deliberation, inconsistent with heat-of-passion. The time gap defeats the provocation defense, and the return with apparent intent to kill suggests deliberate murder. While infidelity may provide context, the extended cooling period proves fatal to a voluntary manslaughter claim. This supports a finding of first-degree murder."
+                },
+                {
+                    id: 7,
+                    title: "Causation — Intervening Cause",
+                    fact: "Defendant stabbed Victim. Victim was taken to hospital where a doctor committed gross malpractice, and Victim died from the botched surgery, not the stab wound.",
+                    given: "The doctor's gross malpractice was a superseding intervening cause that breaks the chain of causation. Defendant's stab wound didn't kill the victim.",
+                    correctCounters: [
+                        "Medical treatment, even negligent, is foreseeable intervening cause",
+                        "'Take your victim as you find them'—including medical treatment received",
+                        "Defendant set the chain of events in motion",
+                        "But-for test: without stabbing, Victim wouldn't be in surgery",
+                        "Only extraordinary/unforeseeable treatment breaks causation"
+                    ],
+                    traps: [
+                        "Any intervening cause breaks causation",
+                        "Hospitals are always responsible for patient deaths",
+                        "Defendant can only be charged with the stabbing, not the death"
+                    ],
+                    modelAnswer: "The doctor's negligent treatment, even if grossly negligent, does not break the chain of causation as a superseding intervening cause. Courts distinguish between foreseeable intervening causes (which do not break causation) and extraordinary or bizarre intervening causes. Medical treatment, even if negligent, is a highly foreseeable consequence of stabbing—the victim naturally seeks hospital care. The doctrine of 'take your victim as you find them' extends to the medical care victims receive. But-for Defendant's stabbing, Victim would not have been in surgery. Only treatment that is so extraordinarily negligent or bizarre as to be unforeseeable breaks causation. Gross malpractice by a medical professional, while serious, remains foreseeable treatment. Defendant caused Victim's death through the stabbing."
+                },
+                {
+                    id: 8,
+                    title: "Conspiracy — Scope",
+                    fact: "A and B agree to rob a store. During the robbery, B spontaneously decides to sexually assault the store clerk. A had no knowledge B would do this.",
+                    given: "A only agreed to robbery. The sexual assault was B's independent act, outside the scope of the conspiracy. A cannot be liable for crimes not contemplated.",
+                    correctCounters: [
+                        "Under Pinkerton, liable for foreseeable crimes in furtherance",
+                        "Sexual assault may be foreseeable during violent felony",
+                        "A facilitated opportunity by participating in robbery",
+                        "Pinkerton uses 'natural and probable consequences' test",
+                        "BUT: MPC rejects Pinkerton—requires individual mens rea for each crime"
+                    ],
+                    traps: [
+                        "Co-conspirators liable for ALL crimes by anyone",
+                        "A must explicitly agree to assault",
+                        "Leaving store is sufficient withdrawal"
+                    ],
+                    modelAnswer: "This depends on the jurisdiction's approach. Under Pinkerton v. United States, A may be liable for B's sexual assault if it was a natural and probable consequence of the robbery conspiracy. A's participation in a violent felony facilitated the opportunity, and crimes of violence during robberies are arguably foreseeable. However, this liability is contested. The MPC explicitly rejects Pinkerton, requiring individual mens rea for each crime charged. Many jurisdictions limit Pinkerton to crimes in furtherance of the conspiracy's objective. Sexual assault, while potentially foreseeable during robbery, is arguably tangential to the robbery's objective and may not trigger co-felon liability. A's lack of knowledge and lack of agreement are significant factors limiting liability under both approaches. The result turns on the jurisdiction's theory of conspiracy."
+                },
+                {
+                    id: 9,
+                    title: "Mistake of Fact",
+                    fact: "Defendant took an expensive coat from a restaurant coat check, honestly believing it was his identical coat. Charged with larceny.",
+                    given: "Defendant took property that didn't belong to him and left the premises with it. The actus reus of larceny is complete.",
+                    correctCounters: [
+                        "Honest mistake of fact negates mens rea of larceny",
+                        "Defendant lacked trespassory intent—believed coat was his",
+                        "Larceny requires intent to take property of ANOTHER",
+                        "Good faith belief eliminates culpability even if unreasonable under MPC",
+                        "No trespassory taking if Defendant believed he had right to property"
+                    ],
+                    traps: [
+                        "Mistake is never a defense to property crimes",
+                        "Defendant should have checked the label",
+                        "Taking from coat check is always trespassory"
+                    ],
+                    modelAnswer: "An honest mistake of fact negates the required mens rea for larceny. Larceny requires specific intent to permanently deprive ANOTHER of his or her property. If Defendant honestly (even if unreasonably) believed the coat was his own, he lacked intent to take property of another. The mistake negates the trespassory taking element—Defendant did not intend to take someone else's coat. Under the MPC, even an unreasonable honest belief regarding ownership is a defense if the statute requires a culpable mental state. While the prosecution might argue Defendant should have checked the label, a genuine belief in ownership (however careless) negates the specific intent to deprive another. The coat-check context supports a claim of mistake; identical coats create legitimate confusion. No larceny conviction is warranted absent proof that Defendant knew or should have known the coat belonged to another."
+                },
+                {
+                    id: 10,
+                    title: "Depraved Heart Murder",
+                    fact: "Defendant fired a gun into an occupied apartment from outside, killing a resident. Defendant claims he was 'just trying to scare' someone who owed him money and didn't aim at anyone.",
+                    given: "Defendant had no intent to kill. He only intended to frighten. This is at most reckless endangerment, not murder.",
+                    correctCounters: [
+                        "Depraved heart murder doesn't require intent to kill",
+                        "Requires extreme recklessness manifesting wicked, depraved indifference to human life",
+                        "Firing into occupied apartment is textbook depraved heart",
+                        "Awareness that occupied apartment could contain people = conscious disregard",
+                        "'Just trying to scare' shows awareness of people inside"
+                    ],
+                    traps: [
+                        "Scaring someone is never murder",
+                        "Intent to frighten is same as negligence",
+                        "Depraved heart requires planning"
+                    ],
+                    modelAnswer: "This is depraved heart murder. Depraved heart murder requires neither intent to kill nor premeditation; it requires extreme recklessness manifesting willful and wicked indifference to human life. Firing a gun into an occupied apartment, regardless of subjective intent, demonstrates extreme recklessness. Defendant's awareness that people occupied the apartment ('just trying to scare') proves conscious disregard of extreme risk of death. Depraved heart liability is established when the defendant knows of extreme risk and acts with reckless abandon. Defendant's stated intent to frighten—implying knowledge of occupants—heightens the recklessness from simple to extreme. The act of firing a weapon into a dwelling is inherently reckless relative to human life. This is murder, not mere reckless endangerment. The subjective intent to scare rather than kill is irrelevant to depraved heart liability."
+                }
+            ]
+        };
+
+        // Game State
+        let currentCourse = 'property';
+        let currentScenarioIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let selectedChips = new Set();
+        let countdownEnabled = true;
+        let sayOutLoudEnabled = true;
+        let roundComplete = false;
+
+        // DOM Elements
+        const gameArea = document.getElementById('gameArea');
+        const tabs = document.querySelectorAll('.tab');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettings = document.getElementById('closeSettings');
+        const countdownToggle = document.getElementById('countdownToggle');
+        const sayOutLoudToggle = document.getElementById('sayOutLoudToggle');
+
+        // Event Listeners
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                if (!roundComplete) {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentCourse = e.target.dataset.course;
+                    currentScenarioIndex = 0;
+                    selectedChips.clear();
+                    renderGame();
+                }
+            });
+        });
+
+        settingsBtn.addEventListener('click', () => {
+            settingsModal.classList.remove('hidden');
+        });
+
+        closeSettings.addEventListener('click', () => {
+            settingsModal.classList.add('hidden');
+        });
+
+        countdownToggle.addEventListener('click', () => {
+            countdownEnabled = !countdownEnabled;
+            countdownToggle.classList.toggle('active');
+        });
+
+        sayOutLoudToggle.addEventListener('click', () => {
+            sayOutLoudEnabled = !sayOutLoudEnabled;
+            sayOutLoudToggle.classList.toggle('active');
+        });
+
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.add('hidden');
+            }
+        });
+
+        // Main Game Render
+        function renderGame() {
+            const scenarios = gameData[currentCourse];
+            const scenario = scenarios[currentScenarioIndex];
+
+            let html = `
+                <div class="scenario-counter">Scenario ${currentScenarioIndex + 1} of ${scenarios.length}</div>
+
+                <div class="score-bar">
+                    <div class="score-item">
+                        <div class="score-label">Score</div>
+                        <div class="score-value">${score}</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Streak</div>
+                        <div class="score-value"><span class="streak-icon">🔥</span> ${streak}</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Accuracy</div>
+                        <div class="score-value">${calculateAccuracy()}%</div>
+                    </div>
+                </div>
+
+                <div class="fact-card">
+                    <span class="card-label">Fact Pattern</span>
+                    <div class="fact-text">${scenario.fact}</div>
+                </div>
+
+                <div class="argument-card">
+                    <span class="card-label">Given Argument</span>
+                    <div class="argument-text">${scenario.given}</div>
+                </div>
+
+                <div class="chips-section">
+                    <span class="card-label">Select Your Counter-Arguments (${scenario.correctCounters.length} correct, ${scenario.traps.length} traps)</span>
+                    <div class="chips-grid" id="chipsGrid">
+            `;
+
+            // Shuffle all options
+            const allOptions = [...scenario.correctCounters, ...scenario.traps].sort(() => Math.random() - 0.5);
+
+            allOptions.forEach((option, idx) => {
+                const isSelected = selectedChips.has(option);
+                html += `
+                    <button class="chip ${isSelected ? 'selected' : ''}" data-option="${option}">
+                        ${option}
+                    </button>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+
+                <button class="button btn-primary" id="submitBtn">Submit Answer</button>
+            `;
+
+            gameArea.innerHTML = html;
+
+            // Attach chip click listeners
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const option = chip.dataset.option;
+                    if (selectedChips.has(option)) {
+                        selectedChips.delete(option);
+                        chip.classList.remove('selected');
+                    } else {
+                        selectedChips.add(option);
+                        chip.classList.add('selected');
+                    }
+                });
+            });
+
+            // Submit button
+            document.getElementById('submitBtn').addEventListener('click', () => {
+                if (sayOutLoudEnabled) {
+                    showSayOutLoudPrompt();
+                } else if (countdownEnabled) {
+                    showCountdown();
+                } else {
+                    evaluateRound();
+                }
+            });
+        }
+
+        function showSayOutLoudPrompt() {
+            const content = document.querySelector('.game-area');
+            content.innerHTML = `
+                <div class="fact-card" style="text-align: center; margin-top: 40px;">
+                    <div style="font-size: 24px; margin-bottom: 20px;">📣</div>
+                    <div class="card-label">Before Submitting</div>
+                    <div class="fact-text">Please state out loud why each of your selected points counters the given argument.</div>
+                    <div class="fact-text" style="margin-top: 20px; font-size: 13px; color: var(--text-secondary);">This helps activate deeper legal reasoning.</div>
+                    <button class="button btn-primary" id="readyBtn" style="margin-top: 40px;">Ready to Submit</button>
+                </div>
+            `;
+
+            document.getElementById('readyBtn').addEventListener('click', () => {
+                if (countdownEnabled) {
+                    showCountdown();
+                } else {
+                    evaluateRound();
+                }
+            });
+        }
+
+        function showCountdown() {
+            const overlay = document.createElement('div');
+            overlay.className = 'countdown-overlay';
+            let seconds = 10;
+
+            const updateCountdown = () => {
+                const progress = ((10 - seconds) / 10) * 360;
+                overlay.innerHTML = `
+                    <div class="countdown-circle" style="--progress: ${progress}deg">${seconds}</div>
+                    <div class="countdown-text">Read your selections again.<br>Are you sure?</div>
+                `;
+
+                if (seconds > 0) {
+                    seconds--;
+                    setTimeout(updateCountdown, 1000);
+                } else {
+                    overlay.remove();
+                    evaluateRound();
+                }
+            };
+
+            document.body.appendChild(overlay);
+            updateCountdown();
+
+            overlay.addEventListener('click', () => {
+                overlay.remove();
+                evaluateRound();
+            });
+        }
+
+        function evaluateRound() {
+            const scenarios = gameData[currentCourse];
+            const scenario = scenarios[currentScenarioIndex];
+
+            let correctCount = 0;
+            let trapCount = 0;
+            let missedCount = 0;
+            let roundScore = 0;
+
+            // Check correct counters
+            scenario.correctCounters.forEach(counter => {
+                if (selectedChips.has(counter)) {
+                    correctCount++;
+                    roundScore += 10;
+                }
+            });
+
+            // Check for traps
+            scenario.traps.forEach(trap => {
+                if (selectedChips.has(trap)) {
+                    trapCount++;
+                    roundScore -= 5;
+                }
+            });
+
+            // Check missed
+            missedCount = scenario.correctCounters.length - correctCount;
+
+            // Bonus for perfect
+            if (trapCount === 0 && missedCount === 0) {
+                roundScore += 20;
+            }
+
+            // Update score and streak
+            if (trapCount === 0 && missedCount === 0) {
+                streak++;
+            } else {
+                streak = 0;
+            }
+
+            score += roundScore;
+            roundComplete = true;
+
+            showResults(scenario, correctCount, trapCount, missedCount, roundScore);
+        }
+
+        function showResults(scenario, correctCount, trapCount, missedCount, roundScore) {
+            const allOptions = [...scenario.correctCounters, ...scenario.traps].sort(() => Math.random() - 0.5);
+
+            let html = `
+                <div class="results-screen">
+                    <div class="results-title">${trapCount === 0 && missedCount === 0 ? '💯 Perfect!' : trapCount === 0 ? '✓ Solid' : '⚠️ Review'}</div>
+                    <div class="results-score">${roundScore > 0 ? '+' : ''}${roundScore}</div>
+
+                    <div class="results-detail">
+                        <div class="detail-row">
+                            <div class="detail-label">Correct Points</div>
+                            <div class="detail-value correct">${correctCount}/${scenario.correctCounters.length}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Traps Selected</div>
+                            <div class="detail-value trap">${trapCount}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Missed Points</div>
+                            <div class="detail-value">${missedCount}</div>
+                        </div>
+                    </div>
+
+                    <div class="chips-grid" id="resultChips">
+            `;
+
+            allOptions.forEach(option => {
+                if (scenario.correctCounters.includes(option)) {
+                    const isSelected = selectedChips.has(option);
+                    const chipClass = isSelected ? 'chip correct' : 'chip missed';
+                    html += `<div class="${chipClass}">${option}</div>`;
+                } else {
+                    const isSelected = selectedChips.has(option);
+                    const chipClass = isSelected ? 'chip trap' : 'chip';
+                    html += `<div class="${chipClass}">${option}</div>`;
+                }
+            });
+
+            html += `
+                    </div>
+
+                    <div class="model-answer-card">
+                        <div class="model-answer-title">Model Counter-Argument (Exam Prose)</div>
+                        <div class="model-answer-text">${scenario.modelAnswer}</div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                        <button class="button btn-secondary" id="prevBtn" style="flex: 1;">← Previous</button>
+                        <button class="button btn-primary" id="nextBtn" style="flex: 1;">Next Scenario →</button>
+                    </div>
+                </div>
+            `;
+
+            gameArea.innerHTML = html;
+
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                const scenarios = gameData[currentCourse];
+                if (currentScenarioIndex < scenarios.length - 1) {
+                    currentScenarioIndex++;
+                    selectedChips.clear();
+                    roundComplete = false;
+                    renderGame();
+                } else {
+                    showCourseComplete();
+                }
+            });
+
+            document.getElementById('prevBtn').addEventListener('click', () => {
+                if (currentScenarioIndex > 0) {
+                    currentScenarioIndex--;
+                    selectedChips.clear();
+                    roundComplete = false;
+                    renderGame();
+                }
+            });
+        }
+
+        function showCourseComplete() {
+            gameArea.innerHTML = `
+                <div class="results-screen" style="margin-top: 60px;">
+                    <div class="results-title">Course Complete! 🎓</div>
+                    <div class="results-score">${score}</div>
+                    <div class="results-detail">
+                        <div class="detail-row">
+                            <div class="detail-label">Final Streak</div>
+                            <div class="detail-value">${streak}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Accuracy</div>
+                            <div class="detail-value">${calculateAccuracy()}%</div>
+                        </div>
+                    </div>
+                    <button class="button btn-primary" id="reviewBtn" style="margin-top: 40px; width: 100%;">Review Another Course</button>
+                </div>
+            `;
+
+            document.getElementById('reviewBtn').addEventListener('click', () => {
+                score = 0;
+                streak = 0;
+                currentScenarioIndex = 0;
+                selectedChips.clear();
+                roundComplete = false;
+                renderGame();
+            });
+        }
+
+        function calculateAccuracy() {
+            // Placeholder accuracy calculation
+            return streak > 0 ? Math.round((streak / (currentScenarioIndex + 1)) * 100) : 0;
+        }
+
+        // Initialize
+        renderGame();
+    </script>
+</body>
+</html>

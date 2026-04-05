@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law School Crossword</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            background: #0a0b12;
+            color: #e4e6eb;
+            padding: 16px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #2a2d3a;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .timer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 500;
+            color: #ffd700;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .puzzle-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .puzzle-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 8px 12px;
+            background: #1a1d2e;
+            border: 2px solid #3a3d4a;
+            color: #e4e6eb;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .puzzle-btn:hover {
+            border-color: #ffd700;
+            background: #252836;
+        }
+
+        .puzzle-btn.active {
+            background: #ffd700;
+            color: #0a0b12;
+            border-color: #ffd700;
+        }
+
+        .game-section {
+            margin-bottom: 24px;
+        }
+
+        .grid-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .grid {
+            display: inline-grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            background: #1a1d2e;
+            padding: 0;
+            border: 2px solid #3a3d4a;
+        }
+
+        .cell {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2a2d3a;
+            border: 1px solid #3a3d4a;
+            color: #e4e6eb;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .cell.black {
+            background: #0a0b12;
+            cursor: default;
+            border-color: #0a0b12;
+        }
+
+        .cell.black::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #3a3d4a;
+            border-radius: 50%;
+        }
+
+        .cell:not(.black):hover {
+            background: #353956;
+        }
+
+        .cell.selected {
+            background: #ffd700;
+            color: #0a0b12;
+            border: 2px solid #ffd700;
+        }
+
+        .cell.word-highlight {
+            background: #4a4d5a;
+            color: #e4e6eb;
+        }
+
+        .cell.error {
+            animation: error-flash 0.5s;
+        }
+
+        @keyframes error-flash {
+            0%, 100% { background: #2a2d3a; }
+            50% { background: #cc3333; }
+        }
+
+        .cell-number {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #999;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #ffd700;
+            color: #0a0b12;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #ffed4e;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .button-secondary {
+            background: #3a3d4a;
+            color: #e4e6eb;
+        }
+
+        .button-secondary:hover {
+            background: #4a4d5a;
+        }
+
+        .clues-section {
+            margin-bottom: 20px;
+        }
+
+        .clues-header {
+            font-size: 13px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        .clues-column {
+            margin-bottom: 16px;
+        }
+
+        .clues-column:last-child {
+            margin-bottom: 0;
+        }
+
+        .clue {
+            padding: 10px 12px;
+            background: #1a1d2e;
+            border-left: 3px solid #3a3d4a;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .clue:hover {
+            background: #252836;
+            border-left-color: #ffd700;
+        }
+
+        .clue.active {
+            background: #2a4a4a;
+            border-left-color: #4dd0e1;
+        }
+
+        .clue-number {
+            font-weight: 700;
+            color: #ffd700;
+            margin-right: 6px;
+        }
+
+        .clue-text {
+            color: #b0b4c0;
+        }
+
+        .message {
+            text-align: center;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #1a3a2a;
+            color: #4dd0e1;
+        }
+
+        .message.error {
+            background: #3a1a1a;
+            color: #ff6b6b;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .key {
+            padding: 8px;
+            background: #1a1d2e;
+            border: 1px solid #3a3d4a;
+            color: #e4e6eb;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .key:active {
+            background: #ffd700;
+            color: #0a0b12;
+        }
+
+        .key:hover:not(:active) {
+            background: #252836;
+            border-color: #ffd700;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            .cell {
+                width: 52px;
+                height: 52px;
+                font-size: 18px;
+            }
+
+            .clue {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="title">Law Crossword</div>
+            <div class="timer" id="timer">00:00</div>
+        </header>
+
+        <div class="puzzle-selector" id="puzzleSelector"></div>
+
+        <div class="game-section">
+            <div id="message"></div>
+
+            <div class="grid-wrapper">
+                <div class="grid" id="grid"></div>
+            </div>
+
+            <div class="controls">
+                <button onclick="app.checkAnswers()">Check</button>
+                <button class="button-secondary" onclick="app.clearGrid()">Clear</button>
+                <button class="button-secondary" onclick="app.revealAnswers()">Reveal</button>
+            </div>
+
+            <div class="clues-section">
+                <div class="clues-header">Across</div>
+                <div class="clues-column" id="acrossClues"></div>
+
+                <div class="clues-header" style="margin-top: 16px;">Down</div>
+                <div class="clues-column" id="downClues"></div>
+            </div>
+        </div>
+
+        <div class="keyboard" id="keyboard"></div>
+    </div>
+
+    <script>
+        const PUZZLES = [
+            {
+                title: 'Puzzle 1: Criminal Law',
+                grid: [
+                    ['F', 'E', 'L', 'O', 'N'],
+                    ['E', '#', 'I', '#', 'U'],
+                    ['E', 'S', 'E', '#', 'L'],
+                    ['S', '#', 'N', '#', 'L'],
+                    ['T', 'O', 'R', 'T', 'S']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Person convicted of serious crime', answer: 'FELON', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Mental state in crime (abbr.)', answer: 'ESE', start: [2, 1], length: 3 },
+                        { num: 8, clue: 'Trial location (abbr.)', answer: 'SEN', start: [3, 1], length: 3 },
+                        { num: 9, clue: 'Civil wrongs', answer: 'TORTS', start: [4, 0], length: 5 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Professional charge', answer: 'FEE', start: [0, 0], length: 3 },
+                        { num: 2, clue: 'Witness at trial', answer: 'EESS', start: [0, 1], length: 5 },
+                        { num: 3, clue: 'Legal document', answer: 'LIEN', start: [0, 2], length: 4 },
+                        { num: 4, clue: 'Illegal act', answer: 'OFFENCE', start: [0, 3], length: 6 },
+                        { num: 5, clue: 'Punishment or damages', answer: 'ULUS', start: [0, 4], length: 4 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 2: Property Law',
+                grid: [
+                    ['T', 'I', 'T', 'L', 'E'],
+                    ['I', '#', 'R', '#', 'S'],
+                    ['T', 'E', 'N', 'A', 'N'],
+                    ['L', '#', 'A', '#', 'C'],
+                    ['E', 'S', 'N', 'C', 'E']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Ownership proof in property', answer: 'TITLE', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'One leasing property', answer: 'TENANT', start: [2, 0], length: 6 },
+                        { num: 8, clue: 'Real property features (abbr.)', answer: 'ESN', start: [4, 0], length: 3 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Secured claim (abbr.)', answer: 'TIRE', start: [0, 0], length: 4 },
+                        { num: 2, clue: 'Possession rights', answer: 'ISEN', start: [0, 1], length: 4 },
+                        { num: 3, clue: 'Land interest', answer: 'TRAN', start: [0, 2], length: 4 },
+                        { num: 4, clue: 'Right to use (abbr.)', answer: 'LSC', start: [0, 3], length: 3 },
+                        { num: 5, clue: 'Transfer document', answer: 'ESNE', start: [0, 4], length: 4 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 3: Contracts',
+                grid: [
+                    ['O', 'F', 'F', 'E', 'R'],
+                    ['F', '#', 'R', '#', 'A'],
+                    ['T', 'E', 'R', 'M', 'S'],
+                    ['E', '#', 'U', '#', 'S'],
+                    ['R', 'U', 'S', 'E', 'S']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Proposal to form contract', answer: 'OFFER', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Written requirements', answer: 'TERMS', start: [2, 0], length: 5 },
+                        { num: 8, clue: 'Contract violations', answer: 'RUSES', start: [4, 0], length: 5 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Written agreement', answer: 'OFFER', start: [0, 0], length: 5 },
+                        { num: 2, clue: 'Promise giver', answer: 'FET', start: [0, 1], length: 3 },
+                        { num: 3, clue: 'Contractual conditions', answer: 'FIRMS', start: [0, 2], length: 5 },
+                        { num: 4, clue: 'Agreement terms', answer: 'EMAS', start: [0, 3], length: 4 },
+                        { num: 5, clue: 'Enforceable agreement', answer: 'RASS', start: [0, 4], length: 4 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 4: Civil Procedure',
+                grid: [
+                    ['S', 'U', 'I', 'T', 'S'],
+                    ['U', '#', 'O', '#', 'T'],
+                    ['M', 'O', 'T', 'I', 'O'],
+                    ['M', '#', 'I', '#', 'N'],
+                    ['O', 'N', 'S', 'O', 'N']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Legal claims (plural)', answer: 'SUITS', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Court request', answer: 'MOTION', start: [2, 0], length: 6 },
+                        { num: 8, clue: 'Final decree (abbr.)', answer: 'ONSO', start: [4, 0], length: 4 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Lawsuit participant', answer: 'SUMO', start: [0, 0], length: 4 },
+                        { num: 2, clue: 'Plaintiff or defendant', answer: 'UTIN', start: [0, 1], length: 4 },
+                        { num: 3, clue: 'Court hearing', answer: 'ITIO', start: [0, 2], length: 4 },
+                        { num: 4, clue: 'Initial response', answer: 'TION', start: [0, 3], length: 4 },
+                        { num: 5, clue: 'Final verdict (abbr.)', answer: 'STON', start: [0, 4], length: 4 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 5: Commerce Clause',
+                grid: [
+                    ['L', 'O', 'P', 'E', 'Z'],
+                    ['O', '#', 'O', '#', 'A'],
+                    ['P', 'O', 'W', 'E', 'R'],
+                    ['E', '#', 'R', '#', 'C'],
+                    ['Z', 'A', 'R', 'C', 'E']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Gun regulation case (last name)', answer: 'LOPEZ', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Federal legislative authority', answer: 'POWER', start: [2, 0], length: 5 },
+                        { num: 8, clue: 'Interstate trade regulation', answer: 'ZARCE', start: [4, 0], length: 5 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Not narrow (Commerce Clause scope)', answer: 'LOPEZ', start: [0, 0], length: 5 },
+                        { num: 2, clue: 'Commerce across borders', answer: 'OOEA', start: [0, 1], length: 4 },
+                        { num: 3, clue: 'Congress power doctrine', answer: 'POWER', start: [0, 2], length: 5 },
+                        { num: 4, clue: 'Wickard farm case subject', answer: 'EZRC', start: [0, 3], length: 4 },
+                        { num: 5, clue: 'Raich medical cannabis case (last name part)', answer: 'ZARC', start: [0, 4], length: 4 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 6: Estates in Land',
+                grid: [
+                    ['L', 'E', 'A', 'S', 'E'],
+                    ['E', '#', 'R', '#', 'A'],
+                    ['A', 'W', 'A', 'S', 'T'],
+                    ['S', '#', 'T', '#', 'E'],
+                    ['E', 'T', 'T', 'E', 'D']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Long-term property interest', answer: 'LEASE', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Damage to property by tenant', answer: 'AWAST', start: [2, 0], length: 5 },
+                        { num: 8, clue: 'Made permanent (estate)', answer: 'ETTED', start: [4, 0], length: 5 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Deed of transfer', answer: 'LEASE', start: [0, 0], length: 5 },
+                        { num: 2, clue: 'Grant to property (abbr.)', answer: 'EAE', start: [0, 1], length: 3 },
+                        { num: 3, clue: 'Property proof document', answer: 'ARTT', start: [0, 2], length: 4 },
+                        { num: 4, clue: 'Legal possession', answer: 'SEET', start: [0, 3], length: 4 },
+                        { num: 5, clue: 'Inheritable right', answer: 'EATD', start: [0, 4], length: 4 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 7: Mens Rea',
+                grid: [
+                    ['G', 'U', 'I', 'L', 'T'],
+                    ['U', '#', 'N', '#', 'O'],
+                    ['I', 'N', 'T', 'E', 'N'],
+                    ['L', '#', 'E', '#', 'O'],
+                    ['T', 'O', 'N', 'O', 'S']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Culpability in crime', answer: 'GUILT', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Subjective purpose in crime', answer: 'INTEN', start: [2, 0], length: 5 },
+                        { num: 8, clue: 'Knowing acts (plural)', answer: 'TONOS', start: [4, 0], length: 5 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Criminal mind state', answer: 'GUILT', start: [0, 0], length: 5 },
+                        { num: 2, clue: 'Aware of risk (reckless)', answer: 'UIEO', start: [0, 1], length: 4 },
+                        { num: 3, clue: 'Deliberate act (criminal)', answer: 'INTEN', start: [0, 2], length: 5 },
+                        { num: 4, clue: 'Unintentional harm', answer: 'LEON', start: [0, 3], length: 4 },
+                        { num: 5, clue: 'Knowing fault element', answer: 'TONOS', start: [0, 4], length: 5 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 8: Due Process',
+                grid: [
+                    ['H', 'E', 'A', 'R', 'D'],
+                    ['E', '#', 'O', '#', 'E'],
+                    ['A', 'R', 'O', 'O', 'T'],
+                    ['R', '#', 'T', '#', 'E'],
+                    ['D', 'E', 'T', 'E', 'D']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Fundamental right (constitutional)', answer: 'HEARD', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Established legal tradition', answer: 'AROOT', start: [2, 0], length: 5 },
+                        { num: 8, clue: 'Substantive right (legal)', answer: 'DETED', start: [4, 0], length: 5 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Right to be heard', answer: 'HEARD', start: [0, 0], length: 5 },
+                        { num: 2, clue: 'Fair legal proceeding', answer: 'EORE', start: [0, 1], length: 4 },
+                        { num: 3, clue: 'Constitutional guarantee', answer: 'AOOT', start: [0, 2], length: 4 },
+                        { num: 4, clue: 'Tradition (deeply rooted)', answer: 'RETE', start: [0, 3], length: 4 },
+                        { num: 5, clue: 'Liberty interest (law)', answer: 'DETED', start: [0, 4], length: 5 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 9: Adverse Possession',
+                grid: [
+                    ['E', 'N', 'T', 'R', 'Y'],
+                    ['N', '#', 'A', '#', 'O'],
+                    ['T', 'A', 'C', 'K', 'S'],
+                    ['R', '#', 'K', '#', 'P'],
+                    ['Y', 'O', 'S', 'P', 'E']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Initial possession action', answer: 'ENTRY', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Continuous possession period', answer: 'TACKS', start: [2, 0], length: 5 },
+                        { num: 8, clue: 'Unsettled land (legal)', answer: 'YOSPE', start: [4, 0], length: 5 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Open possession requirement', answer: 'ENTRY', start: [0, 0], length: 5 },
+                        { num: 2, clue: 'Continued occupation', answer: 'NAEO', start: [0, 1], length: 4 },
+                        { num: 3, clue: 'Tacking periods (legal)', answer: 'TACKS', start: [0, 2], length: 5 },
+                        { num: 4, clue: 'Statutory holding period', answer: 'RRKP', start: [0, 3], length: 4 },
+                        { num: 5, clue: 'Owner ousted (archaic)', answer: 'YOSPE', start: [0, 4], length: 5 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 10: Equal Protection',
+                grid: [
+                    ['R', 'A', 'C', 'E', 'S'],
+                    ['A', '#', 'R', '#', 'T'],
+                    ['C', 'R', 'A', 'I', 'G'],
+                    ['E', '#', 'I', '#', 'E'],
+                    ['S', 'T', 'G', 'E', 'S']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Strict scrutiny suspect class', answer: 'RACES', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Sex discrimination case (Craig v. Boren)', answer: 'CRAIG', start: [2, 0], length: 5 },
+                        { num: 8, clue: 'Affirmative action case last name', answer: 'STGES', start: [4, 0], length: 5 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Protected classification (legal)', answer: 'RACES', start: [0, 0], length: 5 },
+                        { num: 2, clue: 'Tier of review (rational)', answer: 'AART', start: [0, 1], length: 4 },
+                        { num: 3, clue: 'Heightened review standard', answer: 'CRAIG', start: [0, 2], length: 5 },
+                        { num: 4, clue: 'Basic scrutiny level', answer: 'EGIE', start: [0, 3], length: 4 },
+                        { num: 5, clue: 'Sex and race categories', answer: 'STGES', start: [0, 4], length: 5 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 11: Homicide',
+                grid: [
+                    ['D', 'E', 'A', 'T', 'H'],
+                    ['E', '#', 'R', '#', 'A'],
+                    ['A', 'R', 'S', 'O', 'N'],
+                    ['T', '#', 'O', '#', 'E'],
+                    ['H', 'A', 'N', 'E', 'D']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Human killing unlawfully', answer: 'DEATH', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Intentional property destruction', answer: 'ARSON', start: [2, 0], length: 5 },
+                        { num: 8, clue: 'Slain person (poetic)', answer: 'HANED', start: [4, 0], length: 5 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Unlawful killing', answer: 'DEATH', start: [0, 0], length: 5 },
+                        { num: 2, clue: 'Heat of passion killing', answer: 'EAAE', start: [0, 1], length: 4 },
+                        { num: 3, clue: 'Premeditated kill', answer: 'ARSON', start: [0, 2], length: 5 },
+                        { num: 4, clue: 'Malicious act (legal)', answer: 'TOEE', start: [0, 3], length: 4 },
+                        { num: 5, clue: 'Victim of killing', answer: 'HANED', start: [0, 4], length: 5 }
+                    ]
+                }
+            },
+            {
+                title: 'Puzzle 12: First Amendment',
+                grid: [
+                    ['P', 'R', 'E', 'S', 'S'],
+                    ['R', '#', 'O', '#', 'P'],
+                    ['E', 'O', 'R', 'U', 'M'],
+                    ['S', '#', 'U', '#', 'E'],
+                    ['S', 'P', 'M', 'E', 'D']
+                ],
+                clues: {
+                    across: [
+                        { num: 1, clue: 'Media freedom right', answer: 'PRESS', start: [0, 0], length: 5 },
+                        { num: 6, clue: 'Public meeting place (legal)', answer: 'EORUM', start: [2, 0], length: 5 },
+                        { num: 8, clue: 'Restricted speech (legal)', answer: 'SPMED', start: [4, 0], length: 5 }
+                    ],
+                    down: [
+                        { num: 1, clue: 'Publication freedom', answer: 'PRESS', start: [0, 0], length: 5 },
+                        { num: 2, clue: 'Prior restraint (censorship)', answer: 'ROPP', start: [0, 1], length: 4 },
+                        { num: 3, clue: 'Assembly and speech guarantee', answer: 'EORUM', start: [0, 2], length: 5 },
+                        { num: 4, clue: 'Speech restriction doctrine', answer: 'SUEE', start: [0, 3], length: 4 },
+                        { num: 5, clue: 'Expression right (Amendment 1)', answer: 'SPMED', start: [0, 4], length: 5 }
+                    ]
+                }
+            }
+        ];
+
+        class CrosswordApp {
+            constructor() {
+                this.currentPuzzle = 0;
+                this.selected = null;
+                this.revealed = false;
+                this.startTime = null;
+                this.timerInterval = null;
+
+                this.init();
+            }
+
+            init() {
+                this.loadPuzzle(0);
+                this.renderPuzzleSelector();
+                this.renderKeyboard();
+                this.startTimer();
+                document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+            }
+
+            loadPuzzle(index) {
+                this.currentPuzzle = index;
+                this.userGrid = PUZZLES[index].grid.map(row => row.map(cell => cell === '#' ? '#' : ''));
+                this.revealed = false;
+                this.selected = null;
+                this.startTime = Date.now();
+
+                this.renderGrid();
+                this.renderClues();
+                this.updatePuzzleButtons();
+                this.clearMessage();
+            }
+
+            renderPuzzleSelector() {
+                const selector = document.getElementById('puzzleSelector');
+                selector.innerHTML = PUZZLES.map((p, i) =>
+                    `<button class="puzzle-btn ${i === 0 ? 'active' : ''}" onclick="app.loadPuzzle(${i})">${p.title}</button>`
+                ).join('');
+            }
+
+            updatePuzzleButtons() {
+                document.querySelectorAll('.puzzle-btn').forEach((btn, i) => {
+                    btn.classList.toggle('active', i === this.currentPuzzle);
+                });
+            }
+
+            renderGrid() {
+                const grid = document.getElementById('grid');
+                const puzzle = PUZZLES[this.currentPuzzle];
+                const solution = puzzle.grid;
+                const cellNumbers = this.calculateCellNumbers();
+
+                grid.innerHTML = '';
+
+                for (let r = 0; r < 5; r++) {
+                    for (let c = 0; c < 5; c++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        if (solution[r][c] === '#') {
+                            cell.classList.add('black');
+                        } else {
+                            cell.textContent = this.userGrid[r][c] || '';
+                            cell.onclick = () => this.selectCell(r, c);
+
+                            if (cellNumbers[r][c]) {
+                                const numSpan = document.createElement('div');
+                                numSpan.className = 'cell-number';
+                                numSpan.textContent = cellNumbers[r][c];
+                                cell.appendChild(numSpan);
+                            }
+                        }
+                        grid.appendChild(cell);
+                    }
+                }
+
+                this.highlightSelectedWord();
+            }
+
+            calculateCellNumbers() {
+                const puzzle = PUZZLES[this.currentPuzzle];
+                const grid = puzzle.grid;
+                const numbers = Array(5).fill(null).map(() => Array(5).fill(null));
+                let num = 1;
+
+                for (let r = 0; r < 5; r++) {
+                    for (let c = 0; c < 5; c++) {
+                        if (grid[r][c] !== '#') {
+                            const startsAcross = c === 0 || grid[r][c - 1] === '#';
+                            const startsDown = r === 0 || grid[r - 1][c] === '#';
+                            if (startsAcross || startsDown) {
+                                numbers[r][c] = num++;
+                            }
+                        }
+                    }
+                }
+                return numbers;
+            }
+
+            selectCell(r, c) {
+                this.selected = { r, c };
+                this.renderGrid();
+            }
+
+            highlightSelectedWord() {
+                if (!this.selected) return;
+
+                const cells = document.querySelectorAll('.cell');
+                const selectedIdx = this.selected.r * 5 + this.selected.c;
+                cells[selectedIdx].classList.add('selected');
+
+                // Get all cells in the selected word(s)
+                const acrossWord = this.getWord(this.selected.r, this.selected.c, 'across');
+                const downWord = this.getWord(this.selected.r, this.selected.c, 'down');
+
+                acrossWord.forEach(([r, c]) => {
+                    const idx = r * 5 + c;
+                    if (idx !== selectedIdx) cells[idx].classList.add('word-highlight');
+                });
+
+                downWord.forEach(([r, c]) => {
+                    const idx = r * 5 + c;
+                    if (idx !== selectedIdx) cells[idx].classList.add('word-highlight');
+                });
+            }
+
+            getWord(r, c, direction) {
+                const puzzle = PUZZLES[this.currentPuzzle];
+                const grid = puzzle.grid;
+                const cells = [];
+
+                if (direction === 'across') {
+                    let start = c;
+                    while (start > 0 && grid[r][start - 1] !== '#') start--;
+                    for (let i = start; i < 5 && grid[r][i] !== '#'; i++) {
+                        cells.push([r, i]);
+                    }
+                } else {
+                    let start = r;
+                    while (start > 0 && grid[start - 1][c] !== '#') start--;
+                    for (let i = start; i < 5 && grid[i][c] !== '#'; i++) {
+                        cells.push([i, c]);
+                    }
+                }
+
+                return cells;
+            }
+
+            handleKeyPress(e) {
+                if (!this.selected) return;
+
+                const key = e.key.toUpperCase();
+                const puzzle = PUZZLES[this.currentPuzzle];
+                const grid = puzzle.grid;
+                const { r, c } = this.selected;
+
+                if (key === 'BACKSPACE' || key === 'DELETE') {
+                    e.preventDefault();
+                    this.userGrid[r][c] = '';
+                    this.movePrev();
+                } else if (/^[A-Z]$/.test(key)) {
+                    e.preventDefault();
+                    this.userGrid[r][c] = key;
+                    this.moveNext();
+                }
+
+                this.renderGrid();
+            }
+
+            moveNext() {
+                if (!this.selected) return;
+                let { r, c } = this.selected;
+                const puzzle = PUZZLES[this.currentPuzzle];
+                const grid = puzzle.grid;
+
+                do {
+                    c++;
+                    if (c >= 5) {
+                        c = 0;
+                        r++;
+                        if (r >= 5) r = 0;
+                    }
+                } while (grid[r][c] === '#');
+
+                this.selected = { r, c };
+            }
+
+            movePrev() {
+                if (!this.selected) return;
+                let { r, c } = this.selected;
+                const puzzle = PUZZLES[this.currentPuzzle];
+                const grid = puzzle.grid;
+
+                do {
+                    c--;
+                    if (c < 0) {
+                        c = 4;
+                        r--;
+                        if (r < 0) r = 4;
+                    }
+                } while (grid[r][c] === '#');
+
+                this.selected = { r, c };
+            }
+
+            renderKeyboard() {
+                const keyboard = document.getElementById('keyboard');
+                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+                keyboard.innerHTML = letters.map(letter =>
+                    `<div class="key" onclick="app.typeKey('${letter}')">${letter}</div>`
+                ).join('') +
+                `<div class="key" style="grid-column: span 7;" onclick="app.deleteLetter()">Delete</div>`;
+            }
+
+            typeKey(letter) {
+                if (!this.selected) return;
+                const { r, c } = this.selected;
+                this.userGrid[r][c] = letter;
+                this.moveNext();
+                this.renderGrid();
+            }
+
+            deleteLetter() {
+                if (!this.selected) return;
+                const { r, c } = this.selected;
+                this.userGrid[r][c] = '';
+                this.movePrev();
+                this.renderGrid();
+            }
+
+            renderClues() {
+                const puzzle = PUZZLES[this.currentPuzzle];
+                const acrossClues = document.getElementById('acrossClues');
+                const downClues = document.getElementById('downClues');
+
+                acrossClues.innerHTML = puzzle.clues.across.map(clue =>
+                    `<div class="clue" onclick="app.jumpToClue(${clue.start[0]}, ${clue.start[1]})">
+                        <span class="clue-number">${clue.num}.</span>
+                        <span class="clue-text">${clue.clue}</span>
+                    </div>`
+                ).join('');
+
+                downClues.innerHTML = puzzle.clues.down.map(clue =>
+                    `<div class="clue" onclick="app.jumpToClue(${clue.start[0]}, ${clue.start[1]})">
+                        <span class="clue-number">${clue.num}.</span>
+                        <span class="clue-text">${clue.clue}</span>
+                    </div>`
+                ).join('');
+            }
+
+            jumpToClue(r, c) {
+                this.selected = { r, c };
+                this.renderGrid();
+            }
+
+            clearGrid() {
+                this.userGrid = PUZZLES[this.currentPuzzle].grid.map(row =>
+                    row.map(cell => cell === '#' ? '#' : '')
+                );
+                this.renderGrid();
+                this.clearMessage();
+            }
+
+            revealAnswers() {
+                const puzzle = PUZZLES[this.currentPuzzle];
+                this.userGrid = puzzle.grid.map(row => [...row]);
+                this.revealed = true;
+                this.renderGrid();
+                this.showMessage('Puzzle revealed!', 'success');
+            }
+
+            checkAnswers() {
+                const puzzle = PUZZLES[this.currentPuzzle];
+                const solution = puzzle.grid;
+                let correct = true;
+                const cells = document.querySelectorAll('.cell');
+
+                for (let r = 0; r < 5; r++) {
+                    for (let c = 0; c < 5; c++) {
+                        const idx = r * 5 + c;
+                        if (solution[r][c] !== '#' && this.userGrid[r][c] !== solution[r][c]) {
+                            correct = false;
+                            cells[idx].classList.add('error');
+                        }
+                    }
+                }
+
+                if (correct) {
+                    this.showMessage('Perfect! Puzzle solved!', 'success');
+                } else {
+                    this.showMessage('Some letters are incorrect.', 'error');
+                }
+            }
+
+            showMessage(text, type) {
+                const msg = document.getElementById('message');
+                msg.textContent = text;
+                msg.className = `message ${type}`;
+            }
+
+            clearMessage() {
+                document.getElementById('message').textContent = '';
+                document.getElementById('message').className = '';
+            }
+
+            startTimer() {
+                this.startTime = Date.now();
+                if (this.timerInterval) clearInterval(this.timerInterval);
+
+                this.timerInterval = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    document.getElementById('timer').textContent =
+                        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                }, 1000);
+            }
+        }
+
+        const app = new CrosswordApp();
+    </script>
+</body>
+</html>

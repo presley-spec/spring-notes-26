@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Timeline - Law Study Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0b12;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            background: #13141f;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 24px;
+            min-height: 500px;
+        }
+
+        /* Thread Selector Screen */
+        .thread-selector {
+            display: grid;
+            gap: 24px;
+        }
+
+        .course-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid;
+        }
+
+        .conlaw-section h2 {
+            color: #667eea;
+            border-color: #667eea;
+        }
+
+        .crimlaw-section h2 {
+            color: #d946a6;
+            border-color: #d946a6;
+        }
+
+        .property-section h2 {
+            color: #f97316;
+            border-color: #f97316;
+        }
+
+        .thread-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .thread-card {
+            padding: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .thread-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: currentColor;
+        }
+
+        .conlaw-card {
+            color: #667eea;
+        }
+
+        .crimlaw-card {
+            color: #d946a6;
+        }
+
+        .property-card {
+            color: #f97316;
+        }
+
+        .thread-card-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .thread-card-meta {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        /* Game Screen */
+        .game-screen {
+            display: none;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            flex: 1;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #e0e0e0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .cases-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+            min-height: 300px;
+        }
+
+        .case-card {
+            padding: 16px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .case-card.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .case-card.selected {
+            border-color: #fbbf24;
+            background: rgba(251, 191, 36, 0.15);
+        }
+
+        .case-card.correct {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .case-card.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .drag-handle {
+            color: #667eea;
+            font-size: 20px;
+            flex-shrink: 0;
+            cursor: grab;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .case-content {
+            flex: 1;
+        }
+
+        .case-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #e0e0e0;
+        }
+
+        .case-holding {
+            font-size: 13px;
+            opacity: 0.6;
+            line-height: 1.4;
+        }
+
+        .arrow-indicator {
+            font-size: 18px;
+            color: #ef4444;
+            flex-shrink: 0;
+        }
+
+        .mobile-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .arrow-button {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            color: #667eea;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .arrow-button:hover {
+            background: rgba(102, 126, 234, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .submit-button, .reset-button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .reset-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .reset-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Results Screen */
+        .results-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score-display {
+            margin: 32px 0;
+        }
+
+        .score-percentage {
+            font-family: 'Playfair Display', serif;
+            font-size: 72px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .score-label {
+            font-size: 16px;
+            color: #999;
+            margin-bottom: 24px;
+        }
+
+        .doctrinal-story {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .doctrinal-story h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #667eea;
+        }
+
+        .doctrinal-story p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #c0c0c0;
+        }
+
+        .results-buttons {
+            display: flex;
+            gap: 12px;
+            flex-direction: column;
+        }
+
+        .primary-button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .secondary-button {
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #e0e0e0;
+        }
+
+        .secondary-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Scrollbar styling */
+        .cases-container::-webkit-scrollbar,
+        .doctrinal-story::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cases-container::-webkit-scrollbar-track,
+        .doctrinal-story::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .cases-container::-webkit-scrollbar-thumb,
+        .doctrinal-story::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.4);
+            border-radius: 3px;
+        }
+
+        .cases-container::-webkit-scrollbar-thumb:hover,
+        .doctrinal-story::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.6);
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .game-header h2 {
+                font-size: 18px;
+            }
+
+            .submit-button, .reset-button {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .score-percentage {
+                font-size: 56px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Case Timeline</h1>
+            <p>Organize landmark cases chronologically and learn the doctrinal story</p>
+        </div>
+
+        <div class="content">
+            <!-- Thread Selector Screen -->
+            <div class="thread-selector" id="threadSelector">
+                <div class="course-section conlaw-section">
+                    <h2>Constitutional Law</h2>
+                    <div class="thread-grid">
+                        <div class="thread-card conlaw-card" data-thread-id="1">
+                            <div class="thread-card-title">Commerce Clause Evolution</div>
+                            <div class="thread-card-meta">7 cases • Gibbons to NFIB</div>
+                        </div>
+                        <div class="thread-card conlaw-card" data-thread-id="2">
+                            <div class="thread-card-title">Equal Protection Journey</div>
+                            <div class="thread-card-meta">6 cases • Plessy to Obergefell</div>
+                        </div>
+                        <div class="thread-card conlaw-card" data-thread-id="3">
+                            <div class="thread-card-title">Due Process & Privacy Rights</div>
+                            <div class="thread-card-meta">6 cases • Lochner to Dobbs</div>
+                        </div>
+                        <div class="thread-card conlaw-card" data-thread-id="4">
+                            <div class="thread-card-title">Separation of Powers</div>
+                            <div class="thread-card-meta">5 cases • Youngstown to Seila Law</div>
+                        </div>
+                        <div class="thread-card conlaw-card" data-thread-id="5">
+                            <div class="thread-card-title">First Amendment Speech</div>
+                            <div class="thread-card-meta">6 cases • Schenck to Mahanoy</div>
+                        </div>
+                        <div class="thread-card conlaw-card" data-thread-id="6">
+                            <div class="thread-card-title">Judicial Review & Federal Power</div>
+                            <div class="thread-card-meta">5 cases • Marbury to Shelby County</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-section crimlaw-section">
+                    <h2>Criminal Law</h2>
+                    <div class="thread-grid">
+                        <div class="thread-card crimlaw-card" data-thread-id="7">
+                            <div class="thread-card-title">Death Penalty</div>
+                            <div class="thread-card-meta">6 cases • Furman to Kennedy</div>
+                        </div>
+                        <div class="thread-card crimlaw-card" data-thread-id="8">
+                            <div class="thread-card-title">Miranda & Interrogation Rights</div>
+                            <div class="thread-card-meta">5 cases • Escobedo to Berghuis</div>
+                        </div>
+                        <div class="thread-card crimlaw-card" data-thread-id="9">
+                            <div class="thread-card-title">Search & Seizure (4th Amendment)</div>
+                            <div class="thread-card-meta">5 cases • Weeks to Carpenter</div>
+                        </div>
+                        <div class="thread-card crimlaw-card" data-thread-id="10">
+                            <div class="thread-card-title">Right to Counsel</div>
+                            <div class="thread-card-meta">5 cases • Powell to Lafler</div>
+                        </div>
+                        <div class="thread-card crimlaw-card" data-thread-id="11">
+                            <div class="thread-card-title">Mens Rea Development</div>
+                            <div class="thread-card-meta">5 cases • Cunningham to Global-Tech</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-section property-section">
+                    <h2>Property</h2>
+                    <div class="thread-grid">
+                        <div class="thread-card property-card" data-thread-id="12">
+                            <div class="thread-card-title">Takings Clause</div>
+                            <div class="thread-card-meta">5 cases • PA Coal to Cedar Point</div>
+                        </div>
+                        <div class="thread-card property-card" data-thread-id="13">
+                            <div class="thread-card-title">Fair Housing & Discrimination</div>
+                            <div class="thread-card-meta">5 cases • Shelley to Inclusive Communities</div>
+                        </div>
+                        <div class="thread-card property-card" data-thread-id="14">
+                            <div class="thread-card-title">Landlord-Tenant Evolution</div>
+                            <div class="thread-card-meta">5 cases • Common Law to URLTA</div>
+                        </div>
+                        <div class="thread-card property-card" data-thread-id="15">
+                            <div class="thread-card-title">Adverse Possession</div>
+                            <div class="thread-card-meta">5 cases • Marengo to Howard v. Kunto</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Screen -->
+            <div class="game-screen" id="gameScreen">
+                <div class="game-header">
+                    <h2 id="threadTitle"></h2>
+                    <button class="back-button" id="backButton">Back</button>
+                </div>
+
+                <div class="cases-container" id="casesContainer"></div>
+
+                <div class="action-buttons">
+                    <button class="submit-button" id="submitButton">Submit Order</button>
+                    <button class="reset-button" id="resetButton">Reset</button>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div class="results-screen" id="resultsScreen">
+                <div class="score-display">
+                    <div class="score-percentage" id="scorePercentage">100%</div>
+                    <div class="score-label" id="scoreLabel">Perfect! All cases in correct order</div>
+                </div>
+
+                <div class="doctrinal-story" id="doctrinalStory">
+                    <h3>The Doctrinal Story</h3>
+                    <p id="storyText"></p>
+                </div>
+
+                <div class="results-buttons">
+                    <button class="primary-button" id="retryButton">Try Another Timeline</button>
+                    <button class="secondary-button" id="homeButton">Return to Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Timeline data
+        const timelines = {
+            1: {
+                title: "Commerce Clause Evolution",
+                cases: [
+                    { name: "Gibbons v. Ogden", year: 1824, holding: "Commerce power is broad — includes navigation and intercourse among states" },
+                    { name: "E.C. Knight", year: 1895, holding: "Manufacturing is local, not interstate commerce" },
+                    { name: "NLRB v. Jones & Laughlin", year: 1937, holding: "Activities with a close and substantial relation to commerce can be regulated" },
+                    { name: "Wickard v. Filburn", year: 1942, holding: "Homegrown wheat, in aggregate, substantially affects interstate commerce" },
+                    { name: "Heart of Atlanta Motel", year: 1964, holding: "Commerce power reaches racial discrimination in places of public accommodation" },
+                    { name: "United States v. Lopez", year: 1995, holding: "Gun possession in school zone is non-economic — three categories limit" },
+                    { name: "NFIB v. Sebelius", year: 2012, holding: "Cannot compel commerce — activity/inactivity distinction" }
+                ],
+                story: "The Commerce Clause began broad (Gibbons), narrowed during the Lochner era (E.C. Knight), expanded dramatically in the New Deal (Jones & Laughlin, Wickard), was used as a civil rights tool (Heart of Atlanta), then the Rehnquist Court imposed limits (Lopez) that continue today (NFIB). The arc is expansion-contraction-expansion-partial contraction."
+            },
+            2: {
+                title: "Equal Protection Journey",
+                cases: [
+                    { name: "Plessy v. Ferguson", year: 1896, holding: "Separate but equal satisfies equal protection" },
+                    { name: "Korematsu v. United States", year: 1944, holding: "Racial classification upheld under strict scrutiny (wartime)" },
+                    { name: "Brown v. Board of Education", year: 1954, holding: "Separate educational facilities are inherently unequal" },
+                    { name: "Loving v. Virginia", year: 1967, holding: "Marriage is a fundamental right — anti-miscegenation laws violate EP" },
+                    { name: "Craig v. Boren", year: 1976, holding: "Gender classifications get intermediate scrutiny" },
+                    { name: "Obergefell v. Hodges", year: 2015, holding: "Same-sex couples have fundamental right to marry under EP and DP" }
+                ],
+                story: "Equal protection evolved from tolerating explicit racial segregation (Plessy) to striking it down (Brown), while developing tiered scrutiny. Korematsu showed strict scrutiny wasn't always fatal. The doctrine expanded from race (Brown, Loving) to gender (Craig) to sexual orientation (Obergefell), steadily broadening who 'equal protection' protects."
+            },
+            3: {
+                title: "Due Process & Privacy Rights",
+                cases: [
+                    { name: "Lochner v. New York", year: 1905, holding: "Economic liberty is a fundamental right — struck down labor law" },
+                    { name: "West Coast Hotel v. Parrish", year: 1937, holding: "Overruled Lochner — economic regulation gets rational basis" },
+                    { name: "Griswold v. Connecticut", year: 1965, holding: "Right to privacy in marital contraception — penumbras" },
+                    { name: "Roe v. Wade", year: 1973, holding: "Right to abortion under privacy / liberty" },
+                    { name: "Planned Parenthood v. Casey", year: 1992, holding: "Reaffirmed Roe's core holding — undue burden standard" },
+                    { name: "Dobbs v. Jackson", year: 2022, holding: "Overruled Roe/Casey — no constitutional right to abortion" }
+                ],
+                story: "Substantive due process had a troubled start protecting economic liberty (Lochner), which was abandoned (West Coast Hotel). It was reborn as personal liberty/privacy (Griswold, Roe), refined (Casey), then partially retrenched (Dobbs). The through-line is the tension between judicial protection of unenumerated rights and democratic self-governance."
+            },
+            4: {
+                title: "Separation of Powers",
+                cases: [
+                    { name: "Youngstown Sheet & Tube v. Sawyer", year: 1952, holding: "President can't seize steel mills without Congressional authorization" },
+                    { name: "United States v. Nixon", year: 1974, holding: "Executive privilege exists but isn't absolute — must yield to criminal process" },
+                    { name: "INS v. Chadha", year: 1983, holding: "Legislative veto violates bicameralism and presentment" },
+                    { name: "Clinton v. City of New York", year: 1998, holding: "Line-item veto unconstitutional — violates presentment" },
+                    { name: "Seila Law v. CFPB", year: 2020, holding: "Single-director agencies removable at will by President — unitary executive" }
+                ],
+                story: "Separation of powers jurisprudence consistently checks concentration of power. Youngstown limited executive overreach, Nixon balanced privilege against accountability, Chadha and Clinton enforced legislative procedure, and Seila Law reinforced presidential control over the executive branch."
+            },
+            5: {
+                title: "First Amendment Speech",
+                cases: [
+                    { name: "Schenck v. United States", year: 1919, holding: "Clear and present danger test" },
+                    { name: "Brandenburg v. Ohio", year: 1969, holding: "Speech protected unless directed to inciting imminent lawless action" },
+                    { name: "Tinker v. Des Moines", year: 1969, holding: "Students don't shed rights at schoolhouse gate — symbolic speech protected" },
+                    { name: "Texas v. Johnson", year: 1989, holding: "Flag burning is protected symbolic speech" },
+                    { name: "Citizens United v. FEC", year: 2010, holding: "Corporate political spending is protected speech" },
+                    { name: "Mahanoy v. B.L.", year: 2021, holding: "School can't punish off-campus student speech (Snapchat cheerleader)" }
+                ],
+                story: "Free speech protection expanded from a narrow 'clear and present danger' test (Schenck) to the much more protective 'imminent lawless action' standard (Brandenburg). The Court steadily broadened protection: to student expression (Tinker), symbolic acts (Texas v. Johnson), corporate spending (Citizens United), and off-campus student speech (Mahanoy)."
+            },
+            6: {
+                title: "Judicial Review & Federal Power",
+                cases: [
+                    { name: "Marbury v. Madison", year: 1803, holding: "It is the province of the judiciary to say what the law is" },
+                    { name: "McCulloch v. Maryland", year: 1819, holding: "Implied powers + states can't tax federal institutions" },
+                    { name: "Cooper v. Aaron", year: 1958, holding: "Supreme Court interpretation of Constitution is supreme law" },
+                    { name: "Seminole Tribe v. Florida", year: 1996, holding: "Congress can't abrogate state sovereign immunity under Commerce Clause" },
+                    { name: "Shelby County v. Holder", year: 2013, holding: "Struck down VRA coverage formula — equal sovereignty of states" }
+                ],
+                story: "From Marbury establishing judicial review to McCulloch defining federal power broadly, the Court built its authority. Cooper v. Aaron cemented judicial supremacy. Later cases like Seminole Tribe and Shelby County show the Court using that authority to limit federal power over states."
+            },
+            7: {
+                title: "Death Penalty",
+                cases: [
+                    { name: "Furman v. Georgia", year: 1972, holding: "Death penalty as applied is cruel and unusual — arbitrary" },
+                    { name: "Gregg v. Georgia", year: 1976, holding: "Death penalty constitutional with guided discretion" },
+                    { name: "Coker v. Georgia", year: 1977, holding: "Death penalty disproportionate for rape of adult" },
+                    { name: "Atkins v. Virginia", year: 2002, holding: "Unconstitutional to execute intellectually disabled" },
+                    { name: "Roper v. Simmons", year: 2005, holding: "Unconstitutional to execute juveniles" },
+                    { name: "Kennedy v. Louisiana", year: 2008, holding: "Death penalty unconstitutional for non-homicide crimes against individuals" }
+                ],
+                story: "The death penalty was struck down wholesale (Furman), then revived with procedural safeguards (Gregg). The Court then steadily narrowed it: not for rape (Coker), not for the intellectually disabled (Atkins), not for juveniles (Roper), and not for any non-homicide (Kennedy). The trend is consistent narrowing."
+            },
+            8: {
+                title: "Miranda & Interrogation Rights",
+                cases: [
+                    { name: "Escobedo v. Illinois", year: 1964, holding: "Right to counsel during police interrogation" },
+                    { name: "Miranda v. Arizona", year: 1966, holding: "Must be informed of rights before custodial interrogation" },
+                    { name: "Harris v. New York", year: 1971, holding: "Un-Mirandized statements can be used for impeachment" },
+                    { name: "Dickerson v. United States", year: 2000, holding: "Miranda is constitutional rule — Congress can't override" },
+                    { name: "Berghuis v. Thompkins", year: 2010, holding: "Must affirmatively invoke right to silence — silence alone insufficient" }
+                ],
+                story: "Interrogation rights expanded from counsel access (Escobedo) to the full Miranda warnings, then faced incremental limitations (Harris allowing impeachment use, Berghuis requiring affirmative invocation) while the core survived Congressional challenge (Dickerson)."
+            },
+            9: {
+                title: "Search & Seizure (4th Amendment)",
+                cases: [
+                    { name: "Weeks v. United States", year: 1914, holding: "Exclusionary rule applies in federal courts" },
+                    { name: "Mapp v. Ohio", year: 1961, holding: "Exclusionary rule incorporated against states" },
+                    { name: "Katz v. United States", year: 1967, holding: "Reasonable expectation of privacy test replaces trespass doctrine" },
+                    { name: "Terry v. Ohio", year: 1968, holding: "Stop and frisk permitted on reasonable suspicion" },
+                    { name: "Carpenter v. United States", year: 2018, holding: "Cell phone location data requires a warrant" }
+                ],
+                story: "Fourth Amendment protection grew from excluding illegally seized evidence (Weeks, Mapp) to protecting reasonable expectations of privacy (Katz), while allowing limited intrusions (Terry). Carpenter extended privacy protection to digital-age surveillance."
+            },
+            10: {
+                title: "Right to Counsel",
+                cases: [
+                    { name: "Powell v. Alabama", year: 1932, holding: "Right to counsel in capital cases — Scottsboro Boys" },
+                    { name: "Gideon v. Wainwright", year: 1963, holding: "Right to counsel in all felony cases" },
+                    { name: "Argersinger v. Hamlin", year: 1972, holding: "Right to counsel when imprisonment is imposed" },
+                    { name: "Strickland v. Washington", year: 1984, holding: "Ineffective assistance standard — deficient performance + prejudice" },
+                    { name: "Lafler v. Cooper", year: 2012, holding: "Ineffective assistance applies to plea bargaining" }
+                ],
+                story: "Right to counsel started narrow (Powell — capital cases only), then expanded to all felonies (Gideon) and any case resulting in imprisonment (Argersinger). Strickland ensured the right meant effective counsel, and Lafler extended that guarantee to the plea bargaining process."
+            },
+            11: {
+                title: "Mens Rea Development",
+                cases: [
+                    { name: "Regina v. Cunningham", year: 1957, holding: "Recklessness requires subjective awareness of risk" },
+                    { name: "MPC Publication", year: 1962, holding: "Four-level hierarchy: purposely, knowingly, recklessly, negligently" },
+                    { name: "United States v. Jewell", year: 1976, holding: "Willful blindness satisfies knowledge requirement" },
+                    { name: "Staples v. United States", year: 1994, holding: "Presumption of mens rea — Congress must clearly indicate strict liability" },
+                    { name: "Global-Tech v. SEB S.A.", year: 2011, holding: "Willful blindness = deliberate avoidance of knowledge + high probability" }
+                ],
+                story: "Mens rea evolved from vague common law categories to the MPC's precise four-level hierarchy. Courts then refined knowledge through the willful blindness doctrine (Jewell, Global-Tech) while maintaining a presumption against strict liability (Staples)."
+            },
+            12: {
+                title: "Takings Clause",
+                cases: [
+                    { name: "Pennsylvania Coal v. Mahon", year: 1922, holding: "Regulation that goes 'too far' is a taking" },
+                    { name: "Penn Central v. NYC", year: 1978, holding: "Three-factor balancing test for regulatory takings" },
+                    { name: "Lucas v. South Carolina", year: 1992, holding: "Total deprivation of economic value = per se taking" },
+                    { name: "Kelo v. City of New London", year: 2005, holding: "Economic development qualifies as 'public use'" },
+                    { name: "Cedar Point v. Hassid", year: 2021, holding: "Government-authorized physical appropriation is per se taking" }
+                ],
+                story: "Takings law began with the insight that regulation can go too far (Mahon), then developed a balancing test (Penn Central) and a per se rule for total takings (Lucas). Kelo controversially expanded 'public use,' while Cedar Point reinforced that physical appropriation remains a bright-line taking."
+            },
+            13: {
+                title: "Fair Housing & Discrimination",
+                cases: [
+                    { name: "Shelley v. Kraemer", year: 1948, holding: "Judicial enforcement of racial covenants is state action" },
+                    { name: "Fair Housing Act", year: 1968, holding: "Federal law prohibiting housing discrimination" },
+                    { name: "Village of Arlington Heights", year: 1977, holding: "Must show discriminatory intent, not just disparate impact" },
+                    { name: "Mount Laurel I", year: 1975, holding: "Exclusionary zoning that excludes low-income housing violates state constitution" },
+                    { name: "Texas Dept. of Housing v. Inclusive Communities", year: 2015, holding: "Disparate impact claims cognizable under FHA" }
+                ],
+                story: "Housing discrimination law progressed from barring judicial enforcement of racial covenants (Shelley) to comprehensive federal legislation (FHA). The intent requirement (Arlington Heights) was partially offset by allowing disparate impact claims (Inclusive Communities). Mount Laurel attacked exclusionary zoning directly."
+            },
+            14: {
+                title: "Landlord-Tenant Evolution",
+                cases: [
+                    { name: "Traditional Common Law", year: 1800, holding: "Caveat emptor — tenant takes premises as-is" },
+                    { name: "Reste Realty v. Cooper", year: 1969, holding: "Constructive eviction doesn't require total eviction" },
+                    { name: "Javins v. First National Realty", year: 1970, holding: "Implied warranty of habitability" },
+                    { name: "Hilder v. St. Peter", year: 1984, holding: "Breach of IWH allows damages, not just lease termination" },
+                    { name: "URLTA Model Act", year: 1972, holding: "Comprehensive statutory tenant protections" }
+                ],
+                story: "Landlord-tenant law underwent a revolution: from caveat emptor to recognizing constructive eviction (Reste Realty), to implying a warranty of habitability (Javins), to expanding remedies (Hilder), culminating in comprehensive statutory reform (URLTA). The shift reflects viewing leases as contracts, not feudal conveyances."
+            },
+            15: {
+                title: "Adverse Possession",
+                cases: [
+                    { name: "Traditional Common Law", year: 1800, holding: "Adverse possessor acquires title after statutory period" },
+                    { name: "Marengo Cave v. Ross", year: 1937, holding: "Underground possession not 'open and notorious'" },
+                    { name: "Nome 2000 v. Fagerstrom", year: 1990, holding: "Open and notorious use consistent with the land" },
+                    { name: "Mannillo v. Gorski", year: 1969, holding: "Minor encroachments — good faith possessor gets equity" },
+                    { name: "Howard v. Kunto", year: 1970, holding: "Tacking permitted between successive possessors in privity" }
+                ],
+                story: "Adverse possession refined its elements through case law: open and notorious means visible above ground (Marengo Cave) and consistent with how the land would be used (Nome 2000). Equity tempers harsh results for minor encroachments (Mannillo), and tacking allows successive possessors to combine periods (Howard v. Kunto)."
+            }
+        };
+
+        // State management
+        let currentThreadId = null;
+        let currentCases = [];
+        let selectedCardIndex = null;
+        let submitted = false;
+
+        // Initialize
+        document.querySelectorAll('.thread-card').forEach(card => {
+            card.addEventListener('click', startThread);
+        });
+
+        document.getElementById('backButton').addEventListener('click', backToMenu);
+        document.getElementById('submitButton').addEventListener('click', submitOrder);
+        document.getElementById('resetButton').addEventListener('click', resetGame);
+        document.getElementById('retryButton').addEventListener('click', retryThread);
+        document.getElementById('homeButton').addEventListener('click', backToMenu);
+
+        function startThread(e) {
+            const threadId = parseInt(e.currentTarget.dataset.threadId);
+            currentThreadId = threadId;
+            const timeline = timelines[threadId];
+
+            document.getElementById('threadTitle').textContent = timeline.title;
+            currentCases = JSON.parse(JSON.stringify(timeline.cases));
+            shuffleCases();
+            renderCases();
+
+            document.getElementById('threadSelector').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            document.getElementById('resultsScreen').style.display = 'none';
+            submitted = false;
+        }
+
+        function shuffleCases() {
+            for (let i = currentCases.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentCases[i], currentCases[j]] = [currentCases[j], currentCases[i]];
+            }
+        }
+
+        function renderCases() {
+            const container = document.getElementById('casesContainer');
+            container.innerHTML = '';
+
+            currentCases.forEach((caseItem, index) => {
+                const card = document.createElement('div');
+                card.className = 'case-card';
+                if (submitted) {
+                    const correctIndex = timelines[currentThreadId].cases.findIndex(c => c.name === caseItem.name);
+                    if (correctIndex === index) {
+                        card.classList.add('correct');
+                    } else {
+                        card.classList.add('incorrect');
+                    }
+                } else if (selectedCardIndex === index) {
+                    card.classList.add('selected');
+                }
+
+                card.innerHTML = `
+                    <div class="drag-handle">☰</div>
+                    <div class="case-content">
+                        <div class="case-name">${caseItem.name}</div>
+                        <div class="case-holding">${caseItem.holding}</div>
+                    </div>
+                    ${submitted && timelines[currentThreadId].cases.findIndex(c => c.name === caseItem.name) !== index ? `
+                        <div class="arrow-indicator">→</div>
+                    ` : ''}
+                `;
+
+                if (!submitted) {
+                    card.draggable = true;
+                    card.addEventListener('dragstart', handleDragStart);
+                    card.addEventListener('dragend', handleDragEnd);
+                    card.addEventListener('dragover', handleDragOver);
+                    card.addEventListener('drop', handleDrop);
+                    card.addEventListener('click', () => selectCard(index));
+                }
+
+                container.appendChild(card);
+            });
+        }
+
+        function selectCard(index) {
+            if (submitted) return;
+
+            if (selectedCardIndex === null) {
+                selectedCardIndex = index;
+            } else if (selectedCardIndex === index) {
+                selectedCardIndex = null;
+            } else {
+                [currentCases[selectedCardIndex], currentCases[index]] = [currentCases[index], currentCases[selectedCardIndex]];
+                selectedCardIndex = null;
+            }
+            renderCases();
+        }
+
+        let draggedIndex = null;
+
+        function handleDragStart(e) {
+            draggedIndex = Array.from(e.currentTarget.parentNode.children).indexOf(e.currentTarget);
+            e.currentTarget.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropIndex = Array.from(e.currentTarget.parentNode.children).indexOf(e.currentTarget);
+            if (draggedIndex !== null && draggedIndex !== dropIndex) {
+                [currentCases[draggedIndex], currentCases[dropIndex]] = [currentCases[dropIndex], currentCases[draggedIndex]];
+                renderCases();
+            }
+        }
+
+        function submitOrder() {
+            submitted = true;
+            const timeline = timelines[currentThreadId];
+            const correctOrder = timeline.cases;
+
+            let correct = 0;
+            currentCases.forEach((caseItem, index) => {
+                if (correctOrder[index].name === caseItem.name) {
+                    correct++;
+                }
+            });
+
+            const percentage = Math.round((correct / currentCases.length) * 100);
+
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+            let label = '';
+            if (percentage === 100) {
+                label = 'Perfect! All cases in correct order';
+            } else if (percentage >= 80) {
+                label = 'Excellent! ' + correct + '/' + currentCases.length + ' correct';
+            } else if (percentage >= 60) {
+                label = 'Good effort! ' + correct + '/' + currentCases.length + ' correct';
+            } else {
+                label = 'Keep studying! ' + correct + '/' + currentCases.length + ' correct';
+            }
+            document.getElementById('scoreLabel').textContent = label;
+
+            document.getElementById('storyText').textContent = timeline.story;
+
+            renderCases();
+
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+        }
+
+        function resetGame() {
+            if (currentThreadId) {
+                const timeline = timelines[currentThreadId];
+                currentCases = JSON.parse(JSON.stringify(timeline.cases));
+                shuffleCases();
+                selectedCardIndex = null;
+                submitted = false;
+                renderCases();
+                document.getElementById('gameScreen').style.display = 'block';
+                document.getElementById('resultsScreen').style.display = 'none';
+            }
+        }
+
+        function retryThread() {
+            resetGame();
+        }
+
+        function backToMenu() {
+            currentThreadId = null;
+            currentCases = [];
+            selectedCardIndex = null;
+            submitted = false;
+            document.getElementById('threadSelector').style.display = 'block';
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

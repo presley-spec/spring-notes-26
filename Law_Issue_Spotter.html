@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Spotter Bee - Legal Reasoning Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0b12;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #d4a843;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* Course Tabs */
+        .course-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0;
+        }
+
+        .course-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: #999;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .course-tab.active {
+            color: #d4a843;
+            border-bottom-color: #d4a843;
+        }
+
+        /* Rank Progress */
+        .rank-section {
+            background: #1a1c28;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rank-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .rank-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #d4a843;
+        }
+
+        .rank-points {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .rank-bar-container {
+            flex: 1;
+            margin: 0 12px;
+            height: 8px;
+            background: #0a0b12;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .rank-bar {
+            height: 100%;
+            background: #d4a843;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        /* Honeycomb Container */
+        .honeycomb-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            position: relative;
+            width: 100%;
+            height: 280px;
+        }
+
+        .honeycomb {
+            position: relative;
+            width: 220px;
+            height: 220px;
+        }
+
+        .hex {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            background: #2a2d3a;
+            border: 2px solid #444;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            padding: 6px;
+            color: #d4a843;
+            transition: all 0.2s;
+        }
+
+        .hex:hover {
+            background: #3a3d4a;
+            border-color: #d4a843;
+        }
+
+        .hex.center {
+            left: 80px;
+            top: 80px;
+            background: #d4a843;
+            color: #0a0b12;
+            border-color: #d4a843;
+            font-weight: 700;
+            z-index: 10;
+        }
+
+        .hex.center:hover {
+            background: #e8c355;
+        }
+
+        .hex.outer {
+            width: 70px;
+            height: 70px;
+        }
+
+        .hex.outer.pos1 { left: 150px; top: 10px; }
+        .hex.outer.pos2 { left: 195px; top: 50px; }
+        .hex.outer.pos3 { left: 165px; top: 145px; }
+        .hex.outer.pos4 { left: 55px; top: 145px; }
+        .hex.outer.pos5 { left: 25px; top: 50px; }
+        .hex.outer.pos6 { left: 70px; top: 10px; }
+
+        /* Input Section */
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .issue-input {
+            width: 100%;
+            padding: 12px;
+            background: #1a1c28;
+            border: 2px solid #333;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        .issue-input:focus {
+            outline: none;
+            border-color: #d4a843;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1a1c28;
+            border: 2px solid #d4a843;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+
+        .autocomplete-list.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 10px 12px;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.1s;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover {
+            background: #2a2d3a;
+        }
+
+        .autocomplete-item.selected {
+            background: #333;
+            color: #d4a843;
+        }
+
+        /* Submit Button */
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .btn-submit {
+            background: #d4a843;
+            color: #0a0b12;
+        }
+
+        .btn-submit:hover {
+            background: #e8c355;
+        }
+
+        .btn-submit:disabled {
+            background: #666;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .btn-skip {
+            background: #2a2d3a;
+            color: #d4a843;
+            border: 2px solid #d4a843;
+        }
+
+        .btn-skip:hover {
+            background: #3a3d4a;
+        }
+
+        /* Issues Found */
+        .issues-section {
+            margin-bottom: 20px;
+        }
+
+        .issues-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .issues-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .issue-card {
+            background: #1a1c28;
+            border-left: 4px solid #d4a843;
+            padding: 10px;
+            border-radius: 4px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .issue-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e0e0e0;
+            margin-bottom: 4px;
+        }
+
+        .issue-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 8px;
+        }
+
+        .issue-explanation {
+            font-size: 12px;
+            color: #999;
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        .issue-points {
+            background: #d4a843;
+            color: #0a0b12;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #1a1c28;
+            border: 2px solid #d4a843;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 320px;
+            text-align: center;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal h2 {
+            color: #d4a843;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .modal p {
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .countdown {
+            font-size: 32px;
+            color: #d4a843;
+            font-weight: 700;
+            margin: 16px 0;
+        }
+
+        .modal button {
+            padding: 10px 16px;
+            background: #d4a843;
+            color: #0a0b12;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+        }
+
+        .modal button:hover {
+            background: #e8c355;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1c28;
+            border: 2px solid #d4a843;
+            color: #d4a843;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 999;
+            animation: slideUp 0.3s ease;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Settings */
+        .settings-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #d4a843;
+            color: #0a0b12;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            transition: all 0.2s;
+            z-index: 500;
+        }
+
+        .settings-btn:hover {
+            background: #e8c355;
+            transform: scale(1.1);
+        }
+
+        .settings-panel {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: #1a1c28;
+            border: 2px solid #d4a843;
+            border-radius: 8px;
+            padding: 16px;
+            display: none;
+            z-index: 600;
+            min-width: 220px;
+        }
+
+        .settings-panel.show {
+            display: block;
+        }
+
+        .settings-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .settings-option:last-child {
+            margin-bottom: 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 24px;
+            background: #333;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-switch.on {
+            background: #d4a843;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.2s;
+        }
+
+        .toggle-switch.on::after {
+            left: 18px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .puzzle-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .puzzle-nav button {
+            background: #2a2d3a;
+            color: #d4a843;
+            border: 2px solid #d4a843;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .puzzle-nav button:hover {
+            background: #3a3d4a;
+        }
+
+        .puzzle-nav button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .puzzle-counter {
+            color: #d4a843;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐝 Issue Spotter Bee</h1>
+            <p>Spot legal issues from fact patterns</p>
+        </div>
+
+        <div class="course-tabs">
+            <button class="course-tab active" data-course="property">Property</button>
+            <button class="course-tab" data-course="conlaw">Con Law</button>
+            <button class="course-tab" data-course="criminal">Criminal</button>
+        </div>
+
+        <div class="rank-section">
+            <div class="rank-info">
+                <div class="rank-name" id="rank-name">Beginner</div>
+                <div class="rank-points" id="rank-points">0 / 100 pts</div>
+            </div>
+            <div class="rank-bar-container">
+                <div class="rank-bar" id="rank-bar" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <div class="puzzle-nav">
+            <button id="prev-puzzle" class="btn-skip">← Previous</button>
+            <span class="puzzle-counter"><span id="current-puzzle">1</span> / <span id="total-puzzles">5</span></span>
+            <button id="next-puzzle" class="btn-skip">Next →</button>
+        </div>
+
+        <div class="honeycomb-wrapper">
+            <div class="honeycomb" id="honeycomb"></div>
+        </div>
+
+        <div class="input-section">
+            <label class="input-label">Type an issue or doctrine:</label>
+            <div class="input-wrapper">
+                <input
+                    type="text"
+                    class="issue-input"
+                    id="issue-input"
+                    placeholder="e.g., Adverse Possession, Strict Liability..."
+                    autocomplete="off"
+                >
+                <div class="autocomplete-list" id="autocomplete-list"></div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-submit" id="submit-btn">Submit Answer</button>
+            <button class="btn btn-skip" id="skip-btn">Skip Puzzle</button>
+        </div>
+
+        <div class="issues-section" id="issues-section" style="display: none;">
+            <div class="issues-title">Issues Found</div>
+            <div class="issues-list" id="issues-list"></div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal">
+            <h2>Read Your Answer Again</h2>
+            <p>Are you sure about this answer?</p>
+            <p style="margin-bottom: 24px; font-size: 14px; color: #d4a843;" id="confirm-text"></p>
+            <div class="countdown" id="countdown" style="display: none;"></div>
+            <button id="confirm-yes">Submit</button>
+            <button id="confirm-no" style="background: #2a2d3a; color: #d4a843; margin-left: 8px; border: 2px solid #d4a843;">Edit</button>
+        </div>
+    </div>
+
+    <!-- Say It Out Loud Modal -->
+    <div class="modal-overlay" id="say-out-loud-modal">
+        <div class="modal">
+            <h2>Say It Out Loud</h2>
+            <p>For each issue you found, say the trigger facts from the honeycomb that led you to it.</p>
+            <button id="say-continue">I'm Ready to Submit</button>
+        </div>
+    </div>
+
+    <!-- Break Modal -->
+    <div class="modal-overlay" id="break-modal">
+        <div class="modal">
+            <h2>Time for a Break!</h2>
+            <p>You've been playing for 25 minutes. Take a moment to rest your eyes and stretch.</p>
+            <button id="break-continue">Continue Playing</button>
+        </div>
+    </div>
+
+    <!-- Settings Button -->
+    <button class="settings-btn" id="settings-btn">⚙️</button>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-option">
+            <div>10-Second Countdown</div>
+            <div class="toggle-switch on" id="countdown-toggle"></div>
+        </div>
+        <div class="settings-option">
+            <div>Say It Out Loud</div>
+            <div class="toggle-switch on" id="say-loud-toggle"></div>
+        </div>
+        <div class="settings-option">
+            <div>Break Reminder</div>
+            <div class="toggle-switch on" id="break-toggle"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== PUZZLE DATA =====
+        const PUZZLES = {
+            property: [
+                {
+                    title: "Neighbor's Land",
+                    center: "neighbor's land",
+                    facts: ["20 years", "fence built", "no permission", "drainage ditch", "sold to new buyer", "verbal agreement"],
+                    issues: [
+                        { name: "Adverse Possession", points: 1, explanation: "20 years of exclusive, continuous possession without permission can ripen into ownership." },
+                        { name: "Prescriptive Easement", points: 1, explanation: "Open use of drainage ditch for 20 years without permission can create a prescriptive easement." },
+                        { name: "Trespass", points: 1, explanation: "Fence on neighbor's land without permission is trespass until adverse possession requirements are met." },
+                        { name: "License vs Easement", points: 3, explanation: "Verbal agreement about land interest may be unenforceable under Statute of Frauds unless it creates an easement." },
+                        { name: "Recording Act", points: 3, explanation: "Sale to new buyer raises notice issues—did new owner have notice of adverse possession claim?" },
+                        { name: "Statute of Frauds", points: 5, explanation: "Verbal agreement for land interest is generally unenforceable; must be in writing to satisfy Statute of Frauds." }
+                    ]
+                },
+                {
+                    title: "Apartment",
+                    center: "apartment",
+                    facts: ["mold growing", "landlord refused repairs", "lease says no pets", "wheelchair ramp needed", "sublease to friend", "rent withheld"],
+                    issues: [
+                        { name: "Implied Warranty of Habitability", points: 1, explanation: "Mold makes apartment unlivable; landlord's refusal to repair violates warranty of habitability." },
+                        { name: "Constructive Eviction", points: 1, explanation: "Uninhabitable conditions may allow tenant to vacate without breach and potentially recover damages." },
+                        { name: "Fair Housing Act", points: 1, explanation: "Denying wheelchair ramp is disability discrimination and violates reasonable accommodation requirements." },
+                        { name: "Assignment vs Sublease", points: 3, explanation: "Sublease to friend differs from assignment in key ways; may require landlord consent depending on lease terms." },
+                        { name: "Tenant Remedies", points: 3, explanation: "Withholding rent as repair-and-deduct remedy requires proper procedures and compliance with state law." },
+                        { name: "Retaliatory Eviction", points: 5, explanation: "If landlord retaliates for rent withholding or requesting repairs, courts may void the eviction." }
+                    ]
+                },
+                {
+                    title: "Family Farm",
+                    center: "family farm",
+                    facts: ["died without will", "three siblings", "one sibling lives there", "property taxes paid", "mineral rights leased", "boundary fence wrong"],
+                    issues: [
+                        { name: "Intestate Succession", points: 1, explanation: "Without a will, property passes by state intestacy law, typically equally to all siblings." },
+                        { name: "Tenancy in Common", points: 1, explanation: "Three siblings inherit as tenants in common with equal shares and right to possession." },
+                        { name: "Ouster", points: 3, explanation: "If one sibling excludes others from possession, that may constitute ouster triggering partition claims." },
+                        { name: "Partition Action", points: 3, explanation: "Co-tenants can seek partition to force division or sale of the property for fair division of proceeds." },
+                        { name: "Adverse Possession by Co-tenant", points: 5, explanation: "Co-tenant's exclusive possession and tax payments may ripen into title against co-owners if hostile intent shown." },
+                        { name: "Mineral Rights Severance", points: 5, explanation: "Leasing mineral rights creates a separate estate that must be dealt with independently in partition." }
+                    ]
+                },
+                {
+                    title: "New Development",
+                    center: "new development",
+                    facts: ["HOA restrictions", "no fences over 4ft", "solar panels blocked", "view obstructed", "covenant runs with land", "changed neighborhood"],
+                    issues: [
+                        { name: "Restrictive Covenants", points: 1, explanation: "HOA height restriction is a restrictive covenant limiting how owners can use their land." },
+                        { name: "Touch and Concern", points: 1, explanation: "Covenant must touch and concern the land itself, not just the individuals involved." },
+                        { name: "Changed Conditions", points: 3, explanation: "If neighborhood has fundamentally changed, court may release or modify the covenant." },
+                        { name: "Nuisance", points: 3, explanation: "Obstructed view or solar panel interference might constitute nuisance if unreasonably interfering." },
+                        { name: "Equitable Servitudes", points: 3, explanation: "Covenants can be enforced in equity against successors in interest under equitable principles." },
+                        { name: "Horizontal/Vertical Privity", points: 5, explanation: "For covenant to run, must show privity between original parties and between original and successor parties." }
+                    ]
+                },
+                {
+                    title: "Beachfront Property",
+                    center: "beachfront",
+                    facts: ["public trust doctrine", "erosion moved boundary", "developer wants to build", "endangered species", "zoning says residential", "takings claim"],
+                    issues: [
+                        { name: "Public Trust Doctrine", points: 1, explanation: "State may retain public trust interest in beaches for navigation, fishing, and public access." },
+                        { name: "Accretion/Avulsion", points: 1, explanation: "Erosion moving boundary depends on whether change is gradual (accretion) or sudden (avulsion)." },
+                        { name: "Regulatory Takings", points: 1, explanation: "Development restriction may constitute a regulatory taking requiring compensation to property owner." },
+                        { name: "Penn Central Test", points: 3, explanation: "Economic impact, investment-backed expectations, and character of regulation determine takings liability." },
+                        { name: "Lucas Total Taking", points: 3, explanation: "If regulation destroys all economic value, it's a per se taking unless background principles apply." },
+                        { name: "Endangered Species as Police Power", points: 5, explanation: "Environmental regulation protecting endangered species is legitimate police power justifying restrictions." }
+                    ]
+                }
+            ],
+            conlaw: [
+                {
+                    title: "Federal Law",
+                    center: "federal law",
+                    facts: ["regulates homegrown wheat", "farmer argues local", "aggregate effect", "penalty for noncompliance", "interstate market price", "10th Amendment"],
+                    issues: [
+                        { name: "Commerce Clause", points: 1, explanation: "Congress can regulate economic activity that substantially affects interstate commerce." },
+                        { name: "Wickard Aggregation", points: 1, explanation: "Even homegrown wheat affects market price when aggregated with similar production nationwide." },
+                        { name: "Lopez Categories", points: 3, explanation: "Determine if activity fits one of the three categories of Commerce Clause authority." },
+                        { name: "Necessary and Proper Clause", points: 3, explanation: "Penalty provision is means to enforce valid Commerce Clause regulation." },
+                        { name: "Taxing Power", points: 3, explanation: "Penalty may qualify as tax depending on whether it's primarily regulatory or revenue-raising." },
+                        { name: "Tenth Amendment Limits", points: 5, explanation: "Tenth Amendment protects state sovereignty but doesn't prevent federal regulation of interstate commerce." }
+                    ]
+                },
+                {
+                    title: "State Ban",
+                    center: "state law bans",
+                    facts: ["out-of-state wine shipments", "local wineries exempt", "health and safety claim", "economic protectionism", "market participant", "Congressional authorization"],
+                    issues: [
+                        { name: "Dormant Commerce Clause", points: 1, explanation: "Restricts state power to regulate interstate commerce even when Congress is silent." },
+                        { name: "Facial Discrimination", points: 1, explanation: "Local winery exemption discriminates against interstate commerce on its face." },
+                        { name: "Strict Scrutiny (DCC)", points: 3, explanation: "Facially discriminatory state law triggers strict scrutiny and rarely survives." },
+                        { name: "Market Participant Exception", points: 3, explanation: "May allow discrimination if state acts as participant in market rather than regulator." },
+                        { name: "Congressional Authorization", points: 3, explanation: "Congress can authorize state discrimination that would otherwise violate dormant Commerce Clause." },
+                        { name: "Pike Balancing", points: 5, explanation: "If not facially discriminatory, balance burden on commerce against legitimate local benefit." }
+                    ]
+                },
+                {
+                    title: "Campus Speech",
+                    center: "university policy",
+                    facts: ["bans hate speech", "public university", "student expelled", "designated public forum", "compelling interest", "content-based"],
+                    issues: [
+                        { name: "First Amendment", points: 1, explanation: "Speech restrictions at public universities are state action subject to First Amendment scrutiny." },
+                        { name: "State Action", points: 1, explanation: "Public university is government actor; private universities have more speech regulation latitude." },
+                        { name: "Content-Based Restriction", points: 1, explanation: "Hate speech ban is content-based, triggering heightened scrutiny regardless of forum." },
+                        { name: "Strict Scrutiny", points: 3, explanation: "Content-based restrictions in public forums require narrow tailoring to compelling interest." },
+                        { name: "Public Forum Doctrine", points: 3, explanation: "Designated public forum receives strict scrutiny protection even for time/place/manner rules." },
+                        { name: "Overbreadth", points: 5, explanation: "Hate speech policy may sweep too broadly, capturing protected speech alongside unprotected hate speech." }
+                    ]
+                },
+                {
+                    title: "Executive Order",
+                    center: "executive order",
+                    facts: ["steel mills seized", "national emergency", "Congress silent", "war powers", "private property taken", "Youngstown framework"],
+                    issues: [
+                        { name: "Separation of Powers", points: 1, explanation: "Executive seizure raises separation of powers concerns when Congress hasn't authorized it." },
+                        { name: "Youngstown Framework", points: 1, explanation: "Congressional silence places action in Zone 2, where president acts with weakest authority." },
+                        { name: "Commander in Chief", points: 3, explanation: "War powers might justify executive action but require actual ongoing military necessity." },
+                        { name: "Take Care Clause", points: 3, explanation: "President must faithfully execute laws; seizure without statutory authority may violate Take Care." },
+                        { name: "Takings Clause", points: 3, explanation: "Seizure of private property requires just compensation under Fifth Amendment." },
+                        { name: "Congressional Acquiescence", points: 5, explanation: "Silence doesn't equate to approval; court examines legislative history to assess true acquiescence." }
+                    ]
+                },
+                {
+                    title: "Voter ID Law",
+                    center: "voter ID law",
+                    facts: ["disproportionate impact on minorities", "state interest in fraud prevention", "no evidence of fraud", "free ID available", "Equal Protection", "Fifteenth Amendment"],
+                    issues: [
+                        { name: "Equal Protection", points: 1, explanation: "Disparate impact on minorities may violate Equal Protection if intentionally discriminatory." },
+                        { name: "Rational Basis Review", points: 1, explanation: "Fraud prevention is legitimate governmental interest meeting rational basis test." },
+                        { name: "Discriminatory Intent", points: 3, explanation: "Washington v. Davis requires showing intent to discriminate; disparate impact alone insufficient." },
+                        { name: "Fifteenth Amendment", points: 3, explanation: "Right to vote cannot be denied based on race; history of racial discrimination relevant." },
+                        { name: "Fundamental Right to Vote", points: 3, explanation: "Right to vote receives heightened protection under Equal Protection and constitutional tradition." },
+                        { name: "Anderson-Burdick Balancing", points: 5, explanation: "Balance burden on voting against interests in ballot integrity; severity determines scrutiny level." }
+                    ]
+                }
+            ],
+            criminal: [
+                {
+                    title: "Death",
+                    center: "victim died",
+                    facts: ["planned for weeks", "accomplice drove car", "victim had provoked", "fleeing scene", "bystander killed", "defendant intoxicated"],
+                    issues: [
+                        { name: "First Degree Murder", points: 1, explanation: "Premeditation and deliberation shown by planning for weeks." },
+                        { name: "Accomplice Liability", points: 1, explanation: "Accomplice who drove car can be liable as aider and abettor." },
+                        { name: "Voluntary Manslaughter", points: 1, explanation: "Victim provocation could reduce murder to manslaughter if heat of passion element met." },
+                        { name: "Felony Murder", points: 3, explanation: "Death of bystander during underlying felony may trigger felony murder rule." },
+                        { name: "Transferred Intent", points: 3, explanation: "Intent to kill victim transfers to unintended bystander victim." },
+                        { name: "Voluntary Intoxication Defense", points: 3, explanation: "Intoxication may negate specific intent to kill, potentially reducing degree of crime." }
+                    ]
+                },
+                {
+                    title: "Break-In",
+                    center: "entered building",
+                    facts: ["nighttime", "intent to steal", "lookout posted outside", "alarm triggered", "grabbed wrong bag", "owner asleep upstairs"],
+                    issues: [
+                        { name: "Burglary", points: 1, explanation: "Entering building with intent to commit theft constitutes burglary." },
+                        { name: "Conspiracy", points: 1, explanation: "Lookout posted outside shows agreement and mutual intent to commit crime." },
+                        { name: "Larceny", points: 1, explanation: "Taking property with intent to permanently deprive owner constitutes larceny." },
+                        { name: "Attempt", points: 3, explanation: "Alarm triggered suggests crime was incomplete; may constitute attempted crime." },
+                        { name: "Mistake of Fact", points: 3, explanation: "Grabbing wrong bag is mistake of fact—intent to steal remains even if object wrong." },
+                        { name: "Common Law vs MPC Burglary", points: 5, explanation: "Common law burglary requires nighttime element; MPC extends to daytime." }
+                    ]
+                },
+                {
+                    title: "Bar Fight",
+                    center: "punched victim",
+                    facts: ["insult provoked it", "victim fell and hit head", "no intent to kill", "victim had thin skull", "bouncer intervened", "defendant was drunk"],
+                    issues: [
+                        { name: "Battery", points: 1, explanation: "Intentional harmful or offensive contact with victim constitutes battery." },
+                        { name: "Assault", points: 1, explanation: "Threatening motion to punch creates apprehension of harmful contact." },
+                        { name: "Voluntary Manslaughter", points: 1, explanation: "Mere insult usually insufficient provocation, but facts may support heat of passion." },
+                        { name: "Involuntary Manslaughter", points: 3, explanation: "Unintended death resulting from reckless conduct during battery." },
+                        { name: "Eggshell Plaintiff", points: 3, explanation: "Thin skull rule means defendant takes victim as found; unusual vulnerability doesn't reduce liability." },
+                        { name: "Adequate Provocation", points: 5, explanation: "Insult alone rarely qualifies as adequate provocation; totality of circumstances matters." }
+                    ]
+                },
+                {
+                    title: "Drug Deal",
+                    center: "sold drugs",
+                    facts: ["undercover officer", "co-defendant confessed", "entrapment claim", "mandatory minimum", "prior conviction", "consent to search"],
+                    issues: [
+                        { name: "Drug Distribution", points: 1, explanation: "Selling controlled substances violates drug distribution statutes." },
+                        { name: "Entrapment", points: 1, explanation: "Undercover officer inducing sale might constitute entrapment if defendant wasn't predisposed." },
+                        { name: "Fourth Amendment Search", points: 1, explanation: "Search validity depends on proper consent; can revoke consent at any time." },
+                        { name: "Conspiracy", points: 3, explanation: "Co-defendant creates inference of agreement to distribute drugs together." },
+                        { name: "Confrontation Clause", points: 3, explanation: "Co-defendant's confession is hearsay; must test reliability under Crawford v. Washington." },
+                        { name: "Predisposition Test", points: 5, explanation: "Entrapment defense succeeds only if government induced crime and defendant wasn't predisposed." }
+                    ]
+                },
+                {
+                    title: "Road Rage",
+                    center: "car as weapon",
+                    facts: ["swerved at cyclist", "cyclist fell", "no contact made", "speed was 60mph", "residential area", "prior road rage incidents"],
+                    issues: [
+                        { name: "Assault", points: 1, explanation: "Swerving at cyclist creates apprehension of imminent harmful contact." },
+                        { name: "Reckless Endangerment", points: 1, explanation: "60 mph in residential area creates substantial risk of death or injury." },
+                        { name: "Attempted Murder", points: 3, explanation: "Using car as deadly weapon at high speed with intent to hit could constitute attempted murder." },
+                        { name: "Assault with Deadly Weapon", points: 3, explanation: "Car is deadly weapon; swerving constitutes assault with deadly weapon." },
+                        { name: "Depraved Heart Murder", points: 3, explanation: "If death results, extreme recklessness with car may constitute depraved heart murder." },
+                        { name: "Prior Bad Acts", points: 5, explanation: "Prior road rage incidents may be admissible under MRE 404(b) for motive/knowledge/pattern." }
+                    ]
+                }
+            ]
+        };
+
+        const RANKS = [
+            { name: "Beginner", minPoints: 0 },
+            { name: "Good Start", minPoints: 100 },
+            { name: "Moving Up", minPoints: 200 },
+            { name: "Solid", minPoints: 350 },
+            { name: "Nice", minPoints: 500 },
+            { name: "Great", minPoints: 700 },
+            { name: "Amazing", minPoints: 950 },
+            { name: "Genius", minPoints: 1250 },
+            { name: "Queen Bee", minPoints: 1600 }
+        ];
+
+        // ===== STATE =====
+        let currentCourse = "property";
+        let currentPuzzleIndex = 0;
+        let totalPoints = 0;
+        let foundIssues = new Set();
+        let gameStartTime = Date.now();
+        let breakShownAt = null;
+
+        let settings = {
+            countdownEnabled: true,
+            sayOutLoudEnabled: true,
+            breakEnabled: true
+        };
+
+        // ===== INITIALIZATION =====
+        function init() {
+            loadSettings();
+            setupEventListeners();
+            renderPuzzle();
+            checkBreakTime();
+        }
+
+        function loadSettings() {
+            const stored = localStorage.getItem('issueSpotterSettings');
+            if (stored) {
+                settings = { ...settings, ...JSON.parse(stored) };
+            }
+            updateSettingsUI();
+        }
+
+        function saveSettings() {
+            localStorage.setItem('issueSpotterSettings', JSON.stringify(settings));
+        }
+
+        // ===== SETUP =====
+        function setupEventListeners() {
+            // Course tabs
+            document.querySelectorAll('.course-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentCourse = tab.dataset.course;
+                    currentPuzzleIndex = 0;
+                    foundIssues.clear();
+                    gameStartTime = Date.now();
+                    breakShownAt = null;
+                    renderPuzzle();
+                });
+            });
+
+            // Input
+            const input = document.getElementById('issue-input');
+            input.addEventListener('input', updateAutocomplete);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('submit-btn').click();
+                }
+            });
+
+            // Submit
+            document.getElementById('submit-btn').addEventListener('click', handleSubmit);
+            document.getElementById('skip-btn').addEventListener('click', skipPuzzle);
+
+            // Puzzle navigation
+            document.getElementById('prev-puzzle').addEventListener('click', () => {
+                if (currentPuzzleIndex > 0) {
+                    currentPuzzleIndex--;
+                    foundIssues.clear();
+                    renderPuzzle();
+                }
+            });
+
+            document.getElementById('next-puzzle').addEventListener('click', () => {
+                const puzzles = PUZZLES[currentCourse];
+                if (currentPuzzleIndex < puzzles.length - 1) {
+                    currentPuzzleIndex++;
+                    foundIssues.clear();
+                    renderPuzzle();
+                }
+            });
+
+            // Settings
+            document.getElementById('settings-btn').addEventListener('click', () => {
+                document.getElementById('settings-panel').classList.toggle('show');
+            });
+
+            document.getElementById('countdown-toggle').addEventListener('click', () => {
+                settings.countdownEnabled = !settings.countdownEnabled;
+                updateSettingsUI();
+                saveSettings();
+            });
+
+            document.getElementById('say-loud-toggle').addEventListener('click', () => {
+                settings.sayOutLoudEnabled = !settings.sayOutLoudEnabled;
+                updateSettingsUI();
+                saveSettings();
+            });
+
+            document.getElementById('break-toggle').addEventListener('click', () => {
+                settings.breakEnabled = !settings.breakEnabled;
+                updateSettingsUI();
+                saveSettings();
+            });
+
+            // Modals
+            document.getElementById('confirm-yes').addEventListener('click', submitConfirmed);
+            document.getElementById('confirm-no').addEventListener('click', () => {
+                closeModal('confirm-modal');
+                document.getElementById('issue-input').focus();
+            });
+
+            document.getElementById('say-continue').addEventListener('click', () => {
+                closeModal('say-out-loud-modal');
+                if (settings.countdownEnabled) {
+                    showCountdownModal();
+                } else {
+                    submitConfirmed();
+                }
+            });
+
+            document.getElementById('break-continue').addEventListener('click', () => {
+                closeModal('break-modal');
+            });
+        }
+
+        function updateSettingsUI() {
+            document.getElementById('countdown-toggle').classList.toggle('on', settings.countdownEnabled);
+            document.getElementById('say-loud-toggle').classList.toggle('on', settings.sayOutLoudEnabled);
+            document.getElementById('break-toggle').classList.toggle('on', settings.breakEnabled);
+        }
+
+        // ===== RENDERING =====
+        function renderPuzzle() {
+            const puzzles = PUZZLES[currentCourse];
+            const puzzle = puzzles[currentPuzzleIndex];
+
+            // Update counters
+            document.getElementById('current-puzzle').textContent = currentPuzzleIndex + 1;
+            document.getElementById('total-puzzles').textContent = puzzles.length;
+
+            // Update navigation
+            document.getElementById('prev-puzzle').disabled = currentPuzzleIndex === 0;
+            document.getElementById('next-puzzle').disabled = currentPuzzleIndex === puzzles.length - 1;
+
+            // Render honeycomb
+            renderHoneycomb(puzzle);
+
+            // Clear input and issues
+            document.getElementById('issue-input').value = '';
+            document.getElementById('issue-input').focus();
+            renderIssuesList();
+
+            // Update rank
+            updateRankDisplay();
+        }
+
+        function renderHoneycomb(puzzle) {
+            const honeycomb = document.getElementById('honeycomb');
+            honeycomb.innerHTML = '';
+
+            // Center
+            const center = document.createElement('div');
+            center.className = 'hex center';
+            center.textContent = puzzle.center;
+            honeycomb.appendChild(center);
+
+            // Outer hexes
+            puzzle.facts.forEach((fact, i) => {
+                const hex = document.createElement('div');
+                hex.className = `hex outer pos${i + 1}`;
+                hex.textContent = fact;
+                honeycomb.appendChild(hex);
+            });
+        }
+
+        function renderIssuesList() {
+            const container = document.getElementById('issues-section');
+            const list = document.getElementById('issues-list');
+
+            if (foundIssues.size === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            list.innerHTML = '';
+
+            const puzzles = PUZZLES[currentCourse];
+            const puzzle = puzzles[currentPuzzleIndex];
+
+            const issueMap = new Map();
+            puzzle.issues.forEach(issue => {
+                issueMap.set(issue.name.toLowerCase(), issue);
+            });
+
+            Array.from(foundIssues).forEach(issueName => {
+                const issue = issueMap.get(issueName.toLowerCase());
+                if (!issue) return;
+
+                const card = document.createElement('div');
+                card.className = 'issue-card';
+                card.innerHTML = `
+                    <div class="issue-name">${issue.name}</div>
+                    <div class="issue-meta">
+                        <div class="issue-explanation">${issue.explanation}</div>
+                        <div class="issue-points">+${issue.points}</div>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function updateRankDisplay() {
+            const rankIndex = RANKS.findIndex(r => totalPoints < r.minPoints) - 1;
+            const currentRank = RANKS[Math.max(0, rankIndex)];
+            const nextRank = RANKS[Math.min(RANKS.length - 1, rankIndex + 1)];
+
+            document.getElementById('rank-name').textContent = currentRank.name;
+
+            const pointsInRank = totalPoints - currentRank.minPoints;
+            const pointsForRank = nextRank.minPoints - currentRank.minPoints;
+            const progress = Math.min(100, (pointsInRank / pointsForRank) * 100);
+
+            document.getElementById('rank-points').textContent = `${totalPoints} / ${nextRank.minPoints} pts`;
+            document.getElementById('rank-bar').style.width = progress + '%';
+        }
+
+        // ===== AUTOCOMPLETE =====
+        function updateAutocomplete() {
+            const input = document.getElementById('issue-input').value.trim().toLowerCase();
+            const list = document.getElementById('autocomplete-list');
+
+            if (!input) {
+                list.classList.remove('show');
+                return;
+            }
+
+            const puzzles = PUZZLES[currentCourse];
+            const puzzle = puzzles[currentPuzzleIndex];
+
+            const suggestions = puzzle.issues
+                .filter(issue => {
+                    const name = issue.name.toLowerCase();
+                    const abbreviation = issue.name.split(/\s+/).map(w => w[0]).join('').toLowerCase();
+                    return name.includes(input) || abbreviation.includes(input);
+                })
+                .filter(issue => !foundIssues.has(issue.name))
+                .slice(0, 5);
+
+            if (suggestions.length === 0) {
+                list.classList.remove('show');
+                return;
+            }
+
+            list.innerHTML = suggestions.map((issue, i) => `
+                <div class="autocomplete-item" data-index="${i}">${issue.name}</div>
+            `).join('');
+
+            list.classList.add('show');
+
+            document.querySelectorAll('.autocomplete-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.getElementById('issue-input').value = suggestions[parseInt(item.dataset.index)].name;
+                    list.classList.remove('show');
+                });
+            });
+        }
+
+        // ===== SUBMISSION =====
+        function handleSubmit() {
+            const input = document.getElementById('issue-input').value.trim();
+
+            if (!input) {
+                showToast('Enter an issue name first!');
+                return;
+            }
+
+            // Check if issue exists
+            const puzzles = PUZZLES[currentCourse];
+            const puzzle = puzzles[currentPuzzleIndex];
+            const issue = puzzle.issues.find(i => i.name.toLowerCase() === input.toLowerCase());
+
+            if (!issue) {
+                showToast('Issue not found in this puzzle!');
+                return;
+            }
+
+            if (foundIssues.has(issue.name)) {
+                showToast('You already found this issue!');
+                return;
+            }
+
+            // Show appropriate modal
+            document.getElementById('confirm-text').textContent = issue.name;
+
+            if (settings.sayOutLoudEnabled) {
+                showModal('say-out-loud-modal');
+            } else if (settings.countdownEnabled) {
+                showModal('confirm-modal');
+                startCountdown();
+            } else {
+                submitConfirmed();
+            }
+        }
+
+        function submitConfirmed() {
+            closeModal('confirm-modal');
+            closeModal('say-out-loud-modal');
+
+            const input = document.getElementById('issue-input').value.trim();
+            const puzzles = PUZZLES[currentCourse];
+            const puzzle = puzzles[currentPuzzleIndex];
+            const issue = puzzle.issues.find(i => i.name.toLowerCase() === input.toLowerCase());
+
+            foundIssues.add(issue.name);
+            totalPoints += issue.points;
+
+            renderIssuesList();
+            updateRankDisplay();
+
+            document.getElementById('issue-input').value = '';
+            document.getElementById('issue-input').focus();
+
+            showToast(`+${issue.points} pts! Found: ${issue.name}`);
+            checkBreakTime();
+        }
+
+        function skipPuzzle() {
+            if (currentPuzzleIndex < PUZZLES[currentCourse].length - 1) {
+                currentPuzzleIndex++;
+                foundIssues.clear();
+                renderPuzzle();
+                showToast('Skipped to next puzzle');
+            } else {
+                showToast('You\'re on the last puzzle!');
+            }
+        }
+
+        // ===== MODALS =====
+        function showModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function startCountdown() {
+            const countdownEl = document.getElementById('countdown');
+            countdownEl.style.display = 'block';
+            let seconds = 10;
+            countdownEl.textContent = seconds;
+
+            const interval = setInterval(() => {
+                seconds--;
+                countdownEl.textContent = seconds;
+
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    countdownEl.style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        // ===== BREAKS =====
+        function checkBreakTime() {
+            if (!settings.breakEnabled) return;
+
+            const elapsedMs = Date.now() - gameStartTime;
+            const elapsedMins = elapsedMs / 60000;
+
+            if (elapsedMins >= 25 && !breakShownAt) {
+                breakShownAt = Date.now();
+                showModal('break-modal');
+            }
+        }
+
+        // ===== TOAST =====
+        function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // ===== INIT =====
+        init();
+    </script>
+</body>
+</html>

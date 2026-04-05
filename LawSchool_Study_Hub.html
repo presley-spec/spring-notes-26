@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0b12">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="1L Study Hub">
+<title>1L Study Hub — Presley's Finals Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   1L STUDY HUB — MOBILE-FIRST PWA
+   ═══════════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0b12;--surface:#12141e;--surface2:#1a1d2b;--surface3:#232840;
+  --border:#2a2f45;--border-light:#363c58;
+  --text:#e8eaf4;--text-dim:#7a80a0;--text-muted:#4e536a;
+  --gold:#d4a843;--gold-light:#f0d078;--gold-dark:#a07828;
+  --property:#e17055;--property-bg:rgba(225,112,85,.12);--property-border:rgba(225,112,85,.25);
+  --conlaw:#0984e3;--conlaw-bg:rgba(9,132,227,.12);--conlaw-border:rgba(9,132,227,.25);
+  --criminal:#9b59b6;--criminal-bg:rgba(155,89,182,.12);--criminal-border:rgba(155,89,182,.25);
+  --multi:#3ecf8e;--multi-bg:rgba(62,207,142,.12);--multi-border:rgba(62,207,142,.25);
+  --accent:#5b7fff;
+  --safe-bottom:env(safe-area-inset-bottom, 0px);
+  --safe-top:env(safe-area-inset-top, 0px);
+  --nav-height:72px;
+}
+html,body{
+  height:100%;overflow:hidden;
+  background:var(--bg);color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+/* ═══ SCREEN SYSTEM ═══ */
+.screen{display:none;height:100%;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+
+/* ═══ STATUS BAR SPACER ═══ */
+.status-spacer{
+  height:calc(12px + var(--safe-top));
+  background:var(--bg);flex-shrink:0;
+}
+
+/* ═══ TOP HEADER ═══ */
+.top-header{
+  padding:8px 20px 16px;
+  background:var(--bg);
+  flex-shrink:0;
+  position:relative;
+  z-index:10;
+}
+.top-header h1{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:900;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:-0.5px;
+}
+.top-header .subtitle{
+  font-size:12px;color:var(--text-dim);
+  font-weight:500;letter-spacing:0.5px;margin-top:2px;
+}
+.greeting-row{display:flex;align-items:center;justify-content:space-between}
+.stats-pill{
+  display:flex;gap:12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:6px 14px;
+  margin-top:12px;
+}
+.stats-pill .stat{font-size:11px;color:var(--text-dim)}
+.stats-pill .stat strong{color:var(--gold);font-weight:700}
+
+/* ═══ SCROLLABLE CONTENT ═══ */
+.scroll-content{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:0 16px 100px;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+}
+
+/* ═══ SECTION HEADERS ═══ */
+.section-header{
+  display:flex;align-items:center;gap:10px;
+  margin:24px 0 14px;
+}
+.section-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+.section-header h2{
+  font-size:15px;font-weight:700;letter-spacing:0.3px;
+}
+.section-header .count{
+  font-size:11px;color:var(--text-muted);
+  margin-left:auto;font-weight:500;
+}
+
+/* ═══ GAME CARDS ═══ */
+.game-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:12px;
+  cursor:pointer;
+  transition:all .2s ease;
+  -webkit-user-select:none;user-select:none;
+  position:relative;overflow:hidden;
+}
+.game-card:active{
+  transform:scale(0.97);
+  background:var(--surface2);
+}
+.game-card .card-top{
+  display:flex;align-items:flex-start;gap:14px;
+}
+.game-icon{
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;flex-shrink:0;
+  border:1px solid rgba(255,255,255,.06);
+}
+.game-info{flex:1;min-width:0}
+.game-info h3{
+  font-size:15px;font-weight:700;
+  margin-bottom:3px;line-height:1.3;
+}
+.game-info .desc{
+  font-size:12px;color:var(--text-dim);
+  line-height:1.4;
+  display:-webkit-box;-webkit-line-clamp:2;
+  -webkit-box-orient:vertical;overflow:hidden;
+}
+.card-tags{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;
+}
+.tag{
+  font-size:10px;font-weight:600;
+  padding:3px 10px;border-radius:12px;
+  letter-spacing:0.3px;text-transform:uppercase;
+}
+.tag-property{color:var(--property);background:var(--property-bg);border:1px solid var(--property-border)}
+.tag-conlaw{color:var(--conlaw);background:var(--conlaw-bg);border:1px solid var(--conlaw-border)}
+.tag-criminal{color:var(--criminal);background:var(--criminal-bg);border:1px solid var(--criminal-border)}
+.tag-multi{color:var(--multi);background:var(--multi-bg);border:1px solid var(--multi-border)}
+.tag-game{color:var(--accent);background:rgba(91,127,255,.1);border:1px solid rgba(91,127,255,.2)}
+.tag-nyt{color:#f9df6d;background:rgba(249,223,109,.1);border:1px solid rgba(249,223,109,.2)}
+.tag-study{color:var(--gold);background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.2)}
+.tag-exam{color:#e84393;background:rgba(232,67,147,.1);border:1px solid rgba(232,67,147,.2)}
+
+/* PWA Install Banner */
+.install-banner{
+  position:fixed;bottom:calc(80px + var(--safe-bottom));left:12px;right:12px;
+  background:linear-gradient(135deg,#1a1d2b,#232840);
+  border:1px solid var(--gold-dark);
+  border-radius:16px;padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:999;opacity:0;transform:translateY(20px);
+  pointer-events:none;transition:all .3s ease;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.install-banner.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+.install-content{display:flex;align-items:center;gap:10px}
+.install-icon{font-size:28px}
+.install-text{display:flex;flex-direction:column}
+.install-text strong{font-size:13px;color:var(--gold-light)}
+.install-text span{font-size:10px;color:var(--text-dim)}
+.install-actions{display:flex;align-items:center;gap:8px}
+.install-btn{
+  background:var(--gold);color:#0a0b12;border:none;
+  border-radius:10px;padding:8px 16px;font-size:12px;
+  font-weight:700;cursor:pointer;
+}
+.dismiss-btn{
+  background:none;border:none;color:var(--text-muted);
+  font-size:16px;cursor:pointer;padding:4px;
+}
+
+/* NYT Games Row */
+.nyt-row{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:10px;margin-bottom:16px;
+}
+.nyt-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px 8px;
+  cursor:pointer;
+  text-align:center;
+  transition:all .2s;
+  -webkit-user-select:none;
+}
+.nyt-card:active{transform:scale(0.96);background:var(--surface2)}
+.nyt-card .nyt-icon{font-size:26px;margin-bottom:6px;display:block}
+.nyt-card .nyt-name{font-size:11px;font-weight:700;margin-bottom:2px}
+.nyt-card .nyt-desc{font-size:9px;color:var(--text-dim);line-height:1.2}
+
+.card-arrow{
+  position:absolute;right:18px;top:50%;transform:translateY(-50%);
+  font-size:18px;color:var(--text-muted);
+  transition:transform .2s;
+}
+.game-card:active .card-arrow{transform:translateY(-50%) translateX(4px)}
+
+/* ═══ FEATURED CARD ═══ */
+.featured-card{
+  background:linear-gradient(135deg,#1a1830 0%,#1e2040 100%);
+  border:1px solid rgba(212,168,67,.2);
+  border-radius:22px;
+  padding:22px;margin-bottom:16px;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:all .2s;
+}
+.featured-card:active{transform:scale(0.97)}
+.featured-card::before{
+  content:'';position:absolute;top:-50%;right:-30%;
+  width:200px;height:200px;
+  background:radial-gradient(circle,rgba(212,168,67,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.featured-card .badge{
+  display:inline-block;font-size:9px;font-weight:800;
+  color:var(--gold);background:rgba(212,168,67,.15);
+  border:1px solid rgba(212,168,67,.25);
+  padding:3px 10px;border-radius:10px;
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.featured-card h3{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:800;
+  margin-bottom:6px;
+}
+.featured-card .desc{
+  font-size:13px;color:var(--text-dim);line-height:1.5;
+}
+
+/* ═══ QUICK PLAY CAROUSEL ═══ */
+.quick-play{
+  display:flex;gap:12px;overflow-x:auto;
+  padding:4px 0 16px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.quick-play::-webkit-scrollbar{display:none}
+.quick-chip{
+  flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  width:80px;cursor:pointer;
+  -webkit-user-select:none;
+}
+.quick-chip .icon-circle{
+  width:56px;height:56px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;
+  border:2px solid var(--border);
+  transition:all .2s;
+}
+.quick-chip:active .icon-circle{transform:scale(0.9);border-color:var(--gold)}
+.quick-chip .label{
+  font-size:10px;color:var(--text-dim);
+  text-align:center;font-weight:600;
+  line-height:1.2;
+}
+
+/* ═══ BOTTOM NAV ═══ */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--nav-height) + var(--safe-bottom));
+  padding-bottom:var(--safe-bottom);
+  background:rgba(10,11,18,.92);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid var(--border);
+  display:flex;z-index:1000;
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:4px;cursor:pointer;
+  color:var(--text-muted);
+  transition:color .2s;
+  -webkit-user-select:none;
+  border:none;background:none;
+  font-family:inherit;
+}
+.nav-btn.active{color:var(--gold)}
+.nav-btn .nav-icon{font-size:22px;line-height:1}
+.nav-btn .nav-label{font-size:10px;font-weight:600;letter-spacing:0.3px}
+
+/* ═══ GAME PLAYER (iframe view) ═══ */
+#player-screen{background:var(--bg)}
+.player-header{
+  display:flex;align-items:center;gap:14px;
+  padding:8px 16px;padding-top:calc(8px + var(--safe-top));
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  z-index:10;
+}
+.back-btn{
+  width:40px;height:40px;border-radius:12px;
+  background:var(--surface);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:20px;color:var(--text);
+  flex-shrink:0;transition:all .15s;
+}
+.back-btn:active{background:var(--surface2);transform:scale(0.9)}
+.player-title{
+  flex:1;min-width:0;
+  font-size:14px;font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.player-subject-tag{
+  font-size:10px;font-weight:700;
+  padding:3px 10px;border-radius:10px;
+  letter-spacing:0.5px;text-transform:uppercase;
+  flex-shrink:0;
+}
+.game-iframe-wrap{
+  flex:1;position:relative;overflow:hidden;
+  background:#000;
+}
+.game-iframe-wrap iframe{
+  width:100%;height:100%;border:none;
+  background:#0a0b12;
+}
+.iframe-loading{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--bg);z-index:5;
+  transition:opacity .3s;
+}
+.iframe-loading.hidden{opacity:0;pointer-events:none}
+.loader-spinner{
+  width:40px;height:40px;border:3px solid var(--border);
+  border-top-color:var(--gold);border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin-bottom:16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.iframe-loading p{font-size:13px;color:var(--text-dim)}
+
+/* ═══ FILTER TABS ═══ */
+.filter-bar{
+  display:flex;gap:8px;padding:4px 0 8px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-pill{
+  flex-shrink:0;
+  font-size:12px;font-weight:600;
+  padding:7px 16px;border-radius:20px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--text-dim);
+  cursor:pointer;transition:all .2s;
+  -webkit-user-select:none;
+  white-space:nowrap;
+}
+.filter-pill.active{
+  background:rgba(212,168,67,.12);
+  border-color:rgba(212,168,67,.3);
+  color:var(--gold);
+}
+.filter-pill:active{transform:scale(0.95)}
+
+/* ═══ PROGRESS SCREEN ═══ */
+.progress-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:12px;margin:16px 0;
+}
+.progress-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px 12px;
+  text-align:center;
+}
+.progress-card .emoji{font-size:28px;margin-bottom:8px;display:block}
+.progress-card .course-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.progress-card .big-num{font-size:28px;font-weight:900;line-height:1}
+.progress-card .label{font-size:10px;color:var(--text-dim);margin-top:4px}
+
+.streak-banner{
+  background:linear-gradient(135deg,rgba(212,168,67,.1),rgba(212,168,67,.05));
+  border:1px solid rgba(212,168,67,.2);
+  border-radius:18px;
+  padding:20px;
+  text-align:center;
+  margin:16px 0;
+}
+.streak-banner .flame{font-size:40px;margin-bottom:8px;display:block}
+.streak-banner h3{font-size:18px;font-weight:800;color:var(--gold)}
+.streak-banner p{font-size:12px;color:var(--text-dim);margin-top:4px}
+
+.tip-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;padding:18px;
+  margin:12px 0;
+}
+.tip-card .tip-label{
+  font-size:10px;font-weight:700;color:var(--accent);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;
+}
+.tip-card p{font-size:13px;line-height:1.6;color:var(--text-dim)}
+
+/* ═══ SEARCH ═══ */
+.search-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  margin:12px 0 8px;
+}
+.search-box input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--text);font-size:14px;font-family:inherit;
+}
+.search-box input::placeholder{color:var(--text-muted)}
+.search-icon{font-size:18px;color:var(--text-muted);flex-shrink:0}
+
+/* ═══ EMPTY STATE ═══ */
+.empty-state{
+  text-align:center;padding:60px 20px;
+}
+.empty-state .emoji{font-size:48px;margin-bottom:16px;display:block}
+.empty-state h3{font-size:16px;margin-bottom:6px;color:var(--text-dim)}
+.empty-state p{font-size:13px;color:var(--text-muted)}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .3s ease both;will-change:opacity,transform}
+.fade-up-1{animation-delay:.03s}
+.fade-up-2{animation-delay:.06s}
+.fade-up-3{animation-delay:.09s}
+.fade-up-4{animation-delay:.12s}
+.fade-up-5{animation-delay:.15s}
+
+/* Splash screen */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .3s ease;
+}
+#splash.done{opacity:0;pointer-events:none}
+#splash h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:8px}
+#splash p{color:var(--text-muted);font-size:13px}
+#splash .splash-icon{font-size:48px;margin-bottom:16px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(min-width:600px){
+  .scroll-content{max-width:560px;margin:0 auto}
+  .game-card{padding:20px}
+  .top-header{max-width:560px;margin:0 auto}
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="splash-icon">⚖️</div>
+  <h1>Study Hub</h1>
+  <p>Loading your games...</p>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HOME SCREEN
+     ══════════════════════════════════════════ -->
+<div id="home-screen" class="screen active">
+  <div class="status-spacer"></div>
+  <div class="top-header">
+    <div class="greeting-row">
+      <div>
+        <h1>Study Hub</h1>
+        <div class="subtitle" id="greetingText">Good morning, Presley</div>
+      </div>
+      <div style="font-size:36px">⚖️</div>
+    </div>
+    <div class="stats-pill">
+      <div class="stat"><strong id="totalGames">16</strong> tools</div>
+      <div class="stat"><strong>3</strong> courses</div>
+      <div class="stat"><strong id="sessionCount">0</strong> played today</div>
+    </div>
+  </div>
+
+  <div class="scroll-content" id="homeScroll">
+
+    <!-- QUICK PLAY ROW -->
+    <div class="section-header fade-up">
+      <div class="section-dot" style="background:var(--gold)"></div>
+      <h2>Quick Play</h2>
+    </div>
+    <div class="quick-play fade-up fade-up-1" id="quickPlayRow"></div>
+
+    <!-- FEATURED STUDY PLATFORMS -->
+    <div class="section-header fade-up fade-up-2">
+      <div class="section-dot" style="background:var(--accent)"></div>
+      <h2>⭐ Featured Platforms</h2>
+    </div>
+    <div class="featured-card fade-up fade-up-2" onclick="launchGame('crimlaw-platform')" style="border-color:rgba(155,89,182,.3);margin-bottom:10px">
+      <div class="badge" style="color:var(--criminal);background:var(--criminal-bg);border-color:var(--criminal-border)">⚔️ Criminal Law</div>
+      <h3 style="font-size:19px">Criminal Law Platform</h3>
+      <div class="desc">Full rules browser, Mens Rea hierarchy, case database, and interactive practice questions.</div>
+    </div>
+    <div class="featured-card fade-up fade-up-3" onclick="launchGame('conlaw-platform')" style="border-color:rgba(9,132,227,.3);margin-bottom:10px">
+      <div class="badge" style="color:var(--conlaw);background:var(--conlaw-bg);border-color:var(--conlaw-border)">🏛️ Constitutional Law</div>
+      <h3 style="font-size:19px">Constitutional Law Platform</h3>
+      <div class="desc">Commerce Clause, Due Process, Equal Protection — complete doctrine suite with charts and visualizations.</div>
+    </div>
+    <div class="featured-card fade-up fade-up-4" onclick="launchGame('property-platform')" style="border-color:rgba(225,112,85,.3);margin-bottom:16px">
+      <div class="badge" style="color:var(--property);background:var(--property-bg);border-color:var(--property-border)">🏠 Property Law</div>
+      <h3 style="font-size:19px">Property Law Platform</h3>
+      <div class="desc">Bundle of Rights, Adverse Possession, Future Interests — the complete property doctrine reference.</div>
+    </div>
+
+    <!-- NYT GAMES -->
+    <div class="section-header fade-up fade-up-4">
+      <div class="section-dot" style="background:#f9df6d"></div>
+      <h2>🗞️ NYT Games</h2>
+    </div>
+    <div class="nyt-row fade-up fade-up-5">
+      <div class="nyt-card" onclick="launchGame('law-connections')">
+        <span class="nyt-icon">🟪</span>
+        <div class="nyt-name">Connections</div>
+        <div class="nyt-desc">Group 4 sets of 4</div>
+      </div>
+      <div class="nyt-card" onclick="launchGame('law-wordle')">
+        <span class="nyt-icon">🟩</span>
+        <div class="nyt-name">Rule Wordle</div>
+        <div class="nyt-desc">Guess the doctrine</div>
+      </div>
+      <div class="nyt-card" onclick="launchGame('law-crossword')">
+        <span class="nyt-icon">⬛</span>
+        <div class="nyt-name">Crossword</div>
+        <div class="nyt-desc">12 themed puzzles</div>
+      </div>
+      <div class="nyt-card" onclick="launchGame('law-issue-spotter')">
+        <span class="nyt-icon">🐝</span>
+        <div class="nyt-name">Issue Spotter</div>
+        <div class="nyt-desc">Spot issues from facts</div>
+      </div>
+      <div class="nyt-card" onclick="launchGame('law-strands')">
+        <span class="nyt-icon">🔗</span>
+        <div class="nyt-name">Strands</div>
+        <div class="nyt-desc">Connect doctrine chains</div>
+      </div>
+      <div class="nyt-card" onclick="launchGame('law-case-quotes')">
+        <span class="nyt-icon">📜</span>
+        <div class="nyt-name">Case Quotes</div>
+        <div class="nyt-desc">Name the holding</div>
+      </div>
+    </div>
+
+    <!-- EXAM SKILLS GAMES -->
+    <div class="section-header fade-up fade-up-5">
+      <div class="section-dot" style="background:#e84393"></div>
+      <h2>🎯 Exam Skills</h2>
+    </div>
+    <div class="nyt-row fade-up fade-up-5">
+      <div class="nyt-card" onclick="launchGame('devils-advocate')" style="border-color:rgba(232,67,147,.25)">
+        <span class="nyt-icon">😈</span>
+        <div class="nyt-name">Devil's Advocate</div>
+        <div class="nyt-desc">Counter-arguments</div>
+      </div>
+      <div class="nyt-card" onclick="launchGame('majority-minority')" style="border-color:rgba(232,67,147,.25)">
+        <span class="nyt-icon">⚖️</span>
+        <div class="nyt-name">Majority/Minority</div>
+        <div class="nyt-desc">Classify the rule</div>
+      </div>
+      <div class="nyt-card" onclick="launchGame('case-timeline')" style="border-color:rgba(232,67,147,.25)">
+        <span class="nyt-icon">📅</span>
+        <div class="nyt-name">Case Timeline</div>
+        <div class="nyt-desc">Drag into order</div>
+      </div>
+      <div class="nyt-card" onclick="launchGame('hypo-builder')" style="border-color:rgba(232,67,147,.25)">
+        <span class="nyt-icon">🧱</span>
+        <div class="nyt-name">Hypo Builder</div>
+        <div class="nyt-desc">Build fact patterns</div>
+      </div>
+      <div class="nyt-card" onclick="launchGame('irac-sprint')" style="border-color:rgba(232,67,147,.25)">
+        <span class="nyt-icon">⏱️</span>
+        <div class="nyt-name">IRAC Sprint</div>
+        <div class="nyt-desc">Timed essay practice</div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-box fade-up fade-up-3">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search games & platforms..." oninput="filterGames()">
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-bar fade-up fade-up-3">
+      <div class="filter-pill active" data-filter="all" onclick="setFilter('all',this)">All</div>
+      <div class="filter-pill" data-filter="game" onclick="setFilter('game',this)">🎮 Games</div>
+      <div class="filter-pill" data-filter="nyt" onclick="setFilter('nyt',this)">🗞️ NYT Games</div>
+      <div class="filter-pill" data-filter="exam" onclick="setFilter('exam',this)">🎯 Exam Skills</div>
+      <div class="filter-pill" data-filter="study" onclick="setFilter('study',this)">📖 Platforms</div>
+      <div class="filter-pill" data-filter="property" onclick="setFilter('property',this)">🏠 Property</div>
+      <div class="filter-pill" data-filter="conlaw" onclick="setFilter('conlaw',this)">🏛️ Con Law</div>
+      <div class="filter-pill" data-filter="criminal" onclick="setFilter('criminal',this)">⚔️ Criminal</div>
+    </div>
+
+    <!-- GAME LIST -->
+    <div id="gameList"></div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LIBRARY SCREEN
+     ══════════════════════════════════════════ -->
+<div id="library-screen" class="screen">
+  <div class="status-spacer"></div>
+  <div class="top-header">
+    <h1>Library</h1>
+    <div class="subtitle">All study tools by course</div>
+  </div>
+  <div class="scroll-content" id="libraryScroll"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PROGRESS SCREEN
+     ══════════════════════════════════════════ -->
+<div id="progress-screen" class="screen">
+  <div class="status-spacer"></div>
+  <div class="top-header">
+    <h1>Progress</h1>
+    <div class="subtitle">Your study stats</div>
+  </div>
+  <div class="scroll-content">
+    <div class="streak-banner">
+      <span class="flame">🔥</span>
+      <h3 id="streakCount">0 Day Streak</h3>
+      <p>Play at least one game daily to build your streak</p>
+    </div>
+    <div class="progress-grid">
+      <div class="progress-card">
+        <span class="emoji">🏠</span>
+        <div class="course-name" style="color:var(--property)">Property</div>
+        <div class="big-num" id="propSessions" style="color:var(--property)">0</div>
+        <div class="label">sessions</div>
+      </div>
+      <div class="progress-card">
+        <span class="emoji">🏛️</span>
+        <div class="course-name" style="color:var(--conlaw)">Con Law</div>
+        <div class="big-num" id="conlawSessions" style="color:var(--conlaw)">0</div>
+        <div class="label">sessions</div>
+      </div>
+      <div class="progress-card">
+        <span class="emoji">⚔️</span>
+        <div class="course-name" style="color:var(--criminal)">Criminal</div>
+        <div class="big-num" id="crimSessions" style="color:var(--criminal)">0</div>
+        <div class="label">sessions</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-dot" style="background:var(--accent)"></div>
+      <h2>Game → Exam Skill Map</h2>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">🐝 Issue Spotter Bee → Issue Spotting</div>
+      <p>The single most exam-relevant game. Trains you to see facts and instantly think "what doctrines apply?" — exactly what professors test. Target: Genius on 60%+ of puzzles.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">🟪 Connections → Categorization</div>
+      <p>Exams reward precise mental categories. Connections forces you to distinguish similar-looking doctrines. Target: Solving blue/purple without mistakes.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">🟩 Rule Wordle → Element Recall</div>
+      <p>Professors give full credit for complete, precise rule statements. Wordle trains you to recall every element. Target: Completing in 3 or fewer guesses.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">📜 Case Quotes → Case Attribution</div>
+      <p>You can't write "the wheat case" — you need "Wickard v. Filburn." Case Quotes trains instant case-name recall. Target: Guessing in 1-2 tries.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">🔗 Strands → Cross-Topic Synthesis</div>
+      <p>A+ exams connect doctrines across topics. Strands trains you to see how adverse possession links to easements links to recording acts. Target: Finding the Spangram without hints.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">⬛ Crossword → Terminology Speed</div>
+      <p>Quick recall of terms and case names during a 3-hour exam. Daily crossword keeps your vocabulary sharp. Target: Beating your personal best time.</p>
+    </div>
+
+    <div class="section-header">
+      <div class="section-dot" style="background:var(--multi)"></div>
+      <h2>Recently Played</h2>
+    </div>
+    <div id="recentList"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     GAME PLAYER SCREEN
+     ══════════════════════════════════════════ -->
+<div id="player-screen" class="screen">
+  <div class="player-header">
+    <div class="back-btn" onclick="exitGame()">←</div>
+    <div class="player-title" id="playerTitle">Loading...</div>
+    <div class="player-subject-tag" id="playerTag"></div>
+  </div>
+  <div class="game-iframe-wrap">
+    <div class="iframe-loading" id="iframeLoader">
+      <div class="loader-spinner"></div>
+      <p>Loading game...</p>
+    </div>
+    <iframe id="gameIframe" sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- PWA INSTALL BANNER -->
+<div id="installBanner" class="install-banner">
+  <div class="install-content">
+    <span class="install-icon">📲</span>
+    <div class="install-text">
+      <strong>Install Study Hub</strong>
+      <span>Add to home screen for offline access</span>
+    </div>
+  </div>
+  <div class="install-actions">
+    <button class="install-btn" onclick="installApp()">Install</button>
+    <button class="dismiss-btn" onclick="dismissInstall()">✕</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BOTTOM NAVIGATION
+     ══════════════════════════════════════════ -->
+<div class="bottom-nav" id="bottomNav">
+  <button class="nav-btn active" onclick="switchTab('home')">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('library')">
+    <span class="nav-icon">📚</span>
+    <span class="nav-label">Library</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('progress')">
+    <span class="nav-icon">📊</span>
+    <span class="nav-label">Progress</span>
+  </button>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   GAME DATABASE
+   ═══════════════════════════════════════════════════════════ */
+const GAMES = [
+  {
+    id: 'esquire-v3',
+    name: 'Esquire Rising: MyCareer',
+    desc: 'Climb from intern to partner across 3 legal arcs. Career progression RPG with Con Law, Criminal, and Property scenarios.',
+    icon: '👔',
+    iconBg: 'linear-gradient(135deg,#a07828,#d4a843)',
+    file: 'Esquire_Rising_v3.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'game',
+    featured: true
+  },
+  {
+    id: 'galactic-tribunal',
+    name: 'Galactic High Tribunal',
+    desc: 'Star Wars criminal law RPG. Rise from Tatooine public defender to Attorney General of the Republic.',
+    icon: '⚔️',
+    iconBg: 'linear-gradient(135deg,#1e3a5f,#FFE81F)',
+    file: 'galactic-high-tribunal.html',
+    subjects: ['criminal'],
+    type: 'game'
+  },
+  {
+    id: 'quahog-court',
+    name: 'Quahog Courtroom',
+    desc: 'Family Guy themed property law battles. Play as prosecution, defense, or judge in Quahog.',
+    icon: '⚖️',
+    iconBg: 'linear-gradient(135deg,#e17055,#ff6b00)',
+    file: 'Property_Law_Quahog_Court.html',
+    subjects: ['property'],
+    type: 'game'
+  },
+  {
+    id: 'fascism-inc',
+    name: 'Fascism Inc.',
+    desc: 'Multi-course study game covering all three subjects. Strategic question-based gameplay.',
+    icon: '🎯',
+    iconBg: 'linear-gradient(135deg,#2d3436,#636e72)',
+    file: 'FascismInc.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'game'
+  },
+  {
+    id: 'sporcle',
+    name: 'Law School Sporcle',
+    desc: 'Sporcle-style timed quizzes across all three courses. Category-based challenges.',
+    icon: '⏱️',
+    iconBg: 'linear-gradient(135deg,#6c5ce7,#0984e3)',
+    file: 'Law_School_Sporcle.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'game'
+  },
+  {
+    id: 'rick-morty-crim',
+    name: 'Rick & Morty Crim Exam',
+    desc: 'Criminal law practice exam with Rick and Morty universe hypotheticals. Full IRAC practice.',
+    icon: '🧪',
+    iconBg: 'linear-gradient(135deg,#00b894,#00cec9)',
+    file: 'Rick_and_Morty_Crim_Exam_Hypo.html',
+    subjects: ['criminal'],
+    type: 'study'
+  },
+  {
+    id: 'crimlaw-platform',
+    name: 'Criminal Law Platform',
+    desc: 'Comprehensive study tool: rules browser, case database, Mens Rea hierarchy, and practice questions.',
+    icon: '📕',
+    iconBg: 'linear-gradient(135deg,#9b59b6,#8e44ad)',
+    file: 'CrimLaw_Study_Platform.html',
+    subjects: ['criminal'],
+    type: 'study'
+  },
+  {
+    id: 'conlaw-platform',
+    name: 'Constitutional Law Platform',
+    desc: 'Full Con Law study suite: Commerce Clause, Due Process, Equal Protection, and more with charts.',
+    icon: '📘',
+    iconBg: 'linear-gradient(135deg,#0984e3,#74b9ff)',
+    file: 'ConLaw_Study_Platform.html',
+    subjects: ['conlaw'],
+    type: 'study'
+  },
+  {
+    id: 'property-platform',
+    name: 'Property Law Platform',
+    desc: 'Complete property study tool: Bundle of Rights, Adverse Possession, Future Interests, and more.',
+    icon: '📗',
+    iconBg: 'linear-gradient(135deg,#e17055,#fab1a0)',
+    file: 'PropertyLaw_Study_Platform.html',
+    subjects: ['property'],
+    type: 'study'
+  },
+  {
+    id: 'study-guide',
+    name: 'Finals Study Guide',
+    desc: 'Comprehensive Spring 2026 study guide covering all three courses in one document.',
+    icon: '📋',
+    iconBg: 'linear-gradient(135deg,#3ecf8e,#00b894)',
+    file: 'Finals_Study_Guide_Spring_2026.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'study'
+  },
+  /* ── NYT-STYLE GAMES ── */
+  {
+    id: 'law-connections',
+    name: 'Case Connections',
+    desc: '25 puzzles — group 16 legal terms into 4 hidden doctrinal categories. Trains issue-spotting.',
+    icon: '🟪',
+    iconBg: 'linear-gradient(135deg,#ba81c5,#f9df6d)',
+    file: 'Law_Connections.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'nyt'
+  },
+  {
+    id: 'law-wordle',
+    name: 'Rule Wordle',
+    desc: '90 legal terms — guess the doctrine in 6 tries. Definitions revealed after each round.',
+    icon: '🟩',
+    iconBg: 'linear-gradient(135deg,#538d4e,#b59f3b)',
+    file: 'Law_Wordle.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'nyt'
+  },
+  {
+    id: 'law-crossword',
+    name: 'Doctrine Crossword',
+    desc: '12 themed 5×5 crosswords — Commerce Clause, Mens Rea, Estates, and more. Race the clock.',
+    icon: '⬛',
+    iconBg: 'linear-gradient(135deg,#3a3a4a,#d4a843)',
+    file: 'Law_Crossword.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'nyt'
+  },
+  {
+    id: 'law-issue-spotter',
+    name: 'Issue Spotter Bee',
+    desc: '15 fact honeycombs — spot every legal issue from 7 key facts. The most exam-relevant game.',
+    icon: '🐝',
+    iconBg: 'linear-gradient(135deg,#f9df6d,#d4a843)',
+    file: 'Law_Issue_Spotter.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'nyt'
+  },
+  {
+    id: 'law-strands',
+    name: 'Strands of Law',
+    desc: '10 puzzles — find hidden chains of connected doctrines in a grid. Trains cross-topic synthesis.',
+    icon: '🔗',
+    iconBg: 'linear-gradient(135deg,#5b7fff,#9b59b6)',
+    file: 'Law_Strands.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'nyt'
+  },
+  {
+    id: 'law-case-quotes',
+    name: 'Case Quotes',
+    desc: '30 famous holdings — guess which case from the quote. Clues narrow it down each try.',
+    icon: '📜',
+    iconBg: 'linear-gradient(135deg,#d4a843,#a07828)',
+    file: 'Law_Case_Quotes.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'nyt'
+  },
+  /* ── EXAM SKILLS GAMES ── */
+  {
+    id: 'devils-advocate',
+    name: "Devil's Advocate",
+    desc: '30 scenarios — pick the strongest counter-argument, then read model exam prose. Builds rebuttal skills.',
+    icon: '😈',
+    iconBg: 'linear-gradient(135deg,#e74c3c,#c0392b)',
+    file: 'Law_Devils_Advocate.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'exam'
+  },
+  {
+    id: 'majority-minority',
+    name: 'Majority or Minority',
+    desc: '60 rule cards — classify as Common Law, MPC, Majority, or Minority under a 30-second timer.',
+    icon: '⚖️',
+    iconBg: 'linear-gradient(135deg,#00b894,#00cec9)',
+    file: 'Law_Majority_Minority.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'exam'
+  },
+  {
+    id: 'case-timeline',
+    name: 'Case Timeline',
+    desc: '15 timeline threads — drag landmark cases into chronological order and learn the doctrinal story.',
+    icon: '📅',
+    iconBg: 'linear-gradient(135deg,#6c5ce7,#a29bfe)',
+    file: 'Law_Case_Timeline.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'exam'
+  },
+  {
+    id: 'hypo-builder',
+    name: 'Hypo Builder',
+    desc: '32 doctrine rounds — reverse issue-spotter: pick the facts that trigger each legal element.',
+    icon: '🧱',
+    iconBg: 'linear-gradient(135deg,#fdcb6e,#e17055)',
+    file: 'Law_Hypo_Builder.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'exam'
+  },
+  {
+    id: 'irac-sprint',
+    name: 'IRAC Sprint',
+    desc: '30 timed hypos — write full IRAC answers under exam pressure, then compare to model answers.',
+    icon: '⏱️',
+    iconBg: 'linear-gradient(135deg,#e84393,#fd79a8)',
+    file: 'Law_IRAC_Sprint.html',
+    subjects: ['conlaw','criminal','property'],
+    type: 'exam'
+  }
+];
+
+/* ═══ STATE ═══ */
+let currentFilter = 'all';
+let currentTab = 'home';
+let currentGame = null;
+let sessionsToday = 0;
+let recentGames = [];
+let subjectSessions = { property: 0, conlaw: 0, criminal: 0 };
+
+/* ═══ GREETING ═══ */
+function updateGreeting() {
+  const h = new Date().getHours();
+  let greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greetingText').textContent = greeting + ', Presley';
+}
+
+/* ═══ RENDER QUICK PLAY ═══ */
+function renderQuickPlay() {
+  const row = document.getElementById('quickPlayRow');
+  const quickGames = GAMES.filter(g => g.type === 'game').slice(0, 6);
+  row.innerHTML = quickGames.map(g => `
+    <div class="quick-chip" onclick="launchGame('${g.id}')">
+      <div class="icon-circle" style="background:${g.iconBg}">${g.icon}</div>
+      <div class="label">${g.name.split(':')[0].split('—')[0].trim()}</div>
+    </div>
+  `).join('');
+}
+
+/* ═══ RENDER GAME LIST ═══ */
+function renderGameList(containerId, games) {
+  const container = document.getElementById(containerId);
+  if (!games.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <span class="emoji">🔍</span>
+        <h3>No matches found</h3>
+        <p>Try a different search or filter</p>
+      </div>`;
+    return;
+  }
+  container.innerHTML = games.map((g, i) => {
+    const subjectTags = g.subjects.map(s => {
+      const labels = { property: '🏠 Property', conlaw: '🏛️ Con Law', criminal: '⚔️ Criminal' };
+      return `<span class="tag tag-${s}">${labels[s]}</span>`;
+    }).join('');
+    const typeTags = g.type === 'game'
+      ? '<span class="tag tag-game">🎮 Game</span>'
+      : g.type === 'nyt'
+      ? '<span class="tag tag-nyt">🗞️ NYT Game</span>'
+      : g.type === 'exam'
+      ? '<span class="tag tag-exam">🎯 Exam Skill</span>'
+      : '<span class="tag tag-study">📖 Study</span>';
+    return `
+      <div class="game-card fade-up fade-up-${Math.min(i+1,5)}" onclick="launchGame('${g.id}')">
+        <div class="card-top">
+          <div class="game-icon" style="background:${g.iconBg}">${g.icon}</div>
+          <div class="game-info">
+            <h3>${g.name}</h3>
+            <div class="desc">${g.desc}</div>
+          </div>
+        </div>
+        <div class="card-tags">
+          ${typeTags}${subjectTags}
+        </div>
+        <span class="card-arrow">›</span>
+      </div>`;
+  }).join('');
+}
+
+/* ═══ FILTERS ═══ */
+function getFilteredGames() {
+  const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  return GAMES.filter(g => {
+    if (currentFilter === 'game' && g.type !== 'game') return false;
+    if (currentFilter === 'nyt' && g.type !== 'nyt') return false;
+    if (currentFilter === 'exam' && g.type !== 'exam') return false;
+    if (currentFilter === 'study' && g.type !== 'study') return false;
+    if (['property','conlaw','criminal'].includes(currentFilter) && !g.subjects.includes(currentFilter)) return false;
+    if (search && !g.name.toLowerCase().includes(search) && !g.desc.toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
+function setFilter(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderGameList('gameList', getFilteredGames());
+}
+
+function filterGames() {
+  renderGameList('gameList', getFilteredGames());
+}
+
+/* ═══ LIBRARY ═══ */
+function renderLibrary() {
+  const container = document.getElementById('libraryScroll');
+  const courses = [
+    { key: 'property', label: 'Property Law', color: 'var(--property)', emoji: '🏠' },
+    { key: 'conlaw', label: 'Constitutional Law', color: 'var(--conlaw)', emoji: '🏛️' },
+    { key: 'criminal', label: 'Criminal Law', color: 'var(--criminal)', emoji: '⚔️' },
+  ];
+  let html = '';
+  for (const c of courses) {
+    const games = GAMES.filter(g => g.subjects.includes(c.key));
+    html += `
+      <div class="section-header">
+        <div class="section-dot" style="background:${c.color}"></div>
+        <h2>${c.emoji} ${c.label}</h2>
+        <div class="count">${games.length} items</div>
+      </div>`;
+    html += games.map(g => `
+      <div class="game-card" onclick="launchGame('${g.id}')">
+        <div class="card-top">
+          <div class="game-icon" style="background:${g.iconBg}">${g.icon}</div>
+          <div class="game-info">
+            <h3>${g.name}</h3>
+            <div class="desc">${g.desc}</div>
+          </div>
+        </div>
+        <span class="card-arrow">›</span>
+      </div>`).join('');
+  }
+
+  // Multi-subject section
+  const multi = GAMES.filter(g => g.subjects.length > 1);
+  html += `
+    <div class="section-header">
+      <div class="section-dot" style="background:var(--multi)"></div>
+      <h2>🎯 Multi-Subject</h2>
+      <div class="count">${multi.length} items</div>
+    </div>`;
+  html += multi.map(g => `
+    <div class="game-card" onclick="launchGame('${g.id}')">
+      <div class="card-top">
+        <div class="game-icon" style="background:${g.iconBg}">${g.icon}</div>
+        <div class="game-info">
+          <h3>${g.name}</h3>
+          <div class="desc">${g.desc}</div>
+        </div>
+      </div>
+      <span class="card-arrow">›</span>
+    </div>`).join('');
+
+  // NYT Games section
+  const nyt = GAMES.filter(g => g.type === 'nyt');
+  html += `
+    <div class="section-header">
+      <div class="section-dot" style="background:#f9df6d"></div>
+      <h2>🗞️ NYT Games</h2>
+      <div class="count">${nyt.length} items</div>
+    </div>`;
+  html += nyt.map(g => `
+    <div class="game-card" onclick="launchGame('${g.id}')">
+      <div class="card-top">
+        <div class="game-icon" style="background:${g.iconBg}">${g.icon}</div>
+        <div class="game-info">
+          <h3>${g.name}</h3>
+          <div class="desc">${g.desc}</div>
+        </div>
+      </div>
+      <span class="card-arrow">›</span>
+    </div>`).join('');
+
+  // Exam Skills section
+  const exam = GAMES.filter(g => g.type === 'exam');
+  html += `
+    <div class="section-header">
+      <div class="section-dot" style="background:#e84393"></div>
+      <h2>🎯 Exam Skills</h2>
+      <div class="count">${exam.length} items</div>
+    </div>`;
+  html += exam.map(g => `
+    <div class="game-card" onclick="launchGame('${g.id}')">
+      <div class="card-top">
+        <div class="game-icon" style="background:${g.iconBg}">${g.icon}</div>
+        <div class="game-info">
+          <h3>${g.name}</h3>
+          <div class="desc">${g.desc}</div>
+        </div>
+      </div>
+      <span class="card-arrow">›</span>
+    </div>`).join('');
+
+  html += '<div style="height:100px"></div>';
+  container.innerHTML = html;
+}
+
+/* ═══ RECENT GAMES ═══ */
+function renderRecent() {
+  const container = document.getElementById('recentList');
+  if (!recentGames.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <span class="emoji">🎮</span>
+        <h3>No games played yet</h3>
+        <p>Jump into a game from the Home tab!</p>
+      </div>`;
+    return;
+  }
+  const games = recentGames.slice(0, 5).map(id => GAMES.find(g => g.id === id)).filter(Boolean);
+  renderGameList('recentList', games);
+}
+
+/* ═══ TAB SWITCHING ═══ */
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(tab + '-screen').classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn')[['home','library','progress'].indexOf(tab)].classList.add('active');
+  document.getElementById('bottomNav').style.display = 'flex';
+
+  if (tab === 'library') renderLibrary();
+  if (tab === 'progress') {
+    renderRecent();
+    document.getElementById('propSessions').textContent = subjectSessions.property;
+    document.getElementById('conlawSessions').textContent = subjectSessions.conlaw;
+    document.getElementById('crimSessions').textContent = subjectSessions.criminal;
+  }
+}
+
+/* ═══ GAME LAUNCHER ═══ */
+function launchGame(gameId) {
+  const game = GAMES.find(g => g.id === gameId);
+  if (!game) return;
+  currentGame = game;
+
+  // Track session
+  sessionsToday++;
+  document.getElementById('sessionCount').textContent = sessionsToday;
+  if (!recentGames.includes(gameId)) recentGames.unshift(gameId);
+  else { recentGames = recentGames.filter(id => id !== gameId); recentGames.unshift(gameId); }
+  game.subjects.forEach(s => { subjectSessions[s] = (subjectSessions[s] || 0) + 1; });
+
+  // Setup player screen
+  document.getElementById('playerTitle').textContent = game.name;
+  const tag = document.getElementById('playerTag');
+  if (game.subjects.length > 1) {
+    tag.textContent = 'Multi';
+    tag.style.cssText = 'color:var(--multi);background:var(--multi-bg);border:1px solid var(--multi-border)';
+  } else {
+    const s = game.subjects[0];
+    const labels = { property: 'Property', conlaw: 'Con Law', criminal: 'Criminal' };
+    tag.textContent = labels[s];
+    tag.style.cssText = `color:var(--${s});background:var(--${s}-bg);border:1px solid var(--${s}-border)`;
+  }
+
+  // Show player, hide nav
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('player-screen').classList.add('active');
+  document.getElementById('bottomNav').style.display = 'none';
+
+  // Load iframe
+  const loader = document.getElementById('iframeLoader');
+  const iframe = document.getElementById('gameIframe');
+  loader.classList.remove('hidden');
+  iframe.src = '';
+
+  setTimeout(() => {
+    iframe.src = game.file;
+    iframe.onload = () => {
+      setTimeout(() => loader.classList.add('hidden'), 300);
+    };
+  }, 100);
+}
+
+function exitGame() {
+  const iframe = document.getElementById('gameIframe');
+  iframe.src = '';
+  currentGame = null;
+  switchTab(currentTab);
+}
+
+/* ═══ INIT ═══ */
+function init() {
+  updateGreeting();
+  renderQuickPlay();
+  renderGameList('gameList', getFilteredGames());
+  document.getElementById('totalGames').textContent = GAMES.length;
+
+  // Dismiss splash after fonts and layout settle
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const splash = document.getElementById('splash');
+      splash.classList.add('done');
+      setTimeout(() => splash.remove(), 400);
+    }, 350);
+  });
+
+  // Handle back gesture / button
+  window.addEventListener('popstate', (e) => {
+    if (currentGame) { exitGame(); e.preventDefault(); }
+  });
+
+  // Push initial state
+  history.pushState({ screen: 'home' }, '');
+}
+
+// Override launch to push history state
+const _launchGame = launchGame;
+launchGame = function(id) {
+  history.pushState({ screen: 'game', id }, '');
+  _launchGame(id);
+};
+
+init();
+
+/* ═══ PWA SERVICE WORKER ═══ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[PWA] Service Worker registered:', reg.scope))
+      .catch(err => console.log('[PWA] SW registration failed:', err));
+  });
+}
+
+/* ═══ PWA INSTALL PROMPT ═══ */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show install banner
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.classList.add('visible');
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(choice => {
+    if (choice.outcome === 'accepted') console.log('[PWA] App installed');
+    deferredPrompt = null;
+    const banner = document.getElementById('installBanner');
+    if (banner) banner.classList.remove('visible');
+  });
+}
+
+function dismissInstall() {
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.classList.remove('visible');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypo Builder - Law School Study Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0b12 0%, #0f1119 100%);
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(15, 17, 25, 0.95);
+            border-radius: 16px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 2rem 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #d4af37;
+            letter-spacing: 0.5px;
+        }
+
+        .score-badge {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid #d4af37;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #d4af37;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: transparent;
+            color: #a0a0a0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+            color: #d4af37;
+        }
+
+        .tab-btn:hover {
+            border-color: #d4af37;
+            color: #d4af37;
+        }
+
+        .round-info {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .round-counter {
+            font-size: 1.1rem;
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+        .doctrine-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0.02) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .doctrine-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #d4af37;
+            margin-bottom: 1rem;
+            letter-spacing: 0.3px;
+        }
+
+        .elements-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .element {
+            display: flex;
+            gap: 0.8rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .element-badge {
+            background: rgba(212, 175, 55, 0.3);
+            color: #d4af37;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .element-text {
+            color: #c0c0c0;
+        }
+
+        .facts-section {
+            margin-bottom: 2rem;
+        }
+
+        .facts-label {
+            font-size: 0.85rem;
+            color: #808080;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .facts-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .fact-chip {
+            padding: 0.6rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            color: #d0d0d0;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            max-width: 48%;
+        }
+
+        .fact-chip:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #d4af37;
+            color: #e0e0e0;
+        }
+
+        .fact-chip.selected {
+            background: rgba(212, 175, 55, 0.25);
+            border-color: #d4af37;
+            color: #d4af37;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .fact-chip.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: #4caf50;
+            color: #4caf50;
+        }
+
+        .fact-chip.trap {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .fact-chip.irrelevant {
+            background: rgba(100, 100, 100, 0.2);
+            border-color: #666;
+            color: #888;
+        }
+
+        .fact-chip.missed {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: #d4af37;
+            color: #d4af37;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5); }
+            50% { box-shadow: 0 0 20px 10px rgba(212, 175, 55, 0.2); }
+        }
+
+        .element-connection {
+            font-size: 0.8rem;
+            color: #d4af37;
+            margin-top: 0.3rem;
+            margin-left: 2rem;
+            font-style: italic;
+        }
+
+        .correct .element-connection::before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: 600;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #d4af37 0%, #e6c547 100%);
+            border: none;
+            border-radius: 10px;
+            color: #1a1a1a;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .next-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid #d4af37;
+            border-radius: 10px;
+            color: #d4af37;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .next-btn:hover {
+            background: rgba(212, 175, 55, 0.25);
+        }
+
+        .feedback-section {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .feedback-section.show {
+            display: block;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .feedback-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #d4af37;
+        }
+
+        .round-score {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #d4af37;
+        }
+
+        .model-application {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid #d4af37;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            font-family: 'Georgia', serif;
+            color: #c0c0c0;
+        }
+
+        .model-application strong {
+            color: #d4af37;
+        }
+
+        .accommodation-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding: 0.8rem;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 26px;
+            background: rgba(212, 175, 55, 0.3);
+            border: 1px solid #d4af37;
+            border-radius: 13px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: rgba(212, 175, 55, 0.6);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            left: 24px;
+        }
+
+        .countdown {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d4af37;
+            margin: 1rem 0;
+            font-family: 'Playfair Display', serif;
+            display: none;
+        }
+
+        .countdown.show {
+            display: block;
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .game-over-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #d4af37;
+            margin-bottom: 1rem;
+        }
+
+        .final-score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #d4af37;
+            margin: 1rem 0;
+        }
+
+        .score-breakdown {
+            background: rgba(212, 175, 55, 0.08);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .score-breakdown div {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+        }
+
+        .restart-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #d4af37 0%, #e6c547 100%);
+            border: none;
+            border-radius: 10px;
+            color: #1a1a1a;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .doctrine-name {
+                font-size: 1.2rem;
+            }
+
+            .fact-chip {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HYPO BUILDER</h1>
+            <div class="score-badge">Score: <span id="totalScore">0</span></div>
+        </div>
+
+        <div class="accommodation-toggle">
+            <span class="toggle-label">📚 Reflection Timer</span>
+            <div class="toggle-switch" id="timerToggle"></div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-course="property">Property</button>
+            <button class="tab-btn" data-course="conlaw">Con Law</button>
+            <button class="tab-btn" data-course="criminal">Criminal</button>
+        </div>
+
+        <div class="round-info">
+            <div class="round-counter"><span id="roundNum">1</span> of <span id="totalRounds">12</span></div>
+        </div>
+
+        <div class="countdown" id="countdown"></div>
+
+        <div class="doctrine-card">
+            <div class="doctrine-name" id="doctrineName">Adverse Possession</div>
+            <div class="elements-list" id="elementsList"></div>
+        </div>
+
+        <div class="facts-section">
+            <div class="facts-label">Select Facts</div>
+            <div class="facts-pool" id="factsPool"></div>
+            <button class="submit-btn" id="submitBtn">Submit Answer</button>
+        </div>
+
+        <div class="feedback-section" id="feedbackSection">
+            <div class="feedback-header">
+                <div class="feedback-title">Results</div>
+                <div class="round-score" id="roundScore">+15</div>
+            </div>
+            <div id="feedbackDetails"></div>
+            <div class="model-application" id="modelApplication"></div>
+            <button class="next-btn" id="nextBtn">Next Round</button>
+        </div>
+
+        <div id="gameOverSection"></div>
+    </div>
+
+    <script>
+        // Game Data
+        const gameData = {
+            property: [
+                {
+                    name: "Adverse Possession",
+                    elements: [
+                        "Actual possession",
+                        "Open & notorious",
+                        "Exclusive",
+                        "Continuous for statutory period",
+                        "Hostile/without permission"
+                    ],
+                    facts: [
+                        { text: "Built a fence around the parcel", type: "correct", elements: [1, 3] },
+                        { text: "Used the land openly for 22 years", type: "correct", elements: [2, 4] },
+                        { text: "No permission was given by the owner", type: "correct", elements: [5] },
+                        { text: "Planted crops and maintained the garden", type: "correct", elements: [1] },
+                        { text: "Neighbors could see the improvements", type: "correct", elements: [2] },
+                        { text: "Owner gave verbal permission to use the land", type: "trap", elements: [] },
+                        { text: "Used the land only during summer months", type: "trap", elements: [] },
+                        { text: "The land was worth $50,000", type: "irrelevant", elements: [] },
+                        { text: "Owner lived in another state", type: "irrelevant", elements: [] },
+                        { text: "The soil was fertile", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "The claimant satisfies adverse possession by demonstrating: (1) <strong>actual possession</strong> through building a fence and planting crops; (2) <strong>open and notorious</strong> use visible to neighbors for 22 years; (3) <strong>exclusive</strong> control by fencing the parcel; (4) <strong>continuous</strong> use throughout the statutory period; and (5) <strong>hostile</strong> possession without the owner's permission. This possession acquired title by adverse possession."
+                },
+                {
+                    name: "Constructive Eviction",
+                    elements: [
+                        "Breach by landlord",
+                        "Substantial interference with use/enjoyment",
+                        "Notice to landlord",
+                        "Tenant vacates within reasonable time"
+                    ],
+                    facts: [
+                        { text: "Mold growing throughout bedroom", type: "correct", elements: [2] },
+                        { text: "Tenant emailed landlord about the problem", type: "correct", elements: [3] },
+                        { text: "Landlord refused repairs for 3 months", type: "correct", elements: [1] },
+                        { text: "Tenant moved out 2 weeks after final notice", type: "correct", elements: [4] },
+                        { text: "Health inspector confirmed uninhabitable conditions", type: "correct", elements: [2] },
+                        { text: "Tenant stayed for 8 more months paying rent", type: "trap", elements: [] },
+                        { text: "Tenant caused the mold by poor ventilation", type: "trap", elements: [] },
+                        { text: "Lease was a 2-year term", type: "irrelevant", elements: [] },
+                        { text: "Rent was $1,500/month", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "Constructive eviction is established by: (1) <strong>landlord's breach</strong> through refusing repairs for three months; (2) <strong>substantial interference</strong> with habitability, evidenced by mold and health inspector confirmation; (3) <strong>notice</strong> provided via email from tenant; and (4) <strong>timely vacation</strong> within two weeks of final notice. The tenant's departure was justified and constitutes constructive eviction relieving rent obligations."
+                },
+                {
+                    name: "Prescriptive Easement",
+                    elements: [
+                        "Actual use",
+                        "Open & notorious",
+                        "Continuous for statutory period",
+                        "Without permission",
+                        "Adverse/hostile"
+                    ],
+                    facts: [
+                        { text: "Family walked the path daily for 20 years", type: "correct", elements: [1, 3] },
+                        { text: "Path was clearly visible and worn", type: "correct", elements: [2] },
+                        { text: "Owner never gave permission", type: "correct", elements: [4, 5] },
+                        { text: "Used the path through all seasons", type: "correct", elements: [3] },
+                        { text: "Owner said 'you can use the path anytime'", type: "trap", elements: [] },
+                        { text: "Family used the path only twice a year", type: "trap", elements: [] },
+                        { text: "The path led to a lake", type: "irrelevant", elements: [] },
+                        { text: "Property was 50 acres", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "A prescriptive easement arises from: (1) <strong>actual use</strong> by the family walking the path; (2) <strong>open and notorious</strong> visibility through a worn path; (3) <strong>continuity</strong> through daily use year-round for 20 years; (4) <strong>absence of permission</strong> from the owner; and (5) <strong>hostility</strong> against the owner's interest. The family acquired a permanent easement to cross the property."
+                },
+                {
+                    name: "Implied Warranty of Habitability",
+                    elements: [
+                        "Residential lease",
+                        "Defect substantially impairing habitability",
+                        "Landlord had notice",
+                        "Landlord failed to repair in reasonable time"
+                    ],
+                    facts: [
+                        { text: "Apartment lease signed for one year", type: "correct", elements: [1] },
+                        { text: "No heat during winter months", type: "correct", elements: [2] },
+                        { text: "Tenant sent certified letter to landlord", type: "correct", elements: [3] },
+                        { text: "Six weeks passed with no repair", type: "correct", elements: [4] },
+                        { text: "Pipes frozen and burst", type: "correct", elements: [2] },
+                        { text: "Commercial office lease", type: "trap", elements: [] },
+                        { text: "Tenant broke the thermostat", type: "trap", elements: [] },
+                        { text: "Building was 40 years old", type: "irrelevant", elements: [] },
+                        { text: "Other tenants had no complaints", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "The implied warranty of habitability requires: (1) a <strong>residential lease</strong>, present here; (2) a <strong>substantial defect</strong>—lack of heat in winter rendering the unit uninhabitable; (3) <strong>notice</strong> via certified letter; and (4) <strong>failure to repair</strong> within reasonable time (six weeks). The tenant may withhold rent or terminate the lease without penalty."
+                },
+                {
+                    name: "Private Nuisance",
+                    elements: [
+                        "Substantial interference",
+                        "With use and enjoyment of land",
+                        "Unreasonable under balancing test",
+                        "Intentional or negligent conduct"
+                    ],
+                    facts: [
+                        { text: "Factory emits toxic fumes daily", type: "correct", elements: [1, 4] },
+                        { text: "Homeowner can't use backyard due to smell", type: "correct", elements: [2] },
+                        { text: "Factory could install scrubbers for minimal cost", type: "correct", elements: [3] },
+                        { text: "Fumes exceed EPA guidelines", type: "correct", elements: [1] },
+                        { text: "Homeowner moved next to factory last year", type: "trap", elements: [] },
+                        { text: "Occasional mild odor on windy days", type: "trap", elements: [] },
+                        { text: "Factory employs 200 workers", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "A private nuisance is established by: (1) <strong>substantial interference</strong> from daily toxic fumes exceeding EPA guidelines; (2) <strong>harm to use and enjoyment</strong> making the backyard unusable; (3) <strong>unreasonableness</strong>—the factory could install scrubbers at minimal cost; and (4) <strong>intentional</strong> operation of the factory producing these emissions. The homeowner has a claim for damages and injunctive relief."
+                },
+                {
+                    name: "Rule Against Perpetuities (Violation)",
+                    elements: [
+                        "Future interest",
+                        "Might not vest",
+                        "Beyond 21 years after",
+                        "Life in being at creation"
+                    ],
+                    facts: [
+                        { text: "To my grandchildren who reach age 25", type: "correct", elements: [1, 2, 3] },
+                        { text: "Grantor's children are ages 2 and 5", type: "correct", elements: [4] },
+                        { text: "No grandchildren currently exist", type: "correct", elements: [2] },
+                        { text: "To my son for life, then to my daughter", type: "trap", elements: [] },
+                        { text: "To my children who graduate college", type: "trap", elements: [] },
+                        { text: "Property is worth $1M", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "This disposition violates the Rule Against Perpetuities: (1) it creates a <strong>future interest</strong> in unborn grandchildren; (2) the interest <strong>might not vest</strong> (a grandchild could be born after the grantor's death); (3) vesting could occur <strong>beyond 21 years</strong> after lives in being (when grandchildren reach 25); and (4) not all measuring lives exist at creation. The gift is void."
+                },
+                {
+                    name: "Easement by Necessity",
+                    elements: [
+                        "Common ownership",
+                        "Severance of parcels",
+                        "Strict necessity for access",
+                        "Necessity existed at time of severance"
+                    ],
+                    facts: [
+                        { text: "Both lots were originally one parcel", type: "correct", elements: [1] },
+                        { text: "Owner sold the back lot separately", type: "correct", elements: [2] },
+                        { text: "Back lot is completely landlocked", type: "correct", elements: [3] },
+                        { text: "No road access existed when lots were split", type: "correct", elements: [4] },
+                        { text: "Alternative access exists via public road", type: "trap", elements: [] },
+                        { text: "Properties were never under common ownership", type: "trap", elements: [] },
+                        { text: "Back lot has a barn", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "An easement by necessity arises when: (1) <strong>common ownership</strong> existed before division; (2) <strong>severance</strong> of parcels occurred through the sale; (3) <strong>strict necessity</strong> for access is proven—the back lot is completely landlocked; and (4) <strong>necessity existed at creation</strong> when the lots were split. The back lot owner has a legal right of way across the front lot."
+                },
+                {
+                    name: "Recording Act (Race-Notice BFP)",
+                    elements: [
+                        "Subsequent purchaser",
+                        "Paid value",
+                        "Without notice",
+                        "Records first"
+                    ],
+                    facts: [
+                        { text: "B bought the property after A", type: "correct", elements: [1] },
+                        { text: "B paid fair market value", type: "correct", elements: [2] },
+                        { text: "B had no knowledge of A's deed", type: "correct", elements: [3] },
+                        { text: "B recorded her deed immediately", type: "correct", elements: [4] },
+                        { text: "B knew A had already bought the property", type: "trap", elements: [] },
+                        { text: "B received the property as a gift", type: "trap", elements: [] },
+                        { text: "Property had a swimming pool", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "Under the race-notice recording statute, B prevails as a <strong>bona fide purchaser</strong> because: (1) she purchased <strong>subsequent</strong> to A; (2) she <strong>paid value</strong> at fair market price; (3) she had <strong>no notice</strong> of A's deed; and (4) she <strong>recorded first</strong>, perfecting her interest. B's title is superior to A's."
+                },
+                {
+                    name: "Covenant Running with Land (Burden)",
+                    elements: [
+                        "Intent to run",
+                        "Touch and concern",
+                        "Horizontal privity",
+                        "Vertical privity",
+                        "Notice"
+                    ],
+                    facts: [
+                        { text: "Covenant states it binds successors and assigns", type: "correct", elements: [1] },
+                        { text: "Restriction limits land use to residential", type: "correct", elements: [2] },
+                        { text: "Covenant created in deed between buyer and seller", type: "correct", elements: [3] },
+                        { text: "Current owner purchased from original covenantor", type: "correct", elements: [4] },
+                        { text: "Covenant was recorded", type: "correct", elements: [5] },
+                        { text: "Covenant says it's personal to the parties", type: "trap", elements: [] },
+                        { text: "Restriction requires paying club membership", type: "trap", elements: [] },
+                        { text: "Neighborhood has 50 homes", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "The covenant burden runs to successor owners through: (1) <strong>intent</strong> to bind heirs and assigns, stated in the deed; (2) the restriction <strong>touches and concerns</strong> the land by limiting use; (3) <strong>horizontal privity</strong> from the original grantor-grantee relationship; (4) <strong>vertical privity</strong> through the purchase chain; and (5) <strong>notice</strong> via recorded covenant. The current owner is bound."
+                },
+                {
+                    name: "Regulatory Taking (Penn Central)",
+                    elements: [
+                        "Economic impact on owner",
+                        "Interference with investment-backed expectations",
+                        "Character of government action"
+                    ],
+                    facts: [
+                        { text: "Property value reduced 80% by new zoning", type: "correct", elements: [1] },
+                        { text: "Owner purchased specifically for development", type: "correct", elements: [2] },
+                        { text: "Regulation effectively transfers value to neighbors", type: "correct", elements: [3] },
+                        { text: "No variance or exception available", type: "correct", elements: [1] },
+                        { text: "Value only reduced 10%", type: "trap", elements: [] },
+                        { text: "Owner knew about potential regulation when buying", type: "trap", elements: [] },
+                        { text: "Property is near a school", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "Under Penn Central, a taking is found where: (1) <strong>severe economic impact</strong>—an 80% value reduction—significantly diminishes the investment; (2) <strong>destroyed investment-backed expectations</strong>—owner purchased for development purposes now barred; and (3) <strong>character of the action</strong>—the regulation physically transfers beneficial use to the public. Just compensation is required."
+                },
+                {
+                    name: "Fair Housing Violation",
+                    elements: [
+                        "Protected class",
+                        "Discriminatory action",
+                        "In housing context",
+                        "No valid exception"
+                    ],
+                    facts: [
+                        { text: "Landlord refused to rent to family with children", type: "correct", elements: [1, 2] },
+                        { text: "Apartment in 50-unit building", type: "correct", elements: [3] },
+                        { text: "No senior housing exemption applies", type: "correct", elements: [4] },
+                        { text: "Landlord told other families were rejected too", type: "correct", elements: [2] },
+                        { text: "Owner-occupied building with 3 units", type: "trap", elements: [] },
+                        { text: "Landlord rejected due to poor credit", type: "trap", elements: [] },
+                        { text: "Rent was $2,000/month", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "A Fair Housing violation occurs where: (1) the protected class is <strong>families with children</strong>; (2) the <strong>discriminatory action</strong> is refusal to rent based on family status; (3) the context is <strong>housing</strong>—a 50-unit rental building; and (4) <strong>no valid exception</strong> applies (not owner-occupied or senior housing). The landlord has violated the Fair Housing Act."
+                },
+                {
+                    name: "Trespass",
+                    elements: [
+                        "Intentional",
+                        "Physical entry/invasion",
+                        "Of another's land",
+                        "Without permission"
+                    ],
+                    facts: [
+                        { text: "Neighbor deliberately built shed on plaintiff's lot", type: "correct", elements: [1, 2, 3] },
+                        { text: "No permission was requested or given", type: "correct", elements: [4] },
+                        { text: "Survey confirms shed is 5 feet over the line", type: "correct", elements: [3] },
+                        { text: "Wind blew debris onto the property", type: "trap", elements: [] },
+                        { text: "Owner gave verbal OK to build there", type: "trap", elements: [] },
+                        { text: "The shed was painted blue", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "Trespass is established by: (1) <strong>intentional</strong> construction by the neighbor; (2) <strong>physical invasion</strong> of a structure onto the land; (3) entry <strong>of another's property</strong>, confirmed by survey; and (4) <strong>absence of permission</strong> from the owner. The neighbor is liable for trespass and must remove the shed."
+                }
+            ],
+            conlaw: [
+                {
+                    name: "Commerce Clause — Substantial Effects",
+                    elements: [
+                        "Activity is economic",
+                        "In aggregate, substantially affects interstate commerce",
+                        "Rational basis for Congressional finding"
+                    ],
+                    facts: [
+                        { text: "Regulation targets commercial wheat farming", type: "correct", elements: [1] },
+                        { text: "National wheat market prices fluctuate based on supply", type: "correct", elements: [2] },
+                        { text: "Congressional findings document interstate market effects", type: "correct", elements: [3] },
+                        { text: "Millions of similar farms exist nationwide", type: "correct", elements: [2] },
+                        { text: "Regulation targets student gun possession", type: "trap", elements: [] },
+                        { text: "No congressional findings accompany the law", type: "trap", elements: [] },
+                        { text: "The farmer's name is Filburn", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Commerce Clause</strong> power is established where: (1) the regulated activity is <strong>economic</strong>—commercial wheat farming; (2) it <strong>substantially affects interstate commerce</strong> in the aggregate—national wheat prices are affected by supply levels; and (3) Congress has a <strong>rational basis</strong> for its finding, documented in legislative records. The statute is constitutional under the Substantial Effects Test."
+                },
+                {
+                    name: "Strict Scrutiny (Survives)",
+                    elements: [
+                        "Compelling government interest",
+                        "Narrowly tailored",
+                        "Least restrictive means"
+                    ],
+                    facts: [
+                        { text: "National security during active war", type: "correct", elements: [1] },
+                        { text: "Law targets only specific imminent threat", type: "correct", elements: [2] },
+                        { text: "No alternative would achieve same protection", type: "correct", elements: [3] },
+                        { text: "Time-limited, expires when emergency ends", type: "correct", elements: [2] },
+                        { text: "Regulation is broadly applied to all citizens", type: "trap", elements: [] },
+                        { text: "Interest is economic efficiency", type: "trap", elements: [] },
+                        { text: "The law was passed unanimously", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "Strict scrutiny is satisfied when: (1) the government has a <strong>compelling interest</strong>—national security during active war; (2) the law is <strong>narrowly tailored</strong>—targeting only specific imminent threats with time limits; and (3) it uses the <strong>least restrictive means</strong>—no alternative method would achieve equivalent protection. The statute survives strict scrutiny."
+                },
+                {
+                    name: "Dormant Commerce Clause Violation",
+                    elements: [
+                        "State law",
+                        "Discriminates against or burdens interstate commerce",
+                        "Facially or in effect",
+                        "Not justified by legitimate local interest"
+                    ],
+                    facts: [
+                        { text: "State bans importing out-of-state waste", type: "correct", elements: [1, 2, 3] },
+                        { text: "In-state waste facilities are exempt", type: "correct", elements: [3] },
+                        { text: "State's claimed health reason is pretextual", type: "correct", elements: [4] },
+                        { text: "Economic protectionism is the real purpose", type: "correct", elements: [4] },
+                        { text: "State acts as buyer in the market", type: "trap", elements: [] },
+                        { text: "Congress authorized the state regulation", type: "trap", elements: [] },
+                        { text: "The waste is non-toxic", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "A Dormant Commerce Clause violation occurs where: (1) a <strong>state law</strong> exists; (2) it <strong>facially discriminates</strong> against out-of-state waste while exempting in-state; (3) the <strong>discrimination is clear</strong> on its face; and (4) the stated justification—health—is <strong>pretextual</strong> when economic protectionism is the true purpose. The ban is unconstitutional."
+                },
+                {
+                    name: "State Action",
+                    elements: [
+                        "Constitutional right allegedly violated",
+                        "Action attributable to government",
+                        "Not purely private conduct"
+                    ],
+                    facts: [
+                        { text: "Public university expelled student", type: "correct", elements: [2, 3] },
+                        { text: "Student claims free speech violation", type: "correct", elements: [1] },
+                        { text: "University is state-funded and operated", type: "correct", elements: [2] },
+                        { text: "Private company fired employee for speech", type: "trap", elements: [] },
+                        { text: "Private club denied membership", type: "trap", elements: [] },
+                        { text: "The university is well-ranked", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "A constitutional claim requires <strong>state action</strong>: (1) a <strong>constitutional right</strong>—free speech—is implicated; (2) the action is <strong>attributable to the state</strong>—the public university is state-funded and operated; and (3) the conduct is <strong>governmental</strong>, not purely private. The student may bring a constitutional claim."
+                },
+                {
+                    name: "Standing",
+                    elements: [
+                        "Injury in fact — concrete and particularized",
+                        "Causation — fairly traceable to defendant",
+                        "Redressability — favorable decision would remedy"
+                    ],
+                    facts: [
+                        { text: "Plaintiff's property was flooded by dam", type: "correct", elements: [1] },
+                        { text: "Government agency built the dam", type: "correct", elements: [2] },
+                        { text: "Court could order dam removal or damages", type: "correct", elements: [3] },
+                        { text: "Plaintiff worries about future flooding", type: "trap", elements: [] },
+                        { text: "Flooding caused by natural weather patterns", type: "trap", elements: [] },
+                        { text: "Plaintiff has lived there 20 years", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "Standing requires: (1) an <strong>injury in fact</strong> that is concrete and particularized—actual property flooding; (2) <strong>causation</strong> fairly traceable to the defendant—the government agency built the dam; and (3) <strong>redressability</strong>—a court can order removal or compensatory damages. The plaintiff has standing."
+                },
+                {
+                    name: "Content-Based Speech Restriction",
+                    elements: [
+                        "Government action",
+                        "Restricts speech",
+                        "Based on content/viewpoint",
+                        "In a public forum"
+                    ],
+                    facts: [
+                        { text: "City ordinance bans political signs on public sidewalks", type: "correct", elements: [1, 2, 3, 4] },
+                        { text: "Commercial signs are permitted in same location", type: "correct", elements: [3] },
+                        { text: "Public sidewalk is traditional public forum", type: "correct", elements: [4] },
+                        { text: "Time/place/manner restriction applied neutrally", type: "trap", elements: [] },
+                        { text: "Restriction in government workplace", type: "trap", elements: [] },
+                        { text: "The city has 50,000 residents", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "A <strong>content-based speech restriction</strong> exists where: (1) the government restricts speech through an ordinance; (2) it restricts <strong>expressive conduct</strong>—political signs; (3) <strong>based on content</strong>—political speech is banned while commercial speech is permitted; and (4) in a <strong>public forum</strong>—traditional public sidewalks. Strict scrutiny applies and the ban likely fails."
+                },
+                {
+                    name: "Procedural Due Process",
+                    elements: [
+                        "Government deprivation",
+                        "Of life, liberty, or property interest",
+                        "Without adequate process"
+                    ],
+                    facts: [
+                        { text: "Public school suspended student for 10 days", type: "correct", elements: [1, 2] },
+                        { text: "No hearing was provided before or after", type: "correct", elements: [3] },
+                        { text: "Student had legitimate expectation of education", type: "correct", elements: [2] },
+                        { text: "Private school expelled student", type: "trap", elements: [] },
+                        { text: "Student received full hearing with counsel", type: "trap", elements: [] },
+                        { text: "Student had a B average", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "Procedural due process is violated where: (1) the <strong>government deprives</strong> a student through suspension; (2) there is a <strong>constitutionally protected interest</strong>—education; and (3) <strong>inadequate process</strong> is provided—no hearing before or after. The student is entitled to notice and opportunity to be heard."
+                },
+                {
+                    name: "Substantive Due Process — Fundamental Right",
+                    elements: [
+                        "Fundamental right",
+                        "Deeply rooted in history/tradition",
+                        "Government infringement",
+                        "Not narrowly tailored to compelling interest"
+                    ],
+                    facts: [
+                        { text: "State law bans interracial marriage", type: "correct", elements: [1, 3] },
+                        { text: "Marriage recognized as fundamental right since Loving", type: "correct", elements: [1, 2] },
+                        { text: "Law has no exception or narrow tailoring", type: "correct", elements: [4] },
+                        { text: "Right to operate a business at any hour", type: "trap", elements: [] },
+                        { text: "Law rationally related to legitimate interest", type: "trap", elements: [] },
+                        { text: "The state was founded in 1789", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Substantive due process</strong> protection for a fundamental right applies where: (1) the right is <strong>fundamental</strong>—marriage; (2) it is <strong>deeply rooted</strong> in history and tradition; (3) the government <strong>infringes</strong> the right through the ban; and (4) the law is <strong>not narrowly tailored</strong> to a compelling interest. The ban violates substantive due process."
+                },
+                {
+                    name: "Preemption",
+                    elements: [
+                        "Federal law",
+                        "Conflicts with or occupies field of state law",
+                        "Congressional intent to preempt"
+                    ],
+                    facts: [
+                        { text: "Federal statute sets nationwide emissions standards", type: "correct", elements: [1] },
+                        { text: "Statute says 'no state shall enact differing standards'", type: "correct", elements: [3] },
+                        { text: "State law requires lower emissions than federal", type: "correct", elements: [2] },
+                        { text: "Federal statute has savings clause preserving state authority", type: "trap", elements: [] },
+                        { text: "State law addresses unrelated topic", type: "trap", elements: [] },
+                        { text: "EPA has 15,000 employees", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Preemption</strong> occurs where: (1) <strong>federal law</strong> establishes nationwide standards; (2) <strong>conflict</strong> exists—the state law mandates lower emissions; and (3) <strong>congressional intent</strong> to preempt is expressed—'no state shall enact differing standards.' The state law is preempted and void."
+                },
+                {
+                    name: "Equal Protection — Intermediate Scrutiny",
+                    elements: [
+                        "Government classification",
+                        "Based on gender/quasi-suspect class",
+                        "Not substantially related",
+                        "To important government interest"
+                    ],
+                    facts: [
+                        { text: "State law allows only women to receive alimony", type: "correct", elements: [1, 2] },
+                        { text: "Based on gender stereotypes about breadwinning", type: "correct", elements: [2] },
+                        { text: "State claims administrative convenience", type: "correct", elements: [4] },
+                        { text: "Classification based on race", type: "trap", elements: [] },
+                        { text: "Classification based on age", type: "trap", elements: [] },
+                        { text: "The law was passed in 1975", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Intermediate scrutiny</strong> applies to gender classifications where: (1) there is a <strong>government classification</strong>—alimony recipients; (2) based on <strong>gender</strong>, a quasi-suspect class; (3) the classification is <strong>not substantially related</strong> to the stated interest; and (4) the interest—administrative convenience—is <strong>not sufficiently important</strong>. The law fails intermediate scrutiny."
+                }
+            ],
+            criminal: [
+                {
+                    name: "First Degree Murder",
+                    elements: [
+                        "Unlawful killing",
+                        "Of a human being",
+                        "With malice aforethought",
+                        "Premeditation",
+                        "Deliberation"
+                    ],
+                    facts: [
+                        { text: "Defendant planned the attack for weeks", type: "correct", elements: [4, 5] },
+                        { text: "Purchased a weapon in advance", type: "correct", elements: [4] },
+                        { text: "Victim died from the attack", type: "correct", elements: [1, 2] },
+                        { text: "Defendant intended to kill", type: "correct", elements: [3] },
+                        { text: "Defendant acted in sudden heat of passion", type: "trap", elements: [] },
+                        { text: "Death was accidental during a fight", type: "trap", elements: [] },
+                        { text: "It happened on a Tuesday", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>First degree murder</strong> requires: (1) an <strong>unlawful killing</strong>; (2) <strong>of a human being</strong> through the attack; (3) <strong>malice aforethought</strong>—intent to kill; (4) <strong>premeditation</strong>—planning for weeks and purchasing a weapon in advance; and (5) <strong>deliberation</strong>—a conscious decision to kill. All elements are satisfied."
+                },
+                {
+                    name: "Felony Murder",
+                    elements: [
+                        "Death",
+                        "During commission of",
+                        "Inherently dangerous felony",
+                        "Causal connection"
+                    ],
+                    facts: [
+                        { text: "Bystander was killed during armed robbery", type: "correct", elements: [1, 2, 3] },
+                        { text: "Death occurred while fleeing the scene", type: "correct", elements: [4] },
+                        { text: "Robbery is an enumerated felony", type: "correct", elements: [3] },
+                        { text: "Death occurred 3 days after the felony ended", type: "trap", elements: [] },
+                        { text: "Underlying felony was tax evasion", type: "trap", elements: [] },
+                        { text: "The bank had security cameras", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Felony murder</strong> arises from: (1) a <strong>death</strong> of a bystander; (2) occurring <strong>during commission</strong> of armed robbery while fleeing; (3) of an <strong>inherently dangerous felony</strong>—robbery with a weapon; and (4) with <strong>causal connection</strong>—the death resulted from the felony. Malice is implied from the underlying felony."
+                },
+                {
+                    name: "Voluntary Manslaughter",
+                    elements: [
+                        "Killing",
+                        "In heat of passion",
+                        "After adequate provocation",
+                        "No cooling-off period"
+                    ],
+                    facts: [
+                        { text: "Defendant discovered spouse in bed with another", type: "correct", elements: [3] },
+                        { text: "Defendant immediately attacked", type: "correct", elements: [2, 4] },
+                        { text: "Victim died from the attack", type: "correct", elements: [1] },
+                        { text: "Reasonable person would have been provoked", type: "correct", elements: [3] },
+                        { text: "Defendant left, waited 2 hours, then returned", type: "trap", elements: [] },
+                        { text: "Provocation was merely insulting words", type: "trap", elements: [] },
+                        { text: "Defendant was 35 years old", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Voluntary manslaughter</strong> is established by: (1) the <strong>killing</strong> through the immediate attack; (2) committed <strong>in heat of passion</strong> at discovering the infidelity; (3) after <strong>adequate provocation</strong>—spousal infidelity—judged by reasonable person standard; and (4) <strong>no cooling-off period</strong>—the defendant acted immediately. The malice is negated."
+                },
+                {
+                    name: "Self-Defense",
+                    elements: [
+                        "Reasonable belief",
+                        "Of imminent threat",
+                        "Force proportional",
+                        "Not the initial aggressor"
+                    ],
+                    facts: [
+                        { text: "Attacker lunged at defendant with a knife", type: "correct", elements: [2, 3] },
+                        { text: "Defendant had no opportunity to retreat", type: "correct", elements: [1, 2] },
+                        { text: "Defendant used comparable force", type: "correct", elements: [3] },
+                        { text: "Defendant did not start the confrontation", type: "correct", elements: [4] },
+                        { text: "Defendant provoked the attacker first", type: "trap", elements: [] },
+                        { text: "Threat was made last week, not imminent", type: "trap", elements: [] },
+                        { text: "The fight was in a parking lot", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Self-defense</strong> is justified where: (1) there is a <strong>reasonable belief</strong> of a serious threat; (2) the threat is <strong>imminent</strong>—the knife attack is immediate; (3) the force used is <strong>proportional</strong>—comparable to the threat level; and (4) the defendant is <strong>not the initial aggressor</strong>. The use of force is justified."
+                },
+                {
+                    name: "Conspiracy",
+                    elements: [
+                        "Agreement",
+                        "Between two or more persons",
+                        "To commit unlawful act",
+                        "Intent to agree and commit",
+                        "Overt act"
+                    ],
+                    facts: [
+                        { text: "A and B met and planned the robbery", type: "correct", elements: [1, 2, 3] },
+                        { text: "Both intended to carry out the plan", type: "correct", elements: [4] },
+                        { text: "B bought masks for the job", type: "correct", elements: [5] },
+                        { text: "A was an undercover officer", type: "trap", elements: [] },
+                        { text: "B only joked about robbing a bank", type: "trap", elements: [] },
+                        { text: "They met at a coffee shop", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Conspiracy</strong> requires: (1) an <strong>agreement</strong> to rob; (2) between <strong>two persons</strong> with intent; (3) <strong>to commit an unlawful act</strong>—the robbery; (4) <strong>intent</strong> by both to carry it out; and (5) an <strong>overt act</strong> in furtherance—purchasing masks. Both A and B are liable."
+                },
+                {
+                    name: "Attempt",
+                    elements: [
+                        "Specific intent to commit crime",
+                        "Substantial step",
+                        "Beyond mere preparation"
+                    ],
+                    facts: [
+                        { text: "Defendant bought burglary tools", type: "correct", elements: [2] },
+                        { text: "Defendant cased the building for a week", type: "correct", elements: [3] },
+                        { text: "Defendant intended to steal jewelry inside", type: "correct", elements: [1] },
+                        { text: "Defendant was caught climbing through the window", type: "correct", elements: [2] },
+                        { text: "Defendant only thought about committing the crime", type: "trap", elements: [] },
+                        { text: "Defendant abandoned plan before any action", type: "trap", elements: [] },
+                        { text: "The building was on Main Street", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Attempt</strong> requires: (1) <strong>specific intent</strong> to commit burglary and steal jewelry; (2) a <strong>substantial step</strong>—climbing through the window is very close to completion; and (3) conduct <strong>beyond mere preparation</strong>—casing the building and entering show commitment. All elements are satisfied."
+                },
+                {
+                    name: "Involuntary Manslaughter",
+                    elements: [
+                        "Unlawful killing",
+                        "Without malice",
+                        "Criminal negligence or unlawful act"
+                    ],
+                    facts: [
+                        { text: "Defendant drove 90mph in school zone", type: "correct", elements: [3] },
+                        { text: "Child pedestrian was killed", type: "correct", elements: [1] },
+                        { text: "Defendant had no intent to harm anyone", type: "correct", elements: [2] },
+                        { text: "Defendant intentionally aimed car at victim", type: "trap", elements: [] },
+                        { text: "Defendant was driving normally, victim darted out", type: "trap", elements: [] },
+                        { text: "It was a sunny day", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Involuntary manslaughter</strong> occurs through: (1) an <strong>unlawful killing</strong> of the child; (2) <strong>without malice</strong>—no intent to harm; and (3) <strong>criminal negligence</strong> in driving 90mph in a school zone, a reckless act creating substantial risk. Guilt is established."
+                },
+                {
+                    name: "Accomplice Liability",
+                    elements: [
+                        "Aid/abet/encourage/facilitate",
+                        "With intent to assist",
+                        "Principal committed the crime"
+                    ],
+                    facts: [
+                        { text: "Defendant drove the getaway car", type: "correct", elements: [1] },
+                        { text: "Defendant knew about and wanted to help with the robbery", type: "correct", elements: [2] },
+                        { text: "Principal robbed the store", type: "correct", elements: [3] },
+                        { text: "Defendant didn't know a crime was being committed", type: "trap", elements: [] },
+                        { text: "The principal was acquitted", type: "trap", elements: [] },
+                        { text: "The getaway car was blue", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Accomplice liability</strong> attaches where: (1) the accomplice <strong>aids/facilitates</strong> by providing the getaway car; (2) with <strong>intent</strong> to assist and knowledge of the robbery; and (3) the <strong>principal commits</strong> the robbery. The accomplice shares liability even without direct participation."
+                },
+                {
+                    name: "Entrapment",
+                    elements: [
+                        "Government inducement",
+                        "Of a crime",
+                        "Defendant not predisposed"
+                    ],
+                    facts: [
+                        { text: "Undercover agent pressured defendant for 6 months", type: "correct", elements: [1] },
+                        { text: "Agent provided the drugs and the buyer", type: "correct", elements: [1] },
+                        { text: "Defendant had no prior drug history", type: "correct", elements: [3] },
+                        { text: "Defendant initially refused multiple times", type: "correct", elements: [3] },
+                        { text: "Defendant had 3 prior drug convictions", type: "trap", elements: [] },
+                        { text: "Agent simply asked once if defendant wanted to buy", type: "trap", elements: [] },
+                        { text: "The agent's name was Smith", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>Entrapment</strong> is established where: (1) the government <strong>induces</strong> the crime through persistent pressure over 6 months; (2) the inducement causes <strong>commission</strong> of a drug sale; and (3) the defendant was <strong>not predisposed</strong>—no prior drug history and multiple refusals. The conviction should be dismissed."
+                },
+                {
+                    name: "Insanity (M'Naghten)",
+                    elements: [
+                        "Mental disease or defect",
+                        "At time of act",
+                        "Did not know nature or quality OR did not know it was wrong"
+                    ],
+                    facts: [
+                        { text: "Defendant diagnosed with severe schizophrenia", type: "correct", elements: [1] },
+                        { text: "Defendant was experiencing delusions during the act", type: "correct", elements: [1, 2] },
+                        { text: "Defendant believed he was slaying a demon, not a person", type: "correct", elements: [3] },
+                        { text: "Defendant knew it was wrong but couldn't stop", type: "trap", elements: [] },
+                        { text: "Defendant was diagnosed after the crime", type: "trap", elements: [] },
+                        { text: "Defendant was 28 years old", type: "irrelevant", elements: [] }
+                    ],
+                    modelApp: "<strong>M'Naghten insanity</strong> is established where: (1) there is a <strong>mental disease</strong>—severe schizophrenia; (2) existing <strong>at the time</strong> of the act; and (3) the defendant <strong>did not know</strong> the nature of the act—believing he was slaying a demon, not a person. The defendant may be found not guilty by reason of insanity."
+                }
+            ]
+        };
+
+        // Game State
+        let currentCourse = 'property';
+        let currentRound = 0;
+        let totalScore = 0;
+        let selectedFacts = new Set();
+        let roundSubmitted = false;
+        let timerEnabled = false;
+        let countdownInterval = null;
+
+        // Initialize Game
+        function init() {
+            setupEventListeners();
+            loadRound();
+        }
+
+        function setupEventListeners() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentCourse = e.target.dataset.course;
+                    currentRound = 0;
+                    totalScore = 0;
+                    selectedFacts.clear();
+                    roundSubmitted = false;
+                    stopCountdown();
+                    loadRound();
+                });
+            });
+
+            document.getElementById('submitBtn').addEventListener('click', submitAnswer);
+            document.getElementById('timerToggle').addEventListener('click', toggleTimer);
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('fact-chip') && !roundSubmitted) {
+                    toggleFact(e.target);
+                }
+            });
+        }
+
+        function toggleFact(element) {
+            const text = element.textContent;
+            if (selectedFacts.has(text)) {
+                selectedFacts.delete(text);
+                element.classList.remove('selected');
+            } else {
+                selectedFacts.add(text);
+                element.classList.add('selected');
+            }
+            updateSubmitBtn();
+        }
+
+        function updateSubmitBtn() {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = selectedFacts.size === 0;
+        }
+
+        function loadRound() {
+            const courseData = gameData[currentCourse];
+            if (currentRound >= courseData.length) {
+                showGameOver();
+                return;
+            }
+
+            stopCountdown();
+            const round = courseData[currentRound];
+            selectedFacts.clear();
+            roundSubmitted = false;
+
+            // Update header
+            document.getElementById('roundNum').textContent = currentRound + 1;
+            document.getElementById('totalRounds').textContent = courseData.length;
+            document.getElementById('totalScore').textContent = totalScore;
+
+            // Load doctrine
+            document.getElementById('doctrineName').textContent = round.name;
+            const elementsList = document.getElementById('elementsList');
+            elementsList.innerHTML = '';
+            round.elements.forEach((elem, idx) => {
+                const el = document.createElement('div');
+                el.className = 'element';
+                el.innerHTML = `<div class="element-badge">${idx + 1}</div><div class="element-text">${elem}</div>`;
+                elementsList.appendChild(el);
+            });
+
+            // Load facts
+            const factsPool = document.getElementById('factsPool');
+            factsPool.innerHTML = '';
+            round.facts.forEach(fact => {
+                const chip = document.createElement('div');
+                chip.className = 'fact-chip';
+                chip.textContent = fact.text;
+                factsPool.appendChild(chip);
+            });
+
+            // Reset UI
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').style.display = 'block';
+            document.getElementById('feedbackSection').classList.remove('show');
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('countdown').classList.remove('show');
+
+            if (timerEnabled) startCountdown();
+        }
+
+        function toggleTimer() {
+            timerEnabled = !timerEnabled;
+            document.getElementById('timerToggle').classList.toggle('active');
+            if (timerEnabled && !roundSubmitted) {
+                startCountdown();
+            } else {
+                stopCountdown();
+            }
+        }
+
+        function startCountdown() {
+            const countdown = document.getElementById('countdown');
+            countdown.classList.add('show');
+            let seconds = 10;
+            countdown.textContent = seconds;
+
+            countdownInterval = setInterval(() => {
+                seconds--;
+                if (seconds <= 0) {
+                    stopCountdown();
+                    countdown.textContent = 'Time\'s up!';
+                    setTimeout(() => {
+                        countdown.classList.remove('show');
+                    }, 1000);
+                    return;
+                }
+                countdown.textContent = seconds;
+            }, 1000);
+        }
+
+        function stopCountdown() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+        }
+
+        function submitAnswer() {
+            stopCountdown();
+            roundSubmitted = true;
+            const courseData = gameData[currentCourse];
+            const round = courseData[currentRound];
+
+            let roundScore = 0;
+            const feedback = [];
+            const chips = document.querySelectorAll('.fact-chip');
+
+            // Map facts to types
+            const factMap = {};
+            round.facts.forEach(fact => {
+                factMap[fact.text] = fact;
+            });
+
+            let correctCount = 0;
+            let missedCorrect = [];
+
+            // Check each fact
+            chips.forEach(chip => {
+                const text = chip.textContent;
+                const fact = factMap[text];
+                const selected = selectedFacts.has(text);
+
+                if (fact.type === 'correct') {
+                    if (selected) {
+                        chip.classList.add('correct');
+                        roundScore += 5;
+                        correctCount++;
+                        if (fact.elements.length > 0) {
+                            const elemStr = fact.elements.map(e => `element ${e}`).join(', ');
+                            feedback.push(`✓ <strong>${text}</strong> → ${elemStr}`);
+                        }
+                    } else {
+                        chip.classList.add('missed');
+                        missedCorrect.push(text);
+                    }
+                } else if (fact.type === 'trap') {
+                    if (selected) {
+                        chip.classList.add('trap');
+                        roundScore -= 3;
+                        feedback.push(`✗ TRAP: <strong>${text}</strong>`);
+                    } else {
+                        chip.classList.add('irrelevant');
+                    }
+                } else if (fact.type === 'irrelevant') {
+                    chip.classList.add('irrelevant');
+                }
+            });
+
+            // Perfect round bonus
+            if (correctCount === round.facts.filter(f => f.type === 'correct').length && selectedFacts.size === correctCount) {
+                roundScore += 15;
+            }
+
+            totalScore += roundScore;
+            document.getElementById('totalScore').textContent = totalScore;
+
+            // Show feedback
+            const feedbackDetails = document.getElementById('feedbackDetails');
+            feedbackDetails.innerHTML = feedback.join('<br>');
+            if (missedCorrect.length > 0) {
+                feedbackDetails.innerHTML += `<br><em style="color: #d4af37;">Missed: ${missedCorrect.join(', ')}</em>`;
+            }
+
+            document.getElementById('roundScore').textContent = roundScore > 0 ? '+' + roundScore : roundScore;
+            document.getElementById('modelApplication').textContent = '';
+            document.getElementById('modelApplication').innerHTML = round.modelApp;
+
+            document.getElementById('feedbackSection').classList.add('show');
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'block';
+
+            document.getElementById('nextBtn').addEventListener('click', nextRound, { once: true });
+        }
+
+        function nextRound() {
+            currentRound++;
+            loadRound();
+        }
+
+        function showGameOver() {
+            const maxScore = gameData[currentCourse].length * 20; // Rough estimate
+            const section = document.getElementById('gameOverSection');
+            section.innerHTML = `
+                <div class="game-over">
+                    <div class="game-over-title">${currentCourse === 'property' ? 'Property' : currentCourse === 'conlaw' ? 'Con Law' : 'Criminal Law'} Complete!</div>
+                    <div class="final-score">${totalScore}</div>
+                    <p style="color: #a0a0a0; margin-bottom: 1rem;">All rounds completed</p>
+                    <button class="restart-btn" onclick="location.reload()">Play Again</button>
+                </div>
+            `;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.disabled = true;
+            });
+        }
+
+        // Start game
+        init();
+    </script>
+</body>
+</html>

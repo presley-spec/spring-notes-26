@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Strands - Legal Concepts Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0b12;
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #d4a843, #e8c547);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #888;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .puzzle-selector {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .puzzle-btn {
+            padding: 8px 14px;
+            background: #1a1b28;
+            border: 1px solid #333;
+            color: #aaa;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .puzzle-btn:hover {
+            border-color: #555;
+            color: #ddd;
+        }
+
+        .puzzle-btn.active {
+            background: linear-gradient(135deg, #d4a843, #e8c547);
+            color: #0a0b12;
+            border-color: #d4a843;
+        }
+
+        .puzzle-info {
+            background: #1a1b28;
+            border-left: 3px solid #d4a843;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .theme-clue {
+            font-size: 14px;
+            font-weight: 600;
+            color: #d4a843;
+            margin-bottom: 6px;
+        }
+
+        .theme-description {
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        .game-area {
+            background: #1a1b28;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: #242836;
+            border: 1px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #e0e0e0;
+            text-align: center;
+            padding: 4px;
+            transition: all 0.2s ease;
+            position: relative;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .cell:hover {
+            background: #2d2f42;
+            border-color: #444;
+            transform: scale(1.05);
+        }
+
+        .cell.selected {
+            background: #3a3f56;
+            border-color: #6b9aff;
+            box-shadow: 0 0 12px rgba(107, 154, 255, 0.4);
+        }
+
+        .cell.found {
+            color: #fff;
+            font-weight: 700;
+            border: 2px solid;
+            cursor: default;
+            background: #2a2d3a;
+        }
+
+        .cell.found-property {
+            border-color: #e17055;
+            background: rgba(225, 112, 85, 0.15);
+            box-shadow: 0 0 8px rgba(225, 112, 85, 0.3);
+        }
+
+        .cell.found-conlaw {
+            border-color: #0984e3;
+            background: rgba(9, 132, 227, 0.15);
+            box-shadow: 0 0 8px rgba(9, 132, 227, 0.3);
+        }
+
+        .cell.found-criminal {
+            border-color: #9b59b6;
+            background: rgba(155, 89, 182, 0.15);
+            box-shadow: 0 0 8px rgba(155, 89, 182, 0.3);
+        }
+
+        .cell.found-spangram {
+            border-color: #d4a843;
+            background: rgba(212, 168, 67, 0.2);
+            box-shadow: 0 0 12px rgba(212, 168, 67, 0.5);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 12px;
+            background: #0984e3;
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: #0a7ecf;
+            transform: translateY(-1px);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .control-btn.secondary {
+            background: #333;
+            color: #bbb;
+        }
+
+        .control-btn.secondary:hover {
+            background: #3d3d3d;
+        }
+
+        .control-btn:disabled {
+            background: #1a1b28;
+            color: #555;
+            cursor: not-allowed;
+        }
+
+        .status {
+            font-size: 12px;
+            color: #aaa;
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        .status.success {
+            color: #4caf50;
+            font-weight: 600;
+        }
+
+        .found-strands {
+            background: #242836;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .found-strand-item {
+            font-size: 12px;
+            padding: 6px;
+            margin-bottom: 4px;
+            border-radius: 4px;
+            border-left: 3px solid;
+            padding-left: 10px;
+        }
+
+        .found-strand-item.property {
+            background: rgba(225, 112, 85, 0.15);
+            border-left-color: #e17055;
+            color: #e17055;
+        }
+
+        .found-strand-item.conlaw {
+            background: rgba(9, 132, 227, 0.15);
+            border-left-color: #0984e3;
+            color: #0984e3;
+        }
+
+        .found-strand-item.criminal {
+            background: rgba(155, 89, 182, 0.15);
+            border-left-color: #9b59b6;
+            color: #9b59b6;
+        }
+
+        .found-strand-item.spangram {
+            background: rgba(212, 168, 67, 0.2);
+            border-left-color: #d4a843;
+            color: #d4a843;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1b28;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #d4a843;
+        }
+
+        .modal-message {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            background: #0984e3;
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn:hover {
+            background: #0a7ecf;
+        }
+
+        @media (max-width: 480px) {
+            .cell {
+                font-size: 10px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .grid {
+                gap: 4px;
+            }
+        }
+
+        .hint-indicator {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 4px;
+            height: 4px;
+            background: #d4a843;
+            border-radius: 50%;
+            opacity: 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">LAW STRANDS</div>
+            <div class="subtitle">Master Legal Frameworks</div>
+        </div>
+
+        <div class="puzzle-selector" id="puzzleSelector"></div>
+
+        <div class="puzzle-info">
+            <div class="theme-clue" id="themeClue"></div>
+            <div class="theme-description" id="themeDescription"></div>
+        </div>
+
+        <div class="game-area">
+            <div class="grid" id="grid"></div>
+            <div class="controls">
+                <button class="control-btn secondary" id="deselectBtn">Deselect</button>
+                <button class="control-btn" id="submitBtn">Submit</button>
+                <button class="control-btn secondary" id="hintBtn">Hint</button>
+            </div>
+            <div class="status" id="status"></div>
+        </div>
+
+        <div class="found-strands" id="foundStrands"></div>
+    </div>
+
+    <div class="modal" id="completionModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-message" id="modalMessage"></div>
+            <button class="modal-btn" id="modalBtn">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        // Puzzle definitions
+        const puzzles = [
+            {
+                id: 1,
+                course: 'property',
+                title: 'When Possession Becomes Ownership',
+                description: 'Ways that using land creates legal rights',
+                grid: [
+                    ['hostile', 'open', 'notorious', 'continuous', 'statutory', 'title', 'deed', 'grant'],
+                    ['adverse', 'possession', 'decoy1', 'decoy2', 'decoy3', 'license', 'covenant', 'fee'],
+                    ['use', 'without', 'permission', 'continuous', 'prescriptive', 'easement', 'decoy4', 'simple'],
+                    ['prior', 'apparent', 'necessary', 'severance', 'implied', 'easement', 'decoy5', 'determinable'],
+                    ['right', 'ripens', 'into', 'ownership', 'possession', 'transfer', 'lease', 'decoy6'],
+                    ['estate', 'title', 'claim', 'adverse', 'years', 'decoy7', 'decoy8', 'decoy9']
+                ],
+                strands: [
+                    {
+                        name: 'Adverse Possession',
+                        cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+                        category: 'property'
+                    },
+                    {
+                        name: 'Prescriptive Easement',
+                        cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5]],
+                        category: 'property'
+                    },
+                    {
+                        name: 'Implied Easement',
+                        cells: [[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5]],
+                        category: 'property'
+                    }
+                ],
+                spangram: {
+                    name: 'Possession Ripens Into Rights',
+                    cells: [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [4, 7]],
+                    category: 'spangram'
+                }
+            },
+            {
+                id: 2,
+                course: 'conlaw',
+                title: 'The Government Goes Too Far',
+                description: 'When government action is struck down',
+                grid: [
+                    ['racial', 'classification', 'strict', 'scrutiny', 'not', 'tailored', 'decoy', 'invalid'],
+                    ['government', 'power', 'equal', 'protection', 'denied', 'unconstitutional', 'decoy', 'struck'],
+                    ['noneconomic', 'local', 'no', 'substantial', 'effect', 'exceeds', 'decoy', 'congress'],
+                    ['commerce', 'clause', 'limit', 'authority', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['fundamental', 'right', 'not', 'rooted', 'history', 'overruled', 'decoy', 'decoy'],
+                    ['limits', 'on', 'government', 'power', 'check', 'balance', 'decoy', 'decoy']
+                ],
+                strands: [
+                    {
+                        name: 'Strict Scrutiny',
+                        cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+                        category: 'conlaw'
+                    },
+                    {
+                        name: 'Commerce Clause Limit',
+                        cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5]],
+                        category: 'conlaw'
+                    },
+                    {
+                        name: 'Fundamental Rights',
+                        cells: [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]],
+                        category: 'conlaw'
+                    }
+                ],
+                spangram: {
+                    name: 'Limits On Government Power',
+                    cells: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]],
+                    category: 'spangram'
+                }
+            },
+            {
+                id: 3,
+                course: 'criminal',
+                title: 'Defenses That Negate Mens Rea',
+                description: 'When the mind isn\'t guilty',
+                grid: [
+                    ['mistake', 'of', 'fact', 'negates', 'purpose', 'acquittal', 'decoy', 'defense'],
+                    ['state', 'mind', 'required', 'element', 'decoy', 'decoy', 'decoy', 'guilty'],
+                    ['voluntary', 'intoxication', 'no', 'defense', 'general', 'intent', 'decoy', 'specific'],
+                    ['knowledge', 'awareness', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['insanity', 'did', 'not', 'know', 'nature', 'wrongfulness', 'decoy', 'test'],
+                    ['no', 'guilty', 'mind', 'exists', 'mens', 'rea', 'absent', 'decoy']
+                ],
+                strands: [
+                    {
+                        name: 'Mistake of Fact',
+                        cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+                        category: 'criminal'
+                    },
+                    {
+                        name: 'Voluntary Intoxication',
+                        cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5]],
+                        category: 'criminal'
+                    },
+                    {
+                        name: 'Insanity Defense',
+                        cells: [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]],
+                        category: 'criminal'
+                    }
+                ],
+                spangram: {
+                    name: 'No Guilty Mind Exists',
+                    cells: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]],
+                    category: 'spangram'
+                }
+            },
+            {
+                id: 4,
+                course: 'property',
+                title: 'Future Interests Puzzle',
+                description: 'What happens when the present estate ends',
+                grid: [
+                    ['fee', 'simple', 'determinable', 'automatic', 'possibility', 'reverter', 'decoy', 'transfer'],
+                    ['estate', 'term', 'duration', 'defined', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['condition', 'subsequent', 'right', 'of', 'entry', 'reentry', 'decoy', 'power'],
+                    ['breach', 'violation', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['life', 'estate', 'remainder', 'vested', 'indefeasibly', 'transferable', 'decoy', 'heir'],
+                    ['estates', 'end', 'interests', 'begin', 'future', 'property', 'decoy', 'decoy']
+                ],
+                strands: [
+                    {
+                        name: 'Fee Simple Determinable',
+                        cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+                        category: 'property'
+                    },
+                    {
+                        name: 'Condition Subsequent',
+                        cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5]],
+                        category: 'property'
+                    },
+                    {
+                        name: 'Life Estate Remainder',
+                        cells: [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]],
+                        category: 'property'
+                    }
+                ],
+                spangram: {
+                    name: 'Estates End Interests Begin',
+                    cells: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]],
+                    category: 'spangram'
+                }
+            },
+            {
+                id: 5,
+                course: 'conlaw',
+                title: 'Commerce Clause Journey',
+                description: 'The evolution of federal commerce power',
+                grid: [
+                    ['gibbons', 'broad', 'federal', 'power', 'regulate', 'commerce', 'decoy', 'authority'],
+                    ['interstate', 'trade', 'goods', 'services', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['lochner', 'formalism', 'direct', 'indirect', 'narrow', 'struck', 'decoy', 'era'],
+                    ['rationale', 'doctrine', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['wickard', 'aggregation', 'substantial', 'effect', 'rational', 'upheld', 'decoy', 'basis'],
+                    ['commerce', 'power', 'expands', 'contracts', 'evolves', 'develops', 'decoy', 'decoy']
+                ],
+                strands: [
+                    {
+                        name: 'Gibbons Broad Power',
+                        cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+                        category: 'conlaw'
+                    },
+                    {
+                        name: 'Lochner Formalism',
+                        cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5]],
+                        category: 'conlaw'
+                    },
+                    {
+                        name: 'Wickard Aggregation',
+                        cells: [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]],
+                        category: 'conlaw'
+                    }
+                ],
+                spangram: {
+                    name: 'Commerce Power Expands Contracts',
+                    cells: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]],
+                    category: 'spangram'
+                }
+            },
+            {
+                id: 6,
+                course: 'criminal',
+                title: 'The Homicide Ladder',
+                description: 'Degrees of killing',
+                grid: [
+                    ['premeditation', 'deliberation', 'first', 'degree', 'death', 'penalty', 'decoy', 'murder'],
+                    ['prior', 'thought', 'reflection', 'decision', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['malice', 'implied', 'depraved', 'heart', 'second', 'degree', 'decoy', 'killing'],
+                    ['recklessness', 'extreme', 'conduct', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['adequate', 'provocation', 'heat', 'passion', 'voluntary', 'manslaughter', 'decoy', 'crime'],
+                    ['criminal', 'negligence', 'gross', 'deviation', 'involuntary', 'manslaughter', 'decoy', 'decoy']
+                ],
+                strands: [
+                    {
+                        name: 'First Degree Murder',
+                        cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+                        category: 'criminal'
+                    },
+                    {
+                        name: 'Second Degree Murder',
+                        cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5]],
+                        category: 'criminal'
+                    },
+                    {
+                        name: 'Voluntary Manslaughter',
+                        cells: [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]],
+                        category: 'criminal'
+                    },
+                    {
+                        name: 'Involuntary Manslaughter',
+                        cells: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5]],
+                        category: 'criminal'
+                    }
+                ],
+                spangram: {
+                    name: 'Killing With Decreasing Intent',
+                    cells: [[0, 6], [1, 6], [2, 6], [3, 6], [4, 6], [5, 6], [5, 7], [5, 8]],
+                    category: 'spangram'
+                }
+            },
+            {
+                id: 7,
+                course: 'property',
+                title: 'Landlord-Tenant Battles',
+                description: 'When renting goes wrong',
+                grid: [
+                    ['implied', 'warranty', 'habitability', 'substantial', 'impairment', 'remedy', 'decoy', 'lease'],
+                    ['livable', 'conditions', 'safe', 'sanitary', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['constructive', 'eviction', 'landlord', 'breach', 'tenant', 'abandons', 'decoy', 'unit'],
+                    ['uninhabitable', 'repair', 'default', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['retaliatory', 'eviction', 'tenant', 'complained', 'landlord', 'penalizes', 'decoy', 'illegal'],
+                    ['tenants', 'have', 'legal', 'protections', 'rights', 'safeguards', 'decoy', 'decoy']
+                ],
+                strands: [
+                    {
+                        name: 'Implied Warranty Habitability',
+                        cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+                        category: 'property'
+                    },
+                    {
+                        name: 'Constructive Eviction',
+                        cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5]],
+                        category: 'property'
+                    },
+                    {
+                        name: 'Retaliatory Eviction',
+                        cells: [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]],
+                        category: 'property'
+                    }
+                ],
+                spangram: {
+                    name: 'Tenants Have Legal Protections',
+                    cells: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]],
+                    category: 'spangram'
+                }
+            },
+            {
+                id: 8,
+                course: 'conlaw',
+                title: 'Equal Protection Tiers',
+                description: 'Different standards for different classifications',
+                grid: [
+                    ['race', 'suspect', 'compelling', 'narrowly', 'tailored', 'strict', 'decoy', 'review'],
+                    ['immutable', 'characteristic', 'discrimination', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['gender', 'quasi', 'important', 'substantially', 'related', 'intermediate', 'decoy', 'test'],
+                    ['classification', 'categories', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['economic', 'regulation', 'legitimate', 'rationally', 'related', 'rational', 'decoy', 'basis'],
+                    ['classifications', 'determine', 'scrutiny', 'level', 'standard', 'review', 'decoy', 'decoy']
+                ],
+                strands: [
+                    {
+                        name: 'Race Suspect Strict',
+                        cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+                        category: 'conlaw'
+                    },
+                    {
+                        name: 'Gender Quasi Intermediate',
+                        cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5]],
+                        category: 'conlaw'
+                    },
+                    {
+                        name: 'Economic Rational Basis',
+                        cells: [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]],
+                        category: 'conlaw'
+                    }
+                ],
+                spangram: {
+                    name: 'Classifications Determine Scrutiny Level',
+                    cells: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]],
+                    category: 'spangram'
+                }
+            },
+            {
+                id: 9,
+                course: 'criminal',
+                title: 'Inchoate Offenses',
+                description: 'Crimes that aren\'t completed',
+                grid: [
+                    ['attempt', 'substantial', 'step', 'beyond', 'mere', 'preparation', 'decoy', 'crime'],
+                    ['proximity', 'threshold', 'test', 'proximity', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['solicitation', 'requesting', 'another', 'commit', 'crime', 'merges', 'decoy', 'principal'],
+                    ['persuasion', 'encouragement', 'inducement', 'decoy', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['conspiracy', 'agreement', 'overt', 'act', 'pinkerton', 'liability', 'decoy', 'coconspirator'],
+                    ['incomplete', 'crimes', 'still', 'punished', 'incomplete', 'crimes', 'inchoate', 'decoy']
+                ],
+                strands: [
+                    {
+                        name: 'Attempt Substantial Step',
+                        cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+                        category: 'criminal'
+                    },
+                    {
+                        name: 'Solicitation Requesting',
+                        cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5]],
+                        category: 'criminal'
+                    },
+                    {
+                        name: 'Conspiracy Agreement Overt',
+                        cells: [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]],
+                        category: 'criminal'
+                    }
+                ],
+                spangram: {
+                    name: 'Incomplete Crimes Still Punished',
+                    cells: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]],
+                    category: 'spangram'
+                }
+            },
+            {
+                id: 10,
+                course: 'property',
+                title: 'Recording Acts',
+                description: 'Who wins when land is sold twice',
+                grid: [
+                    ['race', 'first', 'record', 'wins', 'regardless', 'notice', 'decoy', 'priority'],
+                    ['early', 'filing', 'recorded', 'document', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['notice', 'subsequent', 'bona', 'fide', 'purchaser', 'prevails', 'decoy', 'knowledge'],
+                    ['good', 'faith', 'value', 'paid', 'decoy', 'decoy', 'decoy', 'decoy'],
+                    ['race', 'notice', 'first', 'record', 'without', 'knowledge', 'decoy', 'inquiry'],
+                    ['recording', 'protects', 'good', 'faith', 'security', 'interest', 'decoy', 'decoy']
+                ],
+                strands: [
+                    {
+                        name: 'Race First Record',
+                        cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+                        category: 'property'
+                    },
+                    {
+                        name: 'Notice Bona Fide',
+                        cells: [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5]],
+                        category: 'property'
+                    },
+                    {
+                        name: 'Race Notice First',
+                        cells: [[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]],
+                        category: 'property'
+                    }
+                ],
+                spangram: {
+                    name: 'Recording Protects Good Faith',
+                    cells: [[5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7]],
+                    category: 'spangram'
+                }
+            }
+        ];
+
+        // Game state
+        let currentPuzzle = null;
+        let selectedCells = [];
+        let foundStrands = [];
+        let hintsRemaining = 3;
+        let hintedCells = new Set();
+
+        // Initialize game
+        function init() {
+            renderPuzzleSelector();
+            loadPuzzle(1);
+        }
+
+        function renderPuzzleSelector() {
+            const selector = document.getElementById('puzzleSelector');
+            selector.innerHTML = '';
+            puzzles.forEach(puzzle => {
+                const btn = document.createElement('button');
+                btn.className = 'puzzle-btn';
+                btn.textContent = `P${puzzle.id}`;
+                btn.onclick = () => loadPuzzle(puzzle.id);
+                selector.appendChild(btn);
+            });
+        }
+
+        function loadPuzzle(puzzleId) {
+            currentPuzzle = puzzles.find(p => p.id === puzzleId);
+            selectedCells = [];
+            foundStrands = [];
+            hintsRemaining = 3;
+            hintedCells.clear();
+
+            // Update active button
+            document.querySelectorAll('.puzzle-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.puzzle-btn')[puzzleId - 1].classList.add('active');
+
+            // Update theme
+            document.getElementById('themeClue').textContent = currentPuzzle.title;
+            document.getElementById('themeDescription').textContent = currentPuzzle.description;
+
+            // Render grid
+            renderGrid();
+            updateFoundStrands();
+            updateStatus('');
+            updateHintButton();
+        }
+
+        function renderGrid() {
+            const gridEl = document.getElementById('grid');
+            gridEl.innerHTML = '';
+
+            currentPuzzle.grid.forEach((row, rowIdx) => {
+                row.forEach((term, colIdx) => {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.textContent = term;
+                    cell.dataset.row = rowIdx;
+                    cell.dataset.col = colIdx;
+
+                    // Check if this cell is part of a found strand
+                    const foundStrand = foundStrands.find(strand =>
+                        strand.cells.some(c => c[0] === rowIdx && c[1] === colIdx)
+                    );
+
+                    if (foundStrand) {
+                        cell.classList.add('found');
+                        cell.classList.add(`found-${foundStrand.category}`);
+                    }
+
+                    // Add hint indicator
+                    if (hintedCells.has(`${rowIdx},${colIdx}`)) {
+                        const hint = document.createElement('div');
+                        hint.className = 'hint-indicator';
+                        cell.appendChild(hint);
+                    }
+
+                    cell.onclick = () => toggleCell(rowIdx, colIdx);
+                    gridEl.appendChild(cell);
+                });
+            });
+        }
+
+        function toggleCell(row, col) {
+            const cellKey = `${row},${col}`;
+            const isAlreadySelected = selectedCells.some(c => c[0] === row && c[1] === col);
+
+            if (isAlreadySelected) {
+                selectedCells = selectedCells.filter(c => !(c[0] === row && c[1] === col));
+            } else {
+                // Check if cell is already part of found strand
+                const isInFoundStrand = foundStrands.some(strand =>
+                    strand.cells.some(c => c[0] === row && c[1] === col)
+                );
+
+                if (!isInFoundStrand) {
+                    selectedCells.push([row, col]);
+                }
+            }
+
+            updateGridDisplay();
+        }
+
+        function updateGridDisplay() {
+            document.querySelectorAll('.cell').forEach(cell => {
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+
+                // Remove selected class
+                cell.classList.remove('selected');
+
+                // Add selected class if in selection
+                if (selectedCells.some(c => c[0] === row && c[1] === col)) {
+                    cell.classList.add('selected');
+                }
+            });
+        }
+
+        function isAdjacent(cell1, cell2) {
+            const [r1, c1] = cell1;
+            const [r2, c2] = cell2;
+            return Math.abs(r1 - r2) <= 1 && Math.abs(c1 - c2) <= 1 && !(r1 === r2 && c1 === c2);
+        }
+
+        function isValidChain(cells) {
+            if (cells.length < 3) return false;
+
+            for (let i = 0; i < cells.length - 1; i++) {
+                if (!isAdjacent(cells[i], cells[i + 1])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function submitSelection() {
+            if (selectedCells.length === 0) {
+                updateStatus('Select cells to form a strand');
+                return;
+            }
+
+            if (!isValidChain(selectedCells)) {
+                updateStatus('Cells must be adjacent in a chain');
+                return;
+            }
+
+            // Check against known strands
+            const matchingStrand = currentPuzzle.strands.find(strand => {
+                if (strand.cells.length !== selectedCells.length) return false;
+                return strand.cells.every(cell =>
+                    selectedCells.some(c => c[0] === cell[0] && c[1] === cell[1])
+                );
+            });
+
+            if (matchingStrand) {
+                foundStrands.push(matchingStrand);
+                selectedCells = [];
+                updateStatus(`Found: ${matchingStrand.name}!`, true);
+                checkForSpangram();
+                renderGrid();
+                updateFoundStrands();
+                updateHintButton();
+            } else {
+                // Check spangram
+                const spangram = currentPuzzle.spangram;
+                const isSpangram = spangram.cells.length === selectedCells.length &&
+                    spangram.cells.every(cell =>
+                        selectedCells.some(c => c[0] === cell[0] && c[1] === cell[1])
+                    );
+
+                if (isSpangram) {
+                    foundStrands.push(spangram);
+                    selectedCells = [];
+                    updateStatus(`SPANGRAM: ${spangram.name}!`, true);
+                    checkForCompletion();
+                    renderGrid();
+                    updateFoundStrands();
+                    updateHintButton();
+                } else {
+                    updateStatus('Not a recognized strand');
+                    selectedCells = [];
+                    updateGridDisplay();
+                }
+            }
+        }
+
+        function useHint() {
+            if (hintsRemaining === 0) {
+                updateStatus('No hints remaining');
+                return;
+            }
+
+            // Find unfound strand
+            const unfoundStrand = currentPuzzle.strands.find(strand =>
+                !foundStrands.some(fs => fs.name === strand.name)
+            );
+
+            if (unfoundStrand) {
+                const firstCell = unfoundStrand.cells[0];
+                hintedCells.add(`${firstCell[0]},${firstCell[1]}`);
+                hintsRemaining--;
+                updateStatus(`Hint: First cell of "${unfoundStrand.name}" highlighted`);
+                renderGrid();
+                updateHintButton();
+            }
+        }
+
+        function deselectAll() {
+            selectedCells = [];
+            updateGridDisplay();
+            updateStatus('');
+        }
+
+        function checkForSpangram() {
+            const spangram = currentPuzzle.spangram;
+            const isSpangramFound = foundStrands.some(s => s.name === spangram.name);
+            return isSpangramFound;
+        }
+
+        function checkForCompletion() {
+            const allStrandsFound = currentPuzzle.strands.every(strand =>
+                foundStrands.some(fs => fs.name === strand.name)
+            );
+
+            const spangramFound = checkForSpangram();
+
+            if (allStrandsFound && spangramFound) {
+                setTimeout(() => {
+                    showModal(
+                        'Puzzle Complete!',
+                        'You\'ve mastered this legal framework. Ready for the next challenge?',
+                        'Next Puzzle'
+                    );
+                }, 500);
+            }
+        }
+
+        function showModal(title, message, btnText) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modalBtn').textContent = btnText;
+            document.getElementById('completionModal').classList.add('active');
+
+            document.getElementById('modalBtn').onclick = () => {
+                document.getElementById('completionModal').classList.remove('active');
+                // Auto-load next puzzle
+                if (currentPuzzle.id < puzzles.length) {
+                    loadPuzzle(currentPuzzle.id + 1);
+                }
+            };
+        }
+
+        function updateFoundStrands() {
+            const container = document.getElementById('foundStrands');
+            if (foundStrands.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            foundStrands.forEach(strand => {
+                html += `<div class="found-strand-item ${strand.category}">${strand.name}</div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function updateStatus(text, success = false) {
+            const status = document.getElementById('status');
+            status.textContent = text;
+            status.classList.toggle('success', success);
+        }
+
+        function updateHintButton() {
+            const btn = document.getElementById('hintBtn');
+            btn.textContent = `Hint (${hintsRemaining})`;
+            btn.disabled = hintsRemaining === 0;
+        }
+
+        // Event listeners
+        document.getElementById('submitBtn').onclick = submitSelection;
+        document.getElementById('deselectBtn').onclick = deselectAll;
+        document.getElementById('hintBtn').onclick = useHint;
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

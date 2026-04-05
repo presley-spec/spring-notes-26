@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Connections - Study Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0a0b12;
+            color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-top: 16px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .puzzle-counter {
+            font-size: 13px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .lives-display {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 16px;
+            align-items: center;
+        }
+
+        .life-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #888;
+            transition: background-color 0.2s;
+        }
+
+        .life-dot.active {
+            background-color: #f0f0f0;
+        }
+
+        .lives-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+        }
+
+        .game-area {
+            margin-bottom: 24px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tile {
+            aspect-ratio: 1;
+            background-color: #1a1b23;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px;
+            transition: all 0.15s ease-out;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tile:hover:not(.solved):not(.tile-locked) {
+            background-color: #252633;
+            transform: scale(0.98);
+        }
+
+        .tile.selected {
+            border-color: #f0f0f0;
+            background-color: #2a2b35;
+        }
+
+        .tile.solved {
+            color: #fff;
+            font-weight: 700;
+            cursor: default;
+            border: none;
+        }
+
+        .tile.solved::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: inherit;
+            z-index: -1;
+        }
+
+        .tile-locked {
+            cursor: default !important;
+            pointer-events: none;
+        }
+
+        .tile.yellow {
+            background: linear-gradient(135deg, #f9df6d 0%, #f5d940 100%);
+            color: #333;
+        }
+
+        .tile.green {
+            background: linear-gradient(135deg, #a0c35a 0%, #95b850 100%);
+            color: #fff;
+        }
+
+        .tile.blue {
+            background: linear-gradient(135deg, #b0c4ef 0%, #a0b5e0 100%);
+            color: #333;
+        }
+
+        .tile.purple {
+            background: linear-gradient(135deg, #ba81c5 0%, #ab6fb5 100%);
+            color: #fff;
+        }
+
+        .category-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+            opacity: 0;
+            max-height: 0;
+            transition: all 0.3s ease-out;
+        }
+
+        .tile.solved .category-label {
+            opacity: 1;
+            max-height: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-deselect {
+            background-color: #1a1b23;
+            color: #f0f0f0;
+            flex: 0;
+            padding: 12px 16px;
+        }
+
+        .btn-deselect:hover {
+            background-color: #252633;
+        }
+
+        .btn-submit {
+            background-color: #f0f0f0;
+            color: #0a0b12;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background-color: #e0e0e0;
+            transform: scale(0.99);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #1a1b23;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 450px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .modal p {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #ccc;
+        }
+
+        .modal ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 16px;
+        }
+
+        .modal li {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            color: #ccc;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .modal li:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #666;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-close {
+            background-color: #f0f0f0;
+            color: #0a0b12;
+            flex: 1;
+        }
+
+        .btn-close:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-help {
+            background-color: #1a1b23;
+            color: #f0f0f0;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .btn-help:hover {
+            background-color: #252633;
+        }
+
+        .btn-next {
+            background-color: #f0f0f0;
+            color: #0a0b12;
+            width: 100%;
+            display: none;
+        }
+
+        .btn-next.show {
+            display: block;
+        }
+
+        .btn-next:hover {
+            background-color: #e0e0e0;
+        }
+
+        .message {
+            text-align: center;
+            font-size: 13px;
+            margin-bottom: 16px;
+            height: 20px;
+            color: #888;
+            transition: all 0.3s;
+        }
+
+        .message.error {
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .message.success {
+            color: #a0c35a;
+            font-weight: 600;
+        }
+
+        .message.congrats {
+            color: #f9df6d;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .solved-group {
+            margin-bottom: 8px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 24px;
+            }
+
+            .tile {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Law Connections</h1>
+            <p class="puzzle-counter">Puzzle <span id="puzzleNumber">1</span> of 25</p>
+            <div class="lives-display">
+                <div class="life-dot active"></div>
+                <div class="life-dot active"></div>
+                <div class="life-dot active"></div>
+                <div class="life-dot active"></div>
+                <span class="lives-label">Lives</span>
+            </div>
+        </header>
+
+        <div class="game-area">
+            <div class="message" id="message"></div>
+
+            <div id="solvedGroups"></div>
+
+            <div class="grid" id="grid"></div>
+
+            <div class="controls">
+                <button class="btn-deselect" id="btnDeselect">Deselect All</button>
+                <button class="btn-submit" id="btnSubmit" disabled>Submit</button>
+            </div>
+
+            <button class="btn-help" id="btnHelp">How to Play</button>
+            <button class="btn-next" id="btnNext">Next Puzzle</button>
+        </div>
+    </div>
+
+    <div class="modal" id="howToPlayModal">
+        <div class="modal-content">
+            <h2>How to Play</h2>
+            <p>Find groups of 4 related law school concepts. Each group shares a connection.</p>
+            <ul>
+                <li>Tap tiles to select them</li>
+                <li>Select 4 tiles and tap "Submit"</li>
+                <li>If correct, you'll reveal the category</li>
+                <li>If wrong, you lose a life (4 max)</li>
+                <li>Identify all 4 groups to complete the puzzle</li>
+            </ul>
+            <p style="margin-top: 16px; font-size: 12px; color: #666;">
+                Difficulty increases with each group:
+                <strong style="color: #f9df6d">Yellow</strong> (easiest) →
+                <strong style="color: #a0c35a">Green</strong> →
+                <strong style="color: #b0c4ef">Blue</strong> →
+                <strong style="color: #ba81c5">Purple</strong> (hardest)
+            </p>
+            <div class="modal-buttons" style="margin-top: 24px;">
+                <button class="btn-close" id="btnCloseModal">Got It</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PUZZLES = [
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'MPC Mental States', items: ['Purpose', 'Knowledge', 'Recklessness', 'Negligence'] },
+                    { difficulty: 'green', category: 'Adverse Possession', items: ['Actual', 'Open', 'Exclusive', 'Continuous'] },
+                    { difficulty: 'blue', category: 'Commerce Clause Cases', items: ['Gibbons', 'Wickard', 'Lopez', 'Raich'] },
+                    { difficulty: 'purple', category: 'Defeasible Fees', items: ['Determinable', 'Condition Subsequent', 'Executory Limitation', 'Fee Simple'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Sentencing Philosophies', items: ['Retribution', 'Deterrence', 'Incapacitation', 'Rehabilitation'] },
+                    { difficulty: 'green', category: 'Concurrent Estates', items: ['Joint Tenancy', 'Tenancy in Common', 'Tenancy by Entireties', 'Community Property'] },
+                    { difficulty: 'blue', category: 'Dormant Commerce Review', items: ['Strict Scrutiny', 'Pike Balancing', 'Market Participant', 'Rational Basis'] },
+                    { difficulty: 'purple', category: 'Homicide Types', items: ['First-Degree', 'Second-Degree', 'Voluntary Manslaughter', 'Involuntary Manslaughter'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Easement Types', items: ['Express', 'Prescriptive', 'Necessity', 'Estoppel'] },
+                    { difficulty: 'green', category: 'Death Penalty Cases', items: ['Furman', 'Gregg', 'Roper', 'Atkins'] },
+                    { difficulty: 'blue', category: 'Commerce Clause Categories', items: ['Channels', 'Instrumentalities', 'Substantial Effects', 'Non-Economic'] },
+                    { difficulty: 'purple', category: 'Lochner Era', items: ['Lochner', 'West Coast Hotel', 'Rational Basis', 'Economic Liberty'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Tenancy Types', items: ['At Will', 'For Years', 'Periodic', 'At Sufferance'] },
+                    { difficulty: 'green', category: 'Future Interests', items: ['Reversion', 'Remainder', 'Executory Interest', 'Possibility of Reverter'] },
+                    { difficulty: 'blue', category: 'Fair Housing Protected', items: ['Race', 'Religion', 'Disability', 'Familial Status'] },
+                    { difficulty: 'purple', category: 'Takings Cases', items: ['Kelo', 'Penn Central', 'Lucas', 'Loretto'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Battery Elements', items: ['Intent', 'Contact', 'Harmful', 'Offensive'] },
+                    { difficulty: 'green', category: 'Nuisance Factors', items: ['Substantial', 'Unreasonable', 'Intentional', 'Interference'] },
+                    { difficulty: 'blue', category: 'Zoning Cases', items: ['Euclid', 'Mount Laurel', 'Belle Terre', 'Nectow'] },
+                    { difficulty: 'purple', category: 'Constitutional Tests', items: ['Strict Scrutiny', 'Intermediate', 'Rational Basis', 'Undue Burden'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Causation Concepts', items: ['But-For', 'Proximate', 'Intervening', 'Superseding'] },
+                    { difficulty: 'green', category: 'Property Remedies', items: ['Injunction', 'Damages', 'Ejectment', 'Partition'] },
+                    { difficulty: 'blue', category: 'Due Process Types', items: ['Substantive', 'Procedural', 'Incorporation', 'Liberty'] },
+                    { difficulty: 'purple', category: 'Felony Murder Elements', items: ['Inherently Dangerous', 'During Commission', 'In Furtherance', 'Res Gestae'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Fee Simple Determinable Language', items: ['So long as', 'While', 'During', 'Until'] },
+                    { difficulty: 'green', category: 'Condition Subsequent Language', items: ['But if', 'Provided that', 'On condition that', 'However if'] },
+                    { difficulty: 'blue', category: 'Vested Remainder Indicators', items: ['To A for life then to B', 'Named and born', 'No condition precedent', 'Ascertainable grantee'] },
+                    { difficulty: 'purple', category: 'RAP Violations', items: ['First grandchild to reach 25', 'First descendant to be a lawyer', 'Children who reach 30', 'When city population hits 1M'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Joint Tenancy Unities', items: ['Time', 'Title', 'Interest', 'Possession'] },
+                    { difficulty: 'green', category: 'Things That Sever JT', items: ['Conveyance', 'Mortgage (title theory)', 'Lease (some states)', 'Partition'] },
+                    { difficulty: 'blue', category: 'Concurrent Ownership Types', items: ['Joint Tenancy', 'Tenancy in Common', 'Tenancy by Entireties', 'Community Property'] },
+                    { difficulty: 'purple', category: 'Tenancy in Common Features', items: ['No survivorship', 'Unequal shares OK', 'Default presumption', 'Freely alienable'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Tenant Duties', items: ['Pay rent', 'No waste', 'No nuisance', 'Return premises'] },
+                    { difficulty: 'green', category: 'Landlord Duties', items: ['Habitability', 'Quiet enjoyment', 'Return deposit', 'Maintain common areas'] },
+                    { difficulty: 'blue', category: 'Tenant Remedies', items: ['Repair and deduct', 'Rent withholding', 'Constructive eviction', 'Sue for damages'] },
+                    { difficulty: 'purple', category: 'Lease Types', items: ['Term of years', 'Periodic tenancy', 'Tenancy at will', 'Tenancy at sufferance'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Trespass Elements', items: ['Physical invasion', 'Intentional entry', 'Tangible intrusion', 'Without permission'] },
+                    { difficulty: 'green', category: 'Private Nuisance Factors', items: ['Substantial harm', 'Unreasonable interference', 'Continuous conduct', 'Non-trespassory'] },
+                    { difficulty: 'blue', category: 'Nuisance Remedies', items: ['Injunction', 'Damages', 'Abatement', 'Coming to nuisance defense'] },
+                    { difficulty: 'purple', category: 'Trespass Remedies', items: ['Nominal damages', 'Compensatory damages', 'Punitive damages', 'Ejectment'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Race Statute Features', items: ['First to record', 'No notice required', 'Pure race', 'Delaware'] },
+                    { difficulty: 'green', category: 'Notice Statute Features', items: ['Good faith purchaser', 'Without notice', 'Regardless of recording', 'Most common'] },
+                    { difficulty: 'blue', category: 'Race-Notice Features', items: ['First to record', 'Without notice', 'Both required', 'Majority rule'] },
+                    { difficulty: 'purple', category: 'Types of Notice', items: ['Actual notice', 'Constructive notice', 'Inquiry notice', 'Record notice'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Standing Elements', items: ['Injury in fact', 'Causation', 'Redressability', 'Concrete and particularized'] },
+                    { difficulty: 'green', category: 'Mootness Exceptions', items: ['Capable of repetition', 'Class actions', 'Voluntary cessation', 'Collateral consequences'] },
+                    { difficulty: 'blue', category: 'Political Question Factors', items: ['Textual commitment', 'Manageable standards', 'Policy determination', 'Coordinate branch'] },
+                    { difficulty: 'purple', category: 'Ripeness Factors', items: ['Hardship of withholding', 'Fitness for review', 'Not hypothetical', 'Present controversy'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Youngstown Zone 1', items: ['Congressional authorization', 'Maximum power', 'Strong presumption', 'Upheld'] },
+                    { difficulty: 'green', category: 'Youngstown Zone 2', items: ['Congressional silence', 'Twilight zone', 'Independent power', 'Uncertain'] },
+                    { difficulty: 'blue', category: 'Youngstown Zone 3', items: ['Congress prohibited', 'Lowest ebb', 'Against legislative will', 'Rarely upheld'] },
+                    { difficulty: 'purple', category: 'Presidential Powers', items: ['Commander in Chief', 'Veto', 'Pardon', 'Appointment'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'State Action Present', items: ['Public function', 'Government official', 'State law mandate', 'Public university'] },
+                    { difficulty: 'green', category: 'State Action Absent', items: ['Private club', 'Private company', 'Individual choice', 'Private university'] },
+                    { difficulty: 'blue', category: 'Entanglement Tests', items: ['Symbiotic relationship', 'Joint participation', 'Nexus test', 'State encouragement'] },
+                    { difficulty: 'purple', category: 'State Action Key Cases', items: ['Shelley v Kraemer', 'Burton v Wilmington', 'Marsh v Alabama', 'DeShaney v Winnebago'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Protected Speech', items: ['Political speech', 'Symbolic speech', 'Commercial speech', 'Anonymous speech'] },
+                    { difficulty: 'green', category: 'Unprotected Speech', items: ['True threats', 'Incitement', 'Fighting words', 'Obscenity'] },
+                    { difficulty: 'blue', category: 'Forum Types', items: ['Traditional public', 'Designated public', 'Limited public', 'Nonpublic'] },
+                    { difficulty: 'purple', category: 'Speech Tests', items: ['Strict scrutiny', 'Intermediate scrutiny', 'Rational basis', 'Content neutral time/place/manner'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Substantive DP Rights', items: ['Privacy', 'Marriage', 'Contraception', 'Child rearing'] },
+                    { difficulty: 'green', category: 'Procedural DP Elements', items: ['Notice', 'Hearing', 'Neutral decisionmaker', 'Mathews balancing'] },
+                    { difficulty: 'blue', category: 'Incorporation Cases', items: ['Gitlow (speech)', 'Mapp (search)', 'Gideon (counsel)', 'McDonald (arms)'] },
+                    { difficulty: 'purple', category: 'Glucksberg Test', items: ['Deeply rooted', 'History and tradition', 'Carefully described', 'Ordered liberty'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Attempt Elements', items: ['Specific intent', 'Substantial step', 'Beyond mere preparation', 'Factual impossibility no defense'] },
+                    { difficulty: 'green', category: 'Conspiracy Elements', items: ['Agreement', 'Overt act (federal)', 'Two or more persons', 'Pinkerton liability'] },
+                    { difficulty: 'blue', category: 'Solicitation Elements', items: ['Requesting another', 'To commit crime', 'Specific intent', 'Merges with completed crime'] },
+                    { difficulty: 'purple', category: 'Defenses to Inchoate', items: ['Abandonment', 'Withdrawal', 'Legal impossibility', 'Renunciation'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Self-Defense Elements', items: ['Reasonable belief', 'Imminent threat', 'Proportional force', 'Not the aggressor'] },
+                    { difficulty: 'green', category: 'Deadly Force Rules', items: ['Reasonable fear of death', 'Serious bodily harm', 'Duty to retreat (majority)', 'Castle doctrine exception'] },
+                    { difficulty: 'blue', category: 'MPC Self-Defense', items: ['Honest belief', 'Reckless belief reduces', 'No duty to retreat', 'Imperfect self-defense'] },
+                    { difficulty: 'purple', category: 'Defense of Others', items: ['Reasonable belief', 'Same force as victim could use', 'Alter ego rule (minority)', 'Reasonable person standard'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Accomplice Actus Reus', items: ['Aid', 'Abet', 'Encourage', 'Facilitate'] },
+                    { difficulty: 'green', category: 'Accomplice Mens Rea', items: ['Purpose to assist', 'Knowledge of crime', 'Shared intent', 'Natural and probable consequences'] },
+                    { difficulty: 'blue', category: 'Accessory Categories', items: ['Principal first degree', 'Principal second degree', 'Accessory before fact', 'Accessory after fact'] },
+                    { difficulty: 'purple', category: 'Accomplice Defenses', items: ['Withdrawal before crime', 'Victim cannot be accomplice', 'Legislative exemption', 'Protected class'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Traditional Rape Elements', items: ['Force', 'Resistance', 'Without consent', 'Penetration'] },
+                    { difficulty: 'green', category: 'Modern/MPC Reforms', items: ['Affirmative consent', 'No resistance required', 'Fraud in factum', 'Incapacity'] },
+                    { difficulty: 'blue', category: 'Consent Issues', items: ['Intoxication', 'Age of consent', 'Position of authority', 'Prior relationship irrelevant'] },
+                    { difficulty: 'purple', category: 'Evidentiary Rules', items: ['Rape shield laws', 'Prior bad acts', 'Pattern evidence', 'Victim credibility reforms'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Larceny Elements', items: ['Trespassory taking', 'Carrying away', 'Personal property', 'Intent to permanently deprive'] },
+                    { difficulty: 'green', category: 'Robbery Additions', items: ['From person or presence', 'By force or threat', 'Immediate danger', 'Merger with assault'] },
+                    { difficulty: 'blue', category: 'Embezzlement Distinctions', items: ['Lawful possession', 'Conversion', 'Fraudulent intent', 'Position of trust'] },
+                    { difficulty: 'purple', category: 'False Pretenses', items: ['Misrepresentation', 'Of material fact', 'Reliance by victim', 'Title passes'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Criminal Latin', items: ['Actus reus', 'Mens rea', 'Corpus delicti', 'Mala in se'] },
+                    { difficulty: 'green', category: 'Property Latin', items: ['Ad coelum', 'Inter vivos', 'Habendum', 'Cestui que trust'] },
+                    { difficulty: 'blue', category: 'Con Law Latin', items: ['Stare decisis', 'Amicus curiae', 'Certiorari', 'Ultra vires'] },
+                    { difficulty: 'purple', category: 'General Legal Latin', items: ['Pro se', 'Prima facie', 'Res judicata', 'Habeas corpus'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Property Law Cases', items: ['Pierson v Post', 'Kelo v New London', 'Penn Central', 'Shelley v Kraemer'] },
+                    { difficulty: 'green', category: 'Con Law Key Cases', items: ['Marbury v Madison', 'Wickard v Filburn', 'Brown v Board', 'Lochner v New York'] },
+                    { difficulty: 'blue', category: 'Criminal Law Cases', items: ['Miranda v Arizona', 'Gideon v Wainwright', 'Mapp v Ohio', 'Batson v Kentucky'] },
+                    { difficulty: 'purple', category: 'Cases Overruled', items: ['Plessy', 'Lochner', 'Bowers v Hardwick', 'Roe v Wade'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Strict Scrutiny Triggers', items: ['Race', 'National origin', 'Religion', 'Fundamental rights'] },
+                    { difficulty: 'green', category: 'Intermediate Scrutiny Triggers', items: ['Gender', 'Legitimacy', 'Commercial speech', 'Content-neutral'] },
+                    { difficulty: 'blue', category: 'Rational Basis Triggers', items: ['Age', 'Disability', 'Economic regulation', 'Social legislation'] },
+                    { difficulty: 'purple', category: 'Criminal Standards', items: ['Beyond reasonable doubt', 'Probable cause', 'Reasonable suspicion', 'Preponderance'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Property Policies', items: ['Efficiency', 'Investment incentives', 'Labor theory', 'Personhood'] },
+                    { difficulty: 'green', category: 'Criminal Policies', items: ['Retribution', 'Deterrence', 'Incapacitation', 'Rehabilitation'] },
+                    { difficulty: 'blue', category: 'Con Law Policies', items: ['Federalism', 'Separation of powers', 'Individual rights', 'Democratic accountability'] },
+                    { difficulty: 'purple', category: 'Competing Values', items: ['Liberty vs Security', 'Efficiency vs Fairness', 'Majority rule vs Minority rights', 'Federal vs State power'] }
+                ]
+            }
+        ];
+
+        let currentPuzzle = 0;
+        let lives = 4;
+        let selected = new Set();
+        let solvedGroups = [];
+        let gameState = {}; // Track what's been solved
+
+        function initPuzzle() {
+            selected.clear();
+            solvedGroups = [];
+            gameState = { solvedItems: new Set() };
+            renderPuzzle();
+            updateMessage('');
+        }
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function renderPuzzle() {
+            const puzzle = PUZZLES[currentPuzzle];
+            const allItems = [];
+
+            puzzle.groups.forEach(group => {
+                group.items.forEach(item => {
+                    allItems.push({ text: item, group: group, index: puzzle.groups.indexOf(group) });
+                });
+            });
+
+            const shuffled = shuffle(allItems);
+
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            shuffled.forEach(item => {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                tile.textContent = item.text;
+                tile.dataset.text = item.text;
+                tile.dataset.groupIndex = item.index;
+
+                if (gameState.solvedItems.has(item.text)) {
+                    tile.classList.add('solved', item.group.difficulty, 'tile-locked');
+                    tile.innerHTML = `${item.text}<div class="category-label">${item.group.category}</div>`;
+                } else {
+                    tile.addEventListener('click', () => toggleTile(tile));
+                }
+
+                grid.appendChild(tile);
+            });
+
+            updateLivesDisplay();
+            document.getElementById('puzzleNumber').textContent = currentPuzzle + 1;
+        }
+
+        function toggleTile(tile) {
+            const text = tile.dataset.text;
+
+            if (selected.has(text)) {
+                selected.delete(text);
+                tile.classList.remove('selected');
+            } else {
+                if (selected.size < 4) {
+                    selected.add(text);
+                    tile.classList.add('selected');
+                }
+            }
+
+            document.getElementById('btnSubmit').disabled = selected.size !== 4;
+        }
+
+        function updateLivesDisplay() {
+            const dots = document.querySelectorAll('.life-dot');
+            dots.forEach((dot, index) => {
+                if (index < lives) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function updateMessage(text, type = '') {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = 'message';
+            if (type) msg.classList.add(type);
+        }
+
+        function checkGuess() {
+            const puzzle = PUZZLES[currentPuzzle];
+            const selectedArray = Array.from(selected);
+
+            for (const group of puzzle.groups) {
+                if (group.items.every(item => selectedArray.includes(item))) {
+                    // Correct guess!
+                    solveGroup(group);
+                    return;
+                }
+            }
+
+            // Incorrect guess
+            lives--;
+            updateLivesDisplay();
+
+            if (lives === 0) {
+                updateMessage('Game Over!', 'error');
+                disableAllTiles();
+                document.getElementById('btnSubmit').disabled = true;
+                document.getElementById('btnDeselect').disabled = true;
+            } else {
+                updateMessage(`Wrong! ${lives} lives remaining.`, 'error');
+                clearSelection();
+            }
+        }
+
+        function solveGroup(group) {
+            solvedGroups.push(group);
+            group.items.forEach(item => gameState.solvedItems.add(item));
+
+            clearSelection();
+            document.getElementById('btnSubmit').disabled = true;
+
+            // Remove tiles and show group
+            const tiles = document.querySelectorAll('.tile');
+            tiles.forEach(tile => {
+                if (gameState.solvedItems.has(tile.dataset.text)) {
+                    tile.classList.add('solved', group.difficulty, 'tile-locked');
+                    tile.innerHTML = `${tile.textContent}<div class="category-label">${group.category}</div>`;
+                    tile.removeEventListener('click', toggleTile);
+                }
+            });
+
+            updateMessage(`Correct! ${group.category}`, 'success');
+
+            if (solvedGroups.length === 4) {
+                setTimeout(() => {
+                    updateMessage('Puzzle Complete!', 'congrats');
+                    document.getElementById('btnNext').classList.add('show');
+                    document.getElementById('btnSubmit').disabled = true;
+                    document.getElementById('btnDeselect').disabled = true;
+                }, 500);
+            }
+        }
+
+        function clearSelection() {
+            selected.forEach(text => {
+                const tile = document.querySelector(`[data-text="${text}"]`);
+                if (tile) tile.classList.remove('selected');
+            });
+            selected.clear();
+        }
+
+        function disableAllTiles() {
+            document.querySelectorAll('.tile:not(.solved)').forEach(tile => {
+                tile.removeEventListener('click', toggleTile);
+                tile.style.opacity = '0.5';
+            });
+        }
+
+        function nextPuzzle() {
+            if (currentPuzzle < PUZZLES.length - 1) {
+                currentPuzzle++;
+                lives = 4;
+                document.getElementById('btnNext').classList.remove('show');
+                initPuzzle();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('btnSubmit').addEventListener('click', checkGuess);
+        document.getElementById('btnDeselect').addEventListener('click', clearSelection);
+        document.getElementById('btnNext').addEventListener('click', nextPuzzle);
+
+        document.getElementById('btnHelp').addEventListener('click', () => {
+            document.getElementById('howToPlayModal').classList.add('active');
+        });
+
+        document.getElementById('btnCloseModal').addEventListener('click', () => {
+            document.getElementById('howToPlayModal').classList.remove('active');
+        });
+
+        document.getElementById('howToPlayModal').addEventListener('click', (e) => {
+            if (e.target.id === 'howToPlayModal') {
+                document.getElementById('howToPlayModal').classList.remove('active');
+            }
+        });
+
+        // Initialize
+        initPuzzle();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Majority or Minority? - Law Rule Classification Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0b12;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 16px;
+            font-size: 14px;
+            background-color: #1a1b2e;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0984e3;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background-color: #1a1b2e;
+            color: #888;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background-color: #0984e3;
+            color: #ffffff;
+        }
+
+        .tab:hover {
+            background-color: #2a2b3e;
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #1a1b2e;
+            border-radius: 3px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2d8659, #0984e3, #d4a843);
+            width: 100%;
+            transition: width 0.1s linear;
+            border-radius: 3px;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .rule-card {
+            background-color: #1a1b2e;
+            padding: 24px;
+            border-radius: 12px;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #e0e0e0;
+            transition: background-color 0.3s ease;
+        }
+
+        .rule-card.correct {
+            background-color: #1a3a28;
+            border: 2px solid #2d8659;
+        }
+
+        .rule-card.incorrect {
+            background-color: #3a1a1a;
+            border: 2px solid #d32f2f;
+        }
+
+        .explanation-card {
+            background-color: #252638;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+            border-left: 4px solid #0984e3;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            color: #2d8659;
+            margin-bottom: 8px;
+        }
+
+        .explanation-content {
+            color: #b0b0b0;
+            margin-bottom: 8px;
+        }
+
+        .contrasting-rule {
+            background-color: #1a1b2e;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #d4a843;
+            border-left: 3px solid #d4a843;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #ffffff;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-common-law {
+            background-color: #d4a843;
+        }
+
+        .btn-common-law:hover:not(:disabled) {
+            background-color: #e6b855;
+            transform: translateY(-2px);
+        }
+
+        .btn-mpc {
+            background-color: #0984e3;
+        }
+
+        .btn-mpc:hover:not(:disabled) {
+            background-color: #1a9ff5;
+            transform: translateY(-2px);
+        }
+
+        .btn-majority {
+            background-color: #2d8659;
+        }
+
+        .btn-majority:hover:not(:disabled) {
+            background-color: #3a9966;
+            transform: translateY(-2px);
+        }
+
+        .btn-minority {
+            background-color: #9b59b6;
+        }
+
+        .btn-minority:hover:not(:disabled) {
+            background-color: #a565c2;
+            transform: translateY(-2px);
+        }
+
+        .game-over-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .game-over-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #1a1b2e;
+            padding: 32px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #0984e3;
+        }
+
+        .modal-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+            font-size: 16px;
+        }
+
+        .modal-stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #2a2b3e;
+        }
+
+        .modal-stat-label {
+            color: #888;
+        }
+
+        .modal-stat-value {
+            font-weight: 700;
+            color: #0984e3;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn-restart {
+            background-color: #0984e3;
+            color: #ffffff;
+        }
+
+        .modal-btn-restart:hover {
+            background-color: #1a9ff5;
+        }
+
+        .modal-btn-stats {
+            background-color: #2a2b3e;
+            color: #e0e0e0;
+        }
+
+        .modal-btn-stats:hover {
+            background-color: #3a3b4e;
+        }
+
+        .streak-indicator {
+            font-size: 12px;
+            color: #2d8659;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+
+            .rule-card {
+                font-size: 15px;
+                padding: 18px;
+                min-height: 120px;
+            }
+
+            .btn {
+                padding: 14px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">Majority or Minority?</div>
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-value" id="scoreDisplay">0</div>
+                    <div class="stat-label">Score</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="streakDisplay">0</div>
+                    <div class="stat-label">Streak</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="accuracyDisplay">0%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-tabs" id="filterTabs"></div>
+
+        <div class="timer-bar">
+            <div class="timer-fill" id="timerFill"></div>
+        </div>
+
+        <div class="game-area">
+            <div class="rule-card" id="ruleCard"></div>
+            <div class="buttons-grid">
+                <button class="btn btn-common-law" data-answer="Common Law">Common Law</button>
+                <button class="btn btn-mpc" data-answer="MPC">MPC</button>
+                <button class="btn btn-majority" data-answer="Majority">Majority</button>
+                <button class="btn btn-minority" data-answer="Minority">Minority</button>
+            </div>
+            <div id="explanationContainer"></div>
+        </div>
+    </div>
+
+    <div class="game-over-modal" id="gameOverModal">
+        <div class="modal-content">
+            <div class="modal-title">Game Over!</div>
+            <div class="modal-stats">
+                <div class="modal-stat-item">
+                    <span class="modal-stat-label">Final Score</span>
+                    <span class="modal-stat-value" id="finalScore">0</span>
+                </div>
+                <div class="modal-stat-item">
+                    <span class="modal-stat-label">Best Streak</span>
+                    <span class="modal-stat-value" id="bestStreak">0</span>
+                </div>
+                <div class="modal-stat-item">
+                    <span class="modal-stat-label">Accuracy</span>
+                    <span class="modal-stat-value" id="finalAccuracy">0%</span>
+                </div>
+                <div class="modal-stat-item">
+                    <span class="modal-stat-label">Total Questions</span>
+                    <span class="modal-stat-value" id="totalQuestions">0</span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-restart" id="restartBtn">Play Again</button>
+                <button class="modal-btn modal-btn-stats" id="closeModal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game data with 60 rule cards
+        const ruleCards = [
+            // CRIMINAL LAW (40 cards)
+            {
+                rule: "Burglary requires breaking and entering of a dwelling at nighttime with intent to commit a felony therein.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "This is the traditional Common Law definition of burglary.",
+                contrast: "MPC: burglary applies to any building/structure, requires no nighttime requirement, and does not require breaking."
+            },
+            {
+                rule: "Burglary is entering a building or occupied structure with purpose to commit a crime therein.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "The MPC §218 definition broadly covers any building/structure without nighttime or breaking requirements.",
+                contrast: "Common Law: requires breaking, dwelling house, and nighttime entry."
+            },
+            {
+                rule: "Murder is the unlawful killing of a human being with malice aforethought.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "This is the traditional Common Law definition using the concept of 'malice aforethought.'",
+                contrast: "MPC §210.2: defines murder as committed purposely or knowingly, or recklessly under extreme indifference—avoiding 'malice' language."
+            },
+            {
+                rule: "Criminal homicide constitutes murder when committed purposely or knowingly, or when committed recklessly under circumstances manifesting extreme indifference to human life.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "This is MPC §210.2, which uses modern mental state terminology instead of 'malice aforethought.'",
+                contrast: "Common Law: uses 'malice aforethought' as the operative standard."
+            },
+            {
+                rule: "Voluntary intoxication is NO defense to any crime.",
+                answer: "Minority",
+                course: "Criminal",
+                explanation: "A minority of jurisdictions completely reject voluntary intoxication as a defense.",
+                contrast: "Majority Rule: voluntary intoxication may negate specific intent but not general intent."
+            },
+            {
+                rule: "Voluntary intoxication may negate specific intent but not general intent.",
+                answer: "Majority",
+                course: "Criminal",
+                explanation: "The majority of jurisdictions follow this Common Law approach allowing intoxication to disprove specific intent.",
+                contrast: "Minority: some jurisdictions reject voluntary intoxication entirely as a defense."
+            },
+            {
+                rule: "Voluntary intoxication is admissible to negate purpose or knowledge.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §2.08 allows voluntary intoxication evidence to negate purpose or knowledge, but not recklessness or negligence.",
+                contrast: "Common Law: allows intoxication for specific intent crimes but not general intent crimes."
+            },
+            {
+                rule: "Larceny is the trespassory taking and carrying away of the personal property of another with intent to permanently deprive.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "This is the classic Common Law definition of larceny with all six elements.",
+                contrast: "MPC §223: consolidates larceny, embezzlement, and false pretenses into a single 'theft' offense."
+            },
+            {
+                rule: "Theft is a consolidated offense combining larceny, embezzlement, and false pretenses.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §223 merges all theft crimes into a single modern 'theft' offense to simplify the law.",
+                contrast: "Common Law: maintains separate crimes of larceny, embezzlement, and false pretenses."
+            },
+            {
+                rule: "Conspiracy requires an agreement between two or more persons (bilateral approach).",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "Common Law traditionally required both parties to agree and share the conspiratorial intent.",
+                contrast: "MPC §5.03: uses unilateral approach—only the defendant's intent and agreement to commit the crime matters."
+            },
+            {
+                rule: "A person is guilty of conspiracy if he agrees with another person that one of them will commit a crime (unilateral approach).",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §5.03 adopts the unilateral approach, focusing only on the defendant's state of mind.",
+                contrast: "Common Law/Majority: requires bilateral agreement—both parties must share conspiratorial intent."
+            },
+            {
+                rule: "Conspiracy requires an overt act in furtherance of the agreement.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §5.03 requires an overt act by at least one conspirator in furtherance of the conspiracy.",
+                contrast: "Common Law: did not universally require an overt act for all conspiracy categories."
+            },
+            {
+                rule: "Attempt requires a 'dangerous proximity' to completion of the crime.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "Common Law uses the dangerous proximity test—the defendant must be dangerously close to completing the crime.",
+                contrast: "MPC §5.01: requires a 'substantial step' that is strongly corroborative of criminal purpose."
+            },
+            {
+                rule: "Attempt requires a 'substantial step' that is strongly corroborative of criminal purpose.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §5.01 adopts the substantial step test, allowing liability earlier in the commission process.",
+                contrast: "Common Law: uses dangerous proximity—requiring defendant to be much closer to completing the crime."
+            },
+            {
+                rule: "Self-defense requires a duty to retreat before using deadly force.",
+                answer: "Majority",
+                course: "Criminal",
+                explanation: "The majority rule requires retreat when safe to do so, though Castle Doctrine exceptions exist.",
+                contrast: "Minority/Stand-Your-Ground: a person may use deadly force without retreating."
+            },
+            {
+                rule: "There is no duty to retreat before using deadly force. A person may stand their ground.",
+                answer: "Minority",
+                course: "Criminal",
+                explanation: "Stand-Your-Ground and No Duty to Retreat rules are followed in a minority of jurisdictions.",
+                contrast: "Majority Rule: requires duty to retreat when safe to do so before using deadly force."
+            },
+            {
+                rule: "Self-defense is available if the defendant honestly believed force was necessary, even if the belief was unreasonable. Unreasonable belief reduces murder to manslaughter.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §3.04 allows imperfect self-defense based on honest but unreasonable belief, reducing murder to manslaughter.",
+                contrast: "Common Law: traditionally required reasonable belief; unreasonable belief provides no defense."
+            },
+            {
+                rule: "Insanity defense: Defendant did not know the nature and quality of the act, or did not know it was wrong.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "This is the M'Naghten Rule, the most widely adopted insanity test in the U.S.",
+                contrast: "MPC §4.01: uses a broader standard—lacks substantial capacity to appreciate criminality OR conform conduct."
+            },
+            {
+                rule: "A person is not responsible for criminal conduct if at the time he lacks substantial capacity either to appreciate the criminality of his conduct or to conform his conduct to the requirements of law.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §4.01 (ALI Test) is broader than M'Naghten, addressing both cognitive and volitional incapacity.",
+                contrast: "Common Law/M'Naghten: focuses narrowly on cognitive capacity—knowing nature/quality and wrongfulness."
+            },
+            {
+                rule: "Insanity defense: The criminal act was the product of mental disease or defect.",
+                answer: "Minority",
+                course: "Criminal",
+                explanation: "This is the Durham Rule (Product Test), used only in New Hampshire among U.S. jurisdictions.",
+                contrast: "Majority: use M'Naghten Rule or MPC standard; Durham is considered too broad."
+            },
+            {
+                rule: "Felony murder applies to any death occurring during commission of ANY felony.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "Traditional Common Law applied felony murder to deaths during any felony commission.",
+                contrast: "Majority Rule/Modern: limits felony murder to inherently dangerous felonies (BARRK)."
+            },
+            {
+                rule: "Felony murder is limited to deaths during inherently dangerous felonies (BARRK: Burglary, Arson, Robbery, Rape, Kidnapping).",
+                answer: "Majority",
+                course: "Criminal",
+                explanation: "The modern majority approach restricts felony murder to inherently dangerous felonies.",
+                contrast: "Common Law: applied felony murder to any felony, without inherent danger limitation."
+            },
+            {
+                rule: "Rape requires force and resistance by the victim.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "Traditional Common Law rape required both physical force and victim resistance.",
+                contrast: "MPC/Modern: rape is sexual intercourse by force/threat OR with incapable person—no resistance requirement."
+            },
+            {
+                rule: "Rape is sexual intercourse by force or threat, or with someone incapable of consent. No resistance requirement.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §213 modernizes rape law, eliminating the resistance requirement and addressing incapacity.",
+                contrast: "Common Law: required both force and victim resistance."
+            },
+            {
+                rule: "Accomplice liability requires purpose to assist AND purpose that the principal commit the crime.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §2.06 requires both purpose to assist and purpose that the principal commit the crime.",
+                contrast: "Common Law/Majority: requires only knowledge of the principal's plan and intentional assistance; uses natural and probable consequences doctrine."
+            },
+            {
+                rule: "Accomplice liability requires intentional assistance; natural and probable consequences doctrine extends liability to foreseeable crimes.",
+                answer: "Majority",
+                course: "Criminal",
+                explanation: "The majority Common Law approach uses intentional assistance + natural/probable consequences expansion.",
+                contrast: "MPC §2.06: requires purpose on both elements—stricter than majority approach."
+            },
+            {
+                rule: "Provocation reducing murder to manslaughter is limited to specific categories: mutual combat, adultery, assault, false arrest.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "Common Law applies categorical provocation doctrine with strict, enumerated categories.",
+                contrast: "MPC §210.3: uses broader extreme emotional disturbance (EED) standard without rigid categories."
+            },
+            {
+                rule: "Murder is reduced to manslaughter when committed under extreme mental or emotional disturbance for which there is reasonable explanation.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §210.3(1)(b) uses the Extreme Emotional Disturbance (EED) defense, broader than categorical provocation.",
+                contrast: "Common Law: limits provocation to specific enumerated categories (mutual combat, adultery, etc.)."
+            },
+            {
+                rule: "Robbery is larceny from the person or presence by force or threat of immediate force.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "This is the traditional Common Law definition of robbery combining larceny elements with force.",
+                contrast: "MPC §222.1: similar definition but integrated into broader theft framework."
+            },
+            {
+                rule: "Arson is the malicious burning of the dwelling house of another.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "This is the traditional Common Law definition of arson limited to dwellings.",
+                contrast: "MPC §220.1: expands arson to any building/structure and uses broader 'burn' definition."
+            },
+            {
+                rule: "Impossibility: factual impossibility is no defense; legal impossibility is a defense.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "Common Law distinguishes between factual and legal impossibility, the latter providing a defense.",
+                contrast: "MPC §5.01(1): abolishes the impossibility defense for attempt—focus on circumstances as defendant believed them."
+            },
+            {
+                rule: "The defense of impossibility is eliminated—attempt liability exists whenever conduct would constitute a crime if circumstances were as the defendant believed them to be.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §5.01(1) eliminates the impossibility defense, focusing on the defendant's subjective belief.",
+                contrast: "Common Law: recognizes legal impossibility as a defense."
+            },
+            {
+                rule: "Solicitation merges with the completed offense or with conspiracy.",
+                answer: "Majority",
+                course: "Criminal",
+                explanation: "The majority approach treats solicitation as merging with completed crimes or conspiracy.",
+                contrast: "MPC §5.02: treats solicitation as a separate crime even if the target crime is committed."
+            },
+            {
+                rule: "Withdrawal from conspiracy requires affirmative action to defeat the purpose of the conspiracy.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §5.03 requires substantial affirmative action to defeat the conspiracy's purpose.",
+                contrast: "Common Law: withdrawal requires only communication to co-conspirators; doesn't prevent liability for acts before withdrawal."
+            },
+            {
+                rule: "A killing committed during the heat of passion with adequate provocation reduces murder to voluntary manslaughter.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "This is the Common Law provocation doctrine reducing murder when passion overrides reason.",
+                contrast: "MPC: uses broader Extreme Emotional Disturbance standard without passion requirement."
+            },
+            {
+                rule: "Depraved heart murder requires conduct manifesting extreme indifference to the value of human life.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "This Common Law category of implied malice murder appears in both CL and MPC frameworks.",
+                contrast: "MPC: includes this as recklessness with extreme indifference under §210.2(1)(b)."
+            },
+            {
+                rule: "Battery is an unlawful application of force to the person of another resulting in bodily injury or offensive touching.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "This is the traditional Common Law definition of battery.",
+                contrast: "MPC §211.1: similar definition using modern mental state framework."
+            },
+            {
+                rule: "Assault is attempted battery OR intentional creation of reasonable apprehension of imminent harmful contact.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "Common Law recognizes two types of assault: attempted battery and apprehension assault.",
+                contrast: "MPC: incorporates assault into its broader simple assault provision with different framework."
+            },
+            {
+                rule: "Criminal negligence requires a gross deviation from the standard of care a reasonable person would observe.",
+                answer: "MPC",
+                course: "Criminal",
+                explanation: "MPC §2.02(2)(d) defines negligence as gross deviation from reasonable person standard.",
+                contrast: "Common Law: similar negligence standard but lacks MPC's precise definition."
+            },
+            {
+                rule: "Kidnapping requires asportation—movement of the victim a substantial distance.",
+                answer: "Common Law",
+                course: "Criminal",
+                explanation: "Common Law kidnapping traditionally requires asportation (substantial movement) of the victim.",
+                contrast: "MPC §212.1: criminalizes false imprisonment with lesser asportation requirements."
+            },
+
+            // PROPERTY (12 cards)
+            {
+                rule: "A mortgage transfers legal title to the lender until the debt is paid.",
+                answer: "Minority",
+                course: "Property",
+                explanation: "Title Theory jurisdictions treat a mortgage as a transfer of legal title to the lender.",
+                contrast: "Majority/Lien Theory: a mortgage creates a lien on the property; the borrower retains legal title."
+            },
+            {
+                rule: "A mortgage creates a lien on the property but the borrower retains title.",
+                answer: "Majority",
+                course: "Property",
+                explanation: "Lien Theory, followed by most U.S. jurisdictions, keeps legal title with the borrower.",
+                contrast: "Minority/Title Theory: transfers legal title to the lender until the debt is satisfied."
+            },
+            {
+                rule: "A joint tenancy is severed by one co-tenant granting a mortgage on their interest.",
+                answer: "Minority",
+                course: "Property",
+                explanation: "In Title Theory jurisdictions, a mortgage on a joint tenant's interest severs the tenancy.",
+                contrast: "Majority/Lien Theory: a mortgage does not sever the joint tenancy because it doesn't transfer legal title."
+            },
+            {
+                rule: "A joint tenancy is NOT severed by one co-tenant granting a mortgage on their interest.",
+                answer: "Majority",
+                course: "Property",
+                explanation: "Under Lien Theory (majority), mortgaging one's interest doesn't sever the joint tenancy.",
+                contrast: "Minority/Title Theory: mortgaging a joint tenant's interest severs the tenancy."
+            },
+            {
+                rule: "In a race-notice jurisdiction, a subsequent purchaser prevails only if they record first AND lack notice.",
+                answer: "Majority",
+                course: "Property",
+                explanation: "Race-Notice statutes (majority rule) protect only those who record without notice.",
+                contrast: "Pure Race jurisdictions (minority): only recording order matters, regardless of notice."
+            },
+            {
+                rule: "In a race jurisdiction, whoever records first wins regardless of notice.",
+                answer: "Minority",
+                course: "Property",
+                explanation: "Pure Race jurisdictions (few states like NC and LA) award priority solely by recording order.",
+                contrast: "Majority/Race-Notice: requires both recording priority AND lack of notice to prevail."
+            },
+            {
+                rule: "The implied warranty of habitability cannot be waived by the tenant.",
+                answer: "Majority",
+                course: "Property",
+                explanation: "Modern majority rule makes the implied warranty of habitability non-waivable.",
+                contrast: "Common Law: allowed tenants to waive habitability warranties (caveat emptor)."
+            },
+            {
+                rule: "Caveat emptor applies—tenants take premises as-is with no implied warranties.",
+                answer: "Common Law",
+                course: "Property",
+                explanation: "Traditional Common Law applied caveat emptor ('buyer beware') to residential tenancies.",
+                contrast: "Majority/Modern Rule: implies and enforces a warranty of habitability."
+            },
+            {
+                rule: "Adverse possession requires good faith—the possessor must honestly believe they own the land.",
+                answer: "Minority",
+                course: "Property",
+                explanation: "Some minority jurisdictions require good faith belief for adverse possession to succeed.",
+                contrast: "Majority Rule: allows intentional trespassers to acquire title through adverse possession."
+            },
+            {
+                rule: "Adverse possession does not require good faith. Intentional trespassers can acquire title.",
+                answer: "Majority",
+                course: "Property",
+                explanation: "The majority rule allows adverse possession by intentional trespassers without good faith.",
+                contrast: "Minority: requires good faith belief that the possessor owns the land."
+            },
+            {
+                rule: "A landlord has a duty to mitigate damages by finding a new tenant when a tenant abandons.",
+                answer: "Majority",
+                course: "Property",
+                explanation: "Modern majority rule requires landlords to mitigate damages after tenant abandonment.",
+                contrast: "Common Law: treated the lease as a conveyance; landlord had no mitigation duty."
+            },
+            {
+                rule: "A landlord has no duty to mitigate—the lease is a conveyance giving the tenant an estate.",
+                answer: "Common Law",
+                course: "Property",
+                explanation: "Traditional Common Law view treated leases as conveyances with no mitigation duty.",
+                contrast: "Majority/Modern Rule: landlords must mitigate damages when tenants abandon."
+            },
+
+            // CON LAW (8 cards)
+            {
+                rule: "Separation of powers is analyzed through formal categories—each branch has defined powers that cannot be shared.",
+                answer: "Common Law",
+                course: "Con Law",
+                explanation: "Formalist approach analyzes separation of powers by strict categorical boundaries.",
+                contrast: "Functionalist approach: allows overlap if one branch doesn't aggrandize power at another's expense."
+            },
+            {
+                rule: "Separation of powers allows functional overlap—the question is whether one branch aggrandizes its power at another's expense.",
+                answer: "Majority",
+                course: "Con Law",
+                explanation: "The functionalist approach, adopted by modern courts, focuses on aggrandizement rather than formalism.",
+                contrast: "Formalist approach: maintains strict categorical boundaries between branches."
+            },
+            {
+                rule: "Unenumerated rights must be deeply rooted in this nation's history and tradition, carefully described.",
+                answer: "Common Law",
+                course: "Con Law",
+                explanation: "Washington v. Glucksberg (1997) requires unenumerated rights to be deeply rooted in history.",
+                contrast: "Living Constitution approach: liberty interests can evolve beyond historical practice."
+            },
+            {
+                rule: "Liberty interests evolve and are not limited to those specifically described in historical practice.",
+                answer: "Majority",
+                course: "Con Law",
+                explanation: "The progressive/living constitution approach allows for evolving liberty interests.",
+                contrast: "Conservative approach (Glucksberg): limits unenumerated rights to deeply rooted historical tradition."
+            },
+            {
+                rule: "The Commerce Clause reaches all activity with any rational connection to interstate commerce, including non-economic activity.",
+                answer: "Common Law",
+                course: "Con Law",
+                explanation: "This broad reading was the standard before United States v. Lopez (1995).",
+                contrast: "Modern (Lopez/Morrison): Commerce Clause limited to economic activity substantially affecting interstate commerce."
+            },
+            {
+                rule: "The Commerce Clause is limited to economic activity that substantially affects interstate commerce. Non-economic activity cannot be aggregated.",
+                answer: "Majority",
+                course: "Con Law",
+                explanation: "United States v. Lopez and United States v. Morrison establish this modern, narrower interpretation.",
+                contrast: "Pre-Lopez approach: allowed aggregation of any activity with rational connection to interstate commerce."
+            },
+            {
+                rule: "States retain sovereign immunity from suit by their own citizens in federal court.",
+                answer: "Majority",
+                course: "Con Law",
+                explanation: "Alden v. Maine (1999) confirms state sovereign immunity applies even in federal court.",
+                contrast: "Pre-Alden view: states could be sued in federal court more readily."
+            },
+            {
+                rule: "Congress can abrogate state sovereign immunity when acting under Section 5 of the 14th Amendment.",
+                answer: "Majority",
+                course: "Con Law",
+                explanation: "Fitzpatrick v. Bitzer (1976) established that Congress can abrogate immunity under Section 5.",
+                contrast: "City of Boerne v. Flores limits Congressional power under Section 5 to enforcing enumerated rights."
+            }
+        ];
+
+        // Game state
+        let gameState = {
+            currentCardIndex: 0,
+            score: 0,
+            streak: 0,
+            bestStreak: 0,
+            correct: 0,
+            total: 0,
+            timeRemaining: 30,
+            gameActive: true,
+            currentFilter: "All",
+            timerInterval: null,
+            shuffledCards: []
+        };
+
+        // Initialize game
+        function initGame() {
+            gameState.currentCardIndex = 0;
+            gameState.score = 0;
+            gameState.streak = 0;
+            gameState.bestStreak = 0;
+            gameState.correct = 0;
+            gameState.total = 0;
+            gameState.gameActive = true;
+            gameState.currentFilter = "All";
+            shuffleAndFilterCards();
+            setupTabs();
+            showCard();
+            startTimer();
+        }
+
+        function shuffleAndFilterCards() {
+            let filtered = ruleCards;
+            if (gameState.currentFilter !== "All") {
+                filtered = ruleCards.filter(card => card.course === gameState.currentFilter);
+            }
+            gameState.shuffledCards = filtered.sort(() => Math.random() - 0.5);
+            gameState.currentCardIndex = 0;
+        }
+
+        function setupTabs() {
+            const tabsContainer = document.getElementById('filterTabs');
+            tabsContainer.innerHTML = '';
+            const courses = ["All", "Criminal", "Property", "Con Law"];
+            courses.forEach(course => {
+                const tab = document.createElement('button');
+                tab.textContent = course;
+                tab.className = `tab ${course === "All" ? 'active' : ''}`;
+                tab.onclick = () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    gameState.currentFilter = course;
+                    shuffleAndFilterCards();
+                    gameState.gameActive = true;
+                    gameState.score = 0;
+                    gameState.streak = 0;
+                    gameState.correct = 0;
+                    gameState.total = 0;
+                    gameState.currentCardIndex = 0;
+                    clearTimeout(gameState.timerInterval);
+                    showCard();
+                    startTimer();
+                };
+                tabsContainer.appendChild(tab);
+            });
+        }
+
+        function showCard() {
+            if (gameState.currentCardIndex >= gameState.shuffledCards.length) {
+                endGame();
+                return;
+            }
+
+            const card = gameState.shuffledCards[gameState.currentCardIndex];
+            const ruleCardEl = document.getElementById('ruleCard');
+            ruleCardEl.textContent = card.rule;
+            ruleCardEl.className = 'rule-card';
+
+            const explanationContainer = document.getElementById('explanationContainer');
+            explanationContainer.innerHTML = '';
+
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            });
+
+            gameState.timeRemaining = 30;
+        }
+
+        function startTimer() {
+            clearTimeout(gameState.timerInterval);
+            gameState.timeRemaining = 30;
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeRemaining--;
+                updateTimerDisplay();
+
+                if (gameState.timeRemaining <= 0) {
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerFill = document.getElementById('timerFill');
+            const percentage = (gameState.timeRemaining / 30) * 100;
+            timerFill.style.width = percentage + '%';
+        }
+
+        function handleTimeout() {
+            clearTimeout(gameState.timerInterval);
+            gameState.gameActive = false;
+            handleAnswer(null);
+        }
+
+        function handleAnswer(selectedAnswer) {
+            if (!gameState.gameActive) return;
+
+            clearTimeout(gameState.timerInterval);
+            gameState.gameActive = false;
+
+            const card = gameState.shuffledCards[gameState.currentCardIndex];
+            const isCorrect = selectedAnswer === card.answer;
+
+            gameState.total++;
+
+            const ruleCardEl = document.getElementById('ruleCard');
+            const explanationContainer = document.getElementById('explanationContainer');
+            const buttons = document.querySelectorAll('.btn');
+
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (isCorrect) {
+                gameState.correct++;
+                gameState.streak++;
+                gameState.bestStreak = Math.max(gameState.bestStreak, gameState.streak);
+
+                // Base points
+                let points = 10;
+                // Streak bonus
+                if (gameState.streak >= 5) {
+                    points += 5;
+                }
+                gameState.score += points;
+
+                ruleCardEl.classList.add('correct');
+
+                explanationContainer.innerHTML = `
+                    <div class="explanation-card">
+                        <div class="explanation-title">✓ Correct!</div>
+                        <div class="explanation-content">${card.explanation}</div>
+                    </div>
+                `;
+            } else {
+                gameState.streak = 0;
+                ruleCardEl.classList.add('incorrect');
+
+                explanationContainer.innerHTML = `
+                    <div class="explanation-card">
+                        <div class="explanation-title">✗ Incorrect - Correct Answer: ${card.answer}</div>
+                        <div class="explanation-content">${card.explanation}</div>
+                        <div class="contrasting-rule"><strong>Compare with:</strong> ${card.contrast}</div>
+                    </div>
+                `;
+            }
+
+            updateStats();
+
+            setTimeout(() => {
+                gameState.currentCardIndex++;
+                gameState.gameActive = true;
+                showCard();
+                startTimer();
+            }, 3000);
+        }
+
+        function updateStats() {
+            document.getElementById('scoreDisplay').textContent = gameState.score;
+            document.getElementById('streakDisplay').textContent = gameState.streak;
+
+            const accuracy = gameState.total > 0
+                ? Math.round((gameState.correct / gameState.total) * 100)
+                : 0;
+            document.getElementById('accuracyDisplay').textContent = accuracy + '%';
+        }
+
+        function endGame() {
+            gameState.gameActive = false;
+            clearTimeout(gameState.timerInterval);
+
+            const accuracy = gameState.total > 0
+                ? Math.round((gameState.correct / gameState.total) * 100)
+                : 0;
+
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('bestStreak').textContent = gameState.bestStreak;
+            document.getElementById('finalAccuracy').textContent = accuracy + '%';
+            document.getElementById('totalQuestions').textContent = gameState.total;
+
+            document.getElementById('gameOverModal').classList.add('show');
+        }
+
+        // Event listeners
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (gameState.gameActive) {
+                    const answer = this.getAttribute('data-answer');
+                    handleAnswer(answer);
+                }
+            });
+        });
+
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            document.getElementById('gameOverModal').classList.remove('show');
+            initGame();
+        });
+
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('gameOverModal').classList.remove('show');
+        });
+
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>

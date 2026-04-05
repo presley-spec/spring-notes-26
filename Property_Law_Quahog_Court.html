@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Law: Quahog Courtroom</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Oswald:wght@400;700&family=Playfair+Display:wght@700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#FFD700;--cyan:#00e5ff;--red:#ff2d2d;--green:#00c850;
+  --orange:#ff6b00;--purple:#a855f7;--pink:#ff6bff;
+  --bg:#0f0a1e;--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);
+}
+body{font-family:'Comic Neue',cursive;background:var(--bg);color:#fff;min-height:100vh;overflow-x:hidden}
+/* COURTROOM BACKGROUND */
+.court-bg{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,#0f0a1e 0%,#1a1030 40%,#251540 100%);
+  opacity:0.9}
+.court-bg::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,215,0,0.03) 0%,transparent 60%)}
+#app{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:20px;min-height:100vh}
+
+/* ═══ TITLE ═══ */
+.title{text-align:center;padding-top:40px;animation:fadeIn 0.8s}
+.title .gavel{font-size:5rem;margin-bottom:10px;display:block}
+.title h1{font-family:'Bangers',cursive;font-size:3.8rem;color:var(--gold);
+  text-shadow:3px 3px 0 var(--orange),6px 6px 0 rgba(0,0,0,0.3);letter-spacing:3px;line-height:1.1}
+.title h2{font-family:'Bangers',cursive;font-size:2rem;color:var(--cyan);
+  text-shadow:2px 2px 0 rgba(0,0,0,0.3);margin:8px 0 25px}
+.title .tagline{color:#bbb;font-size:1rem;max-width:600px;margin:0 auto 35px;line-height:1.7}
+.title .universes{color:#888;font-size:0.85rem;margin-bottom:40px}
+
+/* MODE SELECT */
+.mode-select{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
+.mode-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:28px 24px;
+  width:260px;cursor:pointer;transition:all 0.3s;text-align:center}
+.mode-card:hover{transform:translateY(-6px);border-color:var(--gold);
+  box-shadow:0 12px 40px rgba(255,215,0,0.15)}
+.mode-card.selected{border-color:var(--gold);background:rgba(255,215,0,0.08);
+  box-shadow:0 8px 30px rgba(255,215,0,0.2)}
+.mode-icon{font-size:3rem;margin-bottom:10px;display:block}
+.mode-name{font-family:'Bangers',cursive;font-size:1.5rem;color:var(--gold);margin-bottom:8px}
+.mode-desc{color:#aaa;font-size:0.85rem;line-height:1.5}
+.mode-card .think{display:block;margin-top:10px;font-size:0.78rem;color:var(--cyan);
+  font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+.go-btn{font-family:'Bangers',cursive;font-size:1.8rem;padding:16px 55px;
+  background:linear-gradient(135deg,var(--orange),var(--red));color:#fff;border:none;
+  border-radius:50px;cursor:pointer;letter-spacing:2px;
+  text-shadow:2px 2px 0 rgba(0,0,0,0.3);box-shadow:0 8px 25px rgba(255,107,0,0.4);
+  transition:all 0.3s;margin-top:10px}
+.go-btn:hover{transform:scale(1.06);box-shadow:0 12px 35px rgba(255,107,0,0.6)}
+.go-btn:disabled{opacity:0.4;cursor:default;transform:none}
+
+/* ═══ HUD ═══ */
+.hud{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;
+  background:var(--card);border-radius:16px;margin-bottom:20px;
+  backdrop-filter:blur(10px);border:1px solid var(--border)}
+.hud-item{text-align:center}
+.hud-label{font-size:0.7rem;color:#888;text-transform:uppercase;letter-spacing:1px}
+.hud-val{font-family:'Bangers',cursive;font-size:1.4rem}
+.hud-score{color:var(--gold)}.hud-q{color:var(--pink)}.hud-streak{color:var(--cyan)}
+.hud-role{color:var(--orange)}
+.prog-wrap{width:100%;height:7px;background:rgba(255,255,255,0.08);border-radius:4px;margin-bottom:22px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--pink));border-radius:4px;transition:width 0.5s}
+
+/* ═══ SCENARIO CARD ═══ */
+.scene{background:var(--card);border-radius:22px;padding:32px;margin-bottom:22px;
+  border:1px solid var(--border);backdrop-filter:blur(10px);animation:slideUp 0.5s}
+.topic-tag{display:inline-block;padding:4px 14px;background:rgba(255,107,0,0.15);
+  color:var(--orange);border-radius:18px;font-size:0.75rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;border:1px solid rgba(255,107,0,0.25)}
+.role-tag{display:inline-block;padding:4px 14px;border-radius:18px;font-size:0.75rem;
+  font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;margin-left:8px}
+.role-prosecution{background:rgba(255,45,45,0.15);color:#ff6b6b;border:1px solid rgba(255,45,45,0.25)}
+.role-defense{background:rgba(0,200,80,0.15);color:#00ff6a;border:1px solid rgba(0,200,80,0.25)}
+.role-judge{background:rgba(168,85,247,0.15);color:var(--purple);border:1px solid rgba(168,85,247,0.25)}
+.scene-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.scene-head .char{font-size:2.4rem}
+.scene-title{font-family:'Bangers',cursive;font-size:1.7rem;color:var(--gold);line-height:1.2}
+.scene-text{font-size:1.02rem;line-height:1.85;color:#d4d4d4;margin-bottom:22px;white-space:pre-line}
+.scene-q{font-size:1.05rem;font-weight:700;color:var(--cyan);margin-bottom:18px;padding:14px 16px;
+  background:rgba(0,229,255,0.07);border-radius:12px;border-left:4px solid var(--cyan);line-height:1.5}
+
+/* ═══ OPTIONS ═══ */
+.opts{display:grid;gap:11px}
+.opt{display:block;width:100%;padding:15px 18px;background:rgba(255,255,255,0.04);
+  border:2px solid rgba(255,255,255,0.1);border-radius:14px;color:#eee;
+  font-family:'Comic Neue',cursive;font-size:0.98rem;text-align:left;cursor:pointer;
+  transition:all 0.25s;line-height:1.5}
+.opt:hover:not(.dis){background:rgba(255,255,255,0.1);border-color:var(--cyan);transform:translateX(5px)}
+.opt.correct{background:rgba(0,200,80,0.18);border-color:var(--green);color:#00ff6a}
+.opt.wrong{background:rgba(255,40,40,0.18);border-color:var(--red);color:#ff6b6b}
+.opt.dis{cursor:default;opacity:0.55}
+.opt.reveal{background:rgba(0,200,80,0.12);border-color:var(--green)}
+.opt .letter{display:inline-block;width:28px;height:28px;line-height:28px;text-align:center;
+  background:rgba(255,255,255,0.08);border-radius:7px;margin-right:11px;font-weight:700;font-size:0.85rem}
+
+/* ═══ FEEDBACK ═══ */
+.fb{margin-top:18px;padding:24px;border-radius:16px;animation:fadeIn 0.4s;line-height:1.7}
+.fb-ok{background:rgba(0,200,80,0.08);border:1px solid rgba(0,200,80,0.25)}
+.fb-no{background:rgba(255,40,40,0.08);border:1px solid rgba(255,40,40,0.25)}
+.fb-head{font-family:'Bangers',cursive;font-size:1.4rem;margin-bottom:8px}
+.fb-ok .fb-head{color:#00ff6a}.fb-no .fb-head{color:#ff6b6b}
+.fb-body{color:#d4d4d4;font-size:0.93rem}
+.doctrine{margin-top:14px;padding:14px;background:rgba(255,215,0,0.06);border-radius:10px;border-left:3px solid var(--gold)}
+.doctrine .dl{font-size:0.68rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:5px}
+.doctrine .dt{color:#eee;font-size:0.88rem;line-height:1.6}
+.objection{margin-top:12px;padding:12px;background:rgba(168,85,247,0.08);border-radius:10px;border-left:3px solid var(--purple)}
+.objection .ol{font-size:0.68rem;text-transform:uppercase;letter-spacing:2px;color:var(--purple);margin-bottom:5px}
+.objection .ot{color:#d4d4d4;font-size:0.85rem;line-height:1.5;font-style:italic}
+.nxt{display:inline-block;margin-top:18px;padding:13px 38px;
+  background:linear-gradient(135deg,var(--cyan),#0080ff);color:#fff;border:none;
+  border-radius:30px;font-family:'Bangers',cursive;font-size:1.15rem;cursor:pointer;
+  letter-spacing:1px;transition:all 0.3s;box-shadow:0 4px 15px rgba(0,229,255,0.3)}
+.nxt:hover{transform:scale(1.05);box-shadow:0 6px 25px rgba(0,229,255,0.5)}
+
+/* ═══ RESULTS ═══ */
+.results{text-align:center;padding-top:40px;animation:fadeIn 0.8s}
+.results h1{font-family:'Bangers',cursive;font-size:2.8rem;color:var(--gold);margin-bottom:15px}
+.grade{font-family:'Bangers',cursive;font-size:7rem;margin:25px 0;text-shadow:4px 4px 0 rgba(0,0,0,0.3)}
+.g-a{color:#00ff6a}.g-b{color:var(--cyan)}.g-c{color:var(--gold)}.g-d{color:var(--orange)}.g-f{color:var(--red)}
+.rstats{display:flex;justify-content:center;gap:30px;margin:25px 0;flex-wrap:wrap}
+.rbox{background:var(--card);padding:18px 28px;border-radius:16px;border:1px solid var(--border)}
+.rbox .rn{font-family:'Bangers',cursive;font-size:2.2rem;color:var(--gold)}
+.rbox .rl{font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px}
+.weak,.strong{margin-top:22px;text-align:left;max-width:600px;margin-left:auto;margin-right:auto;padding:22px;border-radius:16px}
+.weak{background:rgba(255,40,40,0.06);border:1px solid rgba(255,40,40,0.18)}
+.weak h3{font-family:'Bangers',cursive;color:#ff6b6b;margin-bottom:10px;font-size:1.2rem}
+.strong{background:rgba(0,200,80,0.06);border:1px solid rgba(0,200,80,0.18)}
+.strong h3{font-family:'Bangers',cursive;color:#00ff6a;margin-bottom:10px;font-size:1.2rem}
+.ritem{padding:7px 0;color:#ccc;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.9rem}
+.review{margin-top:35px;text-align:left;max-width:700px;margin-left:auto;margin-right:auto}
+.review h3{font-family:'Bangers',cursive;font-size:1.4rem;color:var(--cyan);margin-bottom:18px;text-align:center}
+.rev-item{background:rgba(255,255,255,0.04);border-radius:14px;padding:18px;margin-bottom:12px;border-left:4px solid}
+.rev-item.rev-ok{border-color:var(--green)}.rev-item.rev-no{border-color:var(--red)}
+.rev-q{font-weight:700;color:#eee;margin-bottom:6px;font-size:0.95rem}
+.rev-a{color:#999;font-size:0.85rem}
+
+/* ═══ ANIMS ═══ */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes gavel{0%{transform:rotate(0)}25%{transform:rotate(-20deg)}50%{transform:rotate(0)}100%{transform:rotate(0)}}
+.gavel-hit{animation:gavel 0.3s ease}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:700px){
+  .title h1{font-size:2.4rem}.title h2{font-size:1.4rem}
+  .mode-select{flex-direction:column;align-items:center}
+  .mode-card{width:100%;max-width:320px}
+  .scene{padding:20px}.hud{flex-wrap:wrap;gap:8px}
+  .rstats{gap:12px}.grade{font-size:5rem}
+}
+</style>
+</head>
+<body>
+<div class="court-bg"></div>
+<div id="app"></div>
+<script>
+// ════════════════════════════════════════════════════════════════
+//  PROPERTY LAW: QUAHOG COURTROOM
+//  Three game modes · Cross-universe chaos · Exam-grade doctrine
+//  Built for Presley's Property Law Final — Prof. Stern, BU Law
+// ════════════════════════════════════════════════════════════════
+
+const S = [
+// ══════════ 1. ADVERSE POSSESSION ══════════
+{
+  topic:"Adverse Possession",
+  title:"Griffin v. Flanders — The Annexation of Ned's Yard",
+  char:"🍺",
+  text:`Ned Flanders recently moved from Springfield to 33 Spooner Street, Quahog. Within a week, Peter Griffin started mowing a 20-foot strip of Ned's backyard, installed a permanent above-ground pool, and has been hosting "Bird is the Word" dance marathons on it every Saturday for 22 years.
+
+Every time Ned noticed, he just said "Okily-dokily, neighborino! Mi yard es su yard!" He even brought Peter lemonade while Peter was literally jackhammering a patio into Ned's soil.
+
+The statutory period in Quahog is 15 years. Ned's wife finally hires a lawyer.`,
+  prosecution:{
+    q:"As Ned's attorney, what is your STRONGEST argument to defeat Peter's adverse possession claim?",
+    opts:[
+      "Peter's use was not 'open and notorious' because the pool was technically inflatable (it wasn't)",
+      "Ned's repeated statements — 'mi yard es su yard' and bringing lemonade — constitute affirmative grants of permission, defeating the hostile/adverse element",
+      "Peter's 'Bird is the Word' dances don't constitute 'actual possession' because dancing is not a productive land use",
+      "The 22-year period was interrupted when Peter spent 3 episodes in a coma, breaking continuity"
+    ],
+    correct:1,
+    feedback:`This is your ace. Unlike mere SILENCE (which does NOT create permission under the objective standard from Brown v. Goebel), Ned took AFFIRMATIVE ACTS — verbal permission ("mi yard es su yard") and active support (bringing lemonade). This transforms Peter's use from adverse to permissive. The adversity/hostile element requires that possession be without the owner's consent. When Ned verbally invited Peter and physically participated, he gave actual permission. Peter's entire 22 years become permissive use, and the statutory clock never started. As Ned's attorney, you'd argue: "Your Honor, my client didn't just stay silent — he actively, verbally, and physically consented to the defendant's use."`,
+  },
+  defense:{
+    q:"As Peter's attorney, what is your BEST argument to establish adverse possession despite Ned's friendliness?",
+    opts:[
+      "Under the objective standard, Peter's STATE OF MIND is irrelevant — he acted as a true owner would (building permanent structures, exclusive use for 22 years). Ned's friendly comments are mere neighborly politeness, not formal grants of permission",
+      "Peter has color of title from a napkin Quagmire drew a fake deed on at the Drunken Clam",
+      "Ned's religious beliefs mean he would have given the land to anyone, so it's constructive abandonment",
+      "The pool created an equitable estoppel that converts to adverse possession after 15 years"
+    ],
+    correct:0,
+    feedback:`Strong advocacy! Under the OBJECTIVE standard (majority rule, Brown v. Goebel), the adverse possessor's state of mind doesn't matter — what matters is whether they acted as a true owner. Peter built PERMANENT STRUCTURES (pool, patio), used the land EXCLUSIVELY for 22 years, and his use was clearly open and notorious. Your argument: Ned's "okily-dokily" is just how Ned talks to everyone — it's neighborly politeness, not a legal grant of permission. There's no written license, no formal agreement. However, this is genuinely close — a court could go either way on whether Ned's conduct crosses the line from passive silence to affirmative permission. That's what makes it a great exam question.`,
+  },
+  judge:{
+    q:"As the judge, how should you rule on whether Ned's conduct defeats the hostile/adverse element?",
+    opts:[
+      "Peter wins — adverse possession is a strict liability doctrine and Ned's friendliness is irrelevant",
+      "Ned wins — his verbal statements and active participation (bringing lemonade, saying 'mi yard es su yard') constitute affirmative grants of permission that are distinguishable from mere silence, defeating adversity under both objective and subjective standards",
+      "Peter wins — once permanent structures are built, adverse possession is automatic regardless of permission",
+      "Remand for factfinding on whether Ned's statements were legally sufficient to constitute a license"
+    ],
+    correct:1,
+    feedback:`The key legal distinction: SILENCE by the true owner does NOT defeat adversity under the objective standard (Brown v. Goebel). But Ned went far beyond silence — he made verbal statements of consent AND took affirmative supportive actions. This is the difference between a sleeping owner and a consenting owner. Under BOTH the objective standard (Ned's acts constitute formal permission regardless of Peter's mindset) and the subjective standard (Peter could not claim good faith belief of ownership when Ned was explicitly granting permission), adversity fails. The correct doctrinal framing: mere inaction ≠ permission, but affirmative words + conduct = permission.`,
+  },
+  doctrine:"Adverse Possession — Hostile/Adverse Element: Under the objective standard (Brown v. Goebel), claimant's state of mind is irrelevant; what matters is whether they acted as owner would. Owner's SILENCE ≠ permission. But AFFIRMATIVE grants of permission (verbal consent, active participation) DO defeat adversity. Elements: (1) Actual possession, (2) Open & notorious, (3) Exclusive, (4) Continuous for statutory period, (5) Hostile/adverse. Tacking allowed through privity."
+},
+
+// ══════════ 2. TRESPASS & NECESSITY ══════════
+{
+  topic:"Trespass & Necessity",
+  title:"State v. Sanchez — Rick's Interdimensional Breaking & Entering",
+  char:"🧪",
+  text:`During the Quahog Mega-Hurricane, Rick Sanchez's portal gun malfunctions. He and Morty crash-land in Cleveland's rebuilt house (the one that's been destroyed 47 times).
+
+Rick eats all of Cleveland's bathtub BBQ ribs, converts the living room into a temporary lab, accidentally turns Cleveland's cat into a sentient being who immediately files for emancipation, and dismantles the hot water heater for "science parts."
+
+Morty just used the bathroom and apologized 300 times.
+
+When Cleveland returns, Rick says: "Listen *burp* Cleveland, the concept of property is a social construct designed to — and I can't stress this enough — keep dumb people from realizing they own nothing." Cleveland sues both for trespass.`,
+  prosecution:{
+    q:"As Cleveland's attorney, what is your strongest argument against Rick's necessity defense?",
+    opts:[
+      "Rick and Morty are from a different dimension and lack standing in Quahog courts",
+      "While the hurricane created initial necessity, Rick's CONTINUED actions — eating ribs, building a lab, dismantling the water heater — went far beyond what was necessary to avoid the emergency, exceeding the scope of the privilege",
+      "Trespass is a strict liability tort, so necessity can never be a defense",
+      "Rick's portal gun malfunction was his own fault, so he can't claim necessity for a self-created emergency"
+    ],
+    correct:1,
+    feedback:`Excellent prosecution! The necessity defense (Magadini v. Commonwealth) privileges entry to avoid clear and imminent danger — but it doesn't give you carte blanche to redecorate. Rick's initial entry during the hurricane? Privileged. But converting the living room to a lab and dismantling the water heater for "science parts" goes WAY beyond avoiding the emergency. Under private necessity, the entrant remains liable for actual damages caused even during the privileged entry. Option D is also tempting (self-created emergency), but courts are split on this — and the hurricane is an independent intervening cause. The stronger argument is scope: necessity covers shelter, not a full lab renovation.`,
+  },
+  defense:{
+    q:"As Rick's attorney (good luck), what is your BEST defense for Morty specifically?",
+    opts:[
+      "Morty is a minor and cannot form the intent necessary for trespass",
+      "Private necessity — the hurricane created clear and imminent danger with no reasonable legal alternatives, and Morty's actions (using the bathroom and apologizing) were entirely within the scope of the emergency privilege. Morty owes only actual damages, which are minimal",
+      "Morty has diplomatic immunity as a citizen of Dimension C-137",
+      "Cleveland's door was unlocked, constituting implied consent to enter"
+    ],
+    correct:1,
+    feedback:`Smart to separate Morty from Rick! Private necessity (Magadini framework) is Morty's best defense: (1) Clear and imminent danger — Category 5 hurricane, check; (2) Reasonable expectation the action would be effective — entering a house avoids the hurricane, check; (3) No reasonable legal alternatives — in the middle of a hurricane with a broken portal gun, where else would they go?; (4) Not legislatively precluded. Critically, Morty stayed WITHIN the scope of the privilege — he used the bathroom (basic human necessity) and that's it. Under private necessity, he remains liable for actual damages, but using a bathroom during a hurricane? Minimal. Rick, on the other hand, is going to owe Cleveland a LOT of money.`,
+  },
+  judge:{
+    q:"As the judge, how should you rule on the necessity defense and damages?",
+    opts:[
+      "Both Rick and Morty are guilty of trespass with no applicable defense — necessity doesn't apply to portal gun malfunctions",
+      "Full necessity defense for both — the hurricane excuses everything, including the lab and the water heater dismantling",
+      "Private necessity privileges the initial entry for both, but Rick exceeds the scope. Morty owes nominal/minimal actual damages. Rick owes full actual damages for the lab, ribs, water heater, and cat emancipation proceedings — but neither owes punitive damages during the emergency period",
+      "Public necessity applies because Rick was trying to fix his portal gun to save the multiverse, providing a complete defense with zero damages"
+    ],
+    correct:2,
+    feedback:`Correct judicial analysis. Private necessity privileges the entry but does NOT excuse actual damages (unlike public necessity, which is a complete defense). The key distinctions: (1) Entry was privileged — hurricane = clear and imminent danger; (2) Cleveland CANNOT use force to eject during the emergency; (3) But liability for actual damages remains. Rick's damages are extensive because he went beyond the scope of necessity (lab construction, water heater dismantling). Morty's damages are minimal (bathroom use during emergency). Neither owes PUNITIVE damages because the entry itself was privileged — compare Jacobs v. Steenberg Homes, where the deliberate commercial trespass justified $100K punitive. Here, there was genuine necessity for the initial entry.`,
+  },
+  doctrine:"Private Necessity: Privileges entry to avoid imminent harm to oneself. Entrant remains liable for ACTUAL DAMAGES but not punitive damages. Owner cannot use force to eject during emergency. Elements (Magadini): (1) clear/imminent danger, (2) reasonable expectation action effective, (3) no legal alternatives, (4) not legislatively precluded. SCOPE matters — privilege covers emergency actions only, not everything you feel like doing once inside. Distinguish public necessity (complete defense, no damages) from private necessity (partial defense, actual damages only)."
+},
+
+// ══════════ 3. NUISANCE ══════════
+{
+  topic:"Nuisance",
+  title:"Marsh v. Quagmire — Randy's Weed Farm vs. Glenn's Bass Dungeon",
+  char:"😏",
+  text:`Randy Marsh moved from South Park to Spooner Street and immediately started growing "medicinal herbs" in his backyard. The smell is... distinctive. His plants are legal under Rhode Island law, and he insists the operation has "significant agricultural value."
+
+Meanwhile, Quagmire's basement operates from 10 PM to 5 AM at approximately 110 decibels with bass so heavy it has literally cracked Randy's grow-lights and caused structural damage to the herb garden's irrigation system.
+
+Randy sues Quagmire for nuisance. Quagmire countersues, claiming Randy's smell is the REAL nuisance.
+
+Randy moved to Spooner Street 2 years AFTER Quagmire started his basement operation.
+
+Homer Simpson, who lives three houses down, has slept through all of it.`,
+  prosecution:{
+    q:"As Randy's attorney, what is your STRONGEST argument that Quagmire's operation is a nuisance despite Randy 'coming to the nuisance'?",
+    opts:[
+      "Quagmire's activity is a nuisance per se because it exceeds local noise ordinances",
+      "Coming to the nuisance is only a PARTIAL defense — it factors into the balancing but doesn't bar the claim. The interference is substantial (110 dB causing physical damage to structures) and unreasonable regardless of when Randy moved in. Physical harm outweighs the 'coming to' factor",
+      "Randy's legal agricultural operation has priority because it produces economic value while Quagmire's operation produces only regret",
+      "The fact that Homer can sleep through it proves Quagmire's noise exceeds all reasonable standards"
+    ],
+    correct:1,
+    feedback:`Coming to the nuisance is a PARTIAL defense, not a complete bar (Dobbs v. Wiggins framework). Here's your argument: Yes, Randy moved in after Quagmire started. But the court must still balance: (1) CHARACTER OF HARM — this isn't just noise annoyance, there's PHYSICAL STRUCTURAL DAMAGE (cracked grow-lights, damaged irrigation). Physical harm weighs far more heavily than mere aesthetic displeasure; (2) SUBSTANTIAL — 110 dB at night is objectively substantial by any reasonable person standard (a chainsaw is ~110 dB); (3) UNREASONABLE — residential neighborhood, nighttime operation, structural damage to neighboring property. The coming-to-the-nuisance defense reduces Randy's position but doesn't immunize Quagmire from causing physical damage at chainsaw-level decibels.`,
+  },
+  defense:{
+    q:"As Quagmire's attorney, what is your BEST argument that RANDY is the real nuisance?",
+    opts:[
+      "Randy's 'herbs' produce a substantial, unreasonable interference with neighbors' use and enjoyment through pervasive odor. The smell is non-trespassory but interferes with the normal use of surrounding properties, satisfying nuisance elements regardless of the activity's legality — zoning compliance does not bar nuisance claims",
+      "Randy's plants attract wildlife that damages Quagmire's property",
+      "Randy is operating a commercial farm in a residential zone, making it a nuisance per se",
+      "Randy's operation decreases property values, which is per se unreasonable"
+    ],
+    correct:0,
+    feedback:`Key principle: LEGAL ACTIVITY CAN STILL BE A NUISANCE. Just as in Pra v. Moretti, where zoning compliance didn't bar a nuisance claim, Randy's legal grow operation can still constitute nuisance if it substantially and unreasonably interferes with neighbors' use and enjoyment. Your argument: the smell is (1) non-trespassory (odor, not physical invasion), (2) substantial (pervasive enough to affect multiple neighbors), and (3) unreasonable when balanced against the residential character of the neighborhood. Note: courts are reluctant to recognize purely aesthetic harm, but persistent strong odor typically qualifies as more than aesthetic — it interferes with the basic ability to enjoy one's outdoor space. This is the "pig in the parlor" vs. "pig in the barnyard" principle — Randy's farm might be fine in South Park, but not on Spooner Street.`,
+  },
+  judge:{
+    q:"As the judge, both sides claim nuisance. How should you analyze the competing claims?",
+    opts:[
+      "Quagmire's nuisance claim against Randy succeeds; Randy's claim against Quagmire fails because he came to the nuisance",
+      "Both claims fail — the parties chose to live in a neighborhood where this is normal",
+      "Apply multi-factor balancing to EACH claim independently: evaluate character of harm, substantiality (reasonable person standard), unreasonableness (utility vs. gravity), suitability for location, and coming-to-the-nuisance as a partial factor. Quagmire's 110 dB + physical damage likely constitutes nuisance; Randy's odor requires factfinding on severity and pervasiveness",
+      "Both are nuisances per se and should both be enjoined immediately"
+    ],
+    correct:2,
+    feedback:`Each claim must be analyzed independently through the multi-factor balancing test. For Quagmire's noise: 110 dB causing physical damage is almost certainly a nuisance — physical harm to structures is the strongest type of interference. Coming-to-the-nuisance is a partial factor but doesn't bar recovery for physical damage. For Randy's odor: this requires MORE factfinding — how pervasive? How often? Impact on reasonable person? Suitability for residential area? The character of the harm matters: persistent agricultural odor in a residential neighborhood weighs toward nuisance, but the court needs evidence of severity. Neither is "nuisance per se" (majority rule requires the activity to be inherently illegal and impermissible under any circumstances). The court should evaluate each claim on its own merits using the Dobbs framework.`,
+  },
+  doctrine:"Nuisance — Multi-Factor Balancing: (1) Non-trespassory; (2) Substantial — reasonable person standard in community; (3) Unreasonable — balance utility vs. gravity of harm. Factors: character of harm (physical > aesthetic), suitability for location, social/economic value, fault, coming-to-the-nuisance (PARTIAL defense). Legal activity CAN be nuisance (Pra v. Moretti — zoning compliance ≠ nuisance immunity). Nuisance per se (minority): requires activity to be inherently illegal. Intentionality: must intend the conduct, not the harm."
+},
+
+// ══════════ 4. RECORDING STATUTES ══════════
+{
+  topic:"Recording Systems",
+  title:"In re: Homer's Triple Sale — The Moe's Tavern Disaster",
+  char:"🍩",
+  text:`Homer Simpson somehow holds the deed to Moe's Tavern. On Monday, he sells it to Cleveland Brown for $200,000. Cleveland, still traumatized from his bathtub falling through the floor, forgets to record.
+
+On Wednesday, Homer sells the SAME tavern to Mort Goldman for $180,000. Mort has NO idea about Cleveland's purchase. Mort, being Mort, also doesn't record because he's worried about "government databases tracking his property."
+
+On Friday, Homer sells it AGAIN to Eric Cartman for $150,000. Cartman has heard a rumor about "some earlier sale" but says "Whatever, I do what I want!" Cartman immediately records.
+
+On Saturday, Mort finally records.
+On Sunday, Cleveland finally records.
+
+Homer has already spent all $530,000 on donuts.`,
+  prosecution:{
+    q:"You represent Cleveland (first buyer). Under a NOTICE statute, what is your BEST argument to establish Cleveland's superior title?",
+    opts:[
+      "Cleveland was first in time, so he wins under common law priority — 'nemo dat' means Homer had nothing left to give after Monday",
+      "Under a notice statute, subsequent purchasers must be BFPs WITHOUT NOTICE. Cartman had actual notice (heard the rumor), disqualifying him. Mort lacked notice of Cleveland but Cleveland was still first in time, and in a notice statute, a later BFP only wins if the PRIOR holder failed to record — but Mort also failed to record before Cleveland",
+      "Cleveland paid the highest price ($200K), making him the most 'bona fide' purchaser",
+      "All three sales are void because Homer is clearly not a competent seller"
+    ],
+    correct:1,
+    feedback:`Under a NOTICE statute, the subsequent BFP without notice prevails over the prior unrecorded holder. Let's trace it: Cleveland (Monday, unrecorded) → Mort (Wednesday, no notice of Cleveland, BFP) → Cartman (Friday, HAS notice via rumor, NOT a BFP). Mort beats Cleveland because Mort is a subsequent BFP without notice of Cleveland's unrecorded deed. Cartman LOSES to both because he had actual notice ("heard a rumor" = actual notice). The fact that Cartman recorded first is IRRELEVANT under a pure notice statute — recording isn't the test, notice is. Result under notice statute: MORT wins. But as Cleveland's attorney, you'd argue the "rumor" should put Mort on inquiry notice too — though that's a stretch since rumors about "some sale" aren't the same as facts prompting investigation.`,
+  },
+  defense:{
+    q:"You represent Cartman (third buyer, first recorder). Under a RACE statute, what is your BEST argument?",
+    opts:[
+      "Cartman's actual notice of the prior sale doesn't matter — under a pure race statute, the FIRST TO RECORD wins regardless of knowledge. Cartman recorded Friday, Mort recorded Saturday, Cleveland recorded Sunday. Cartman wins the race",
+      "Cartman paid the lowest price, proving he negotiated the best deal and deserves the property",
+      "Cartman's 'I do what I want' statement shows he acted in good faith",
+      "The $150K sale price was so far below market value that it should be treated as fraudulent"
+    ],
+    correct:0,
+    feedback:`Under a PURE RACE statute, knowledge is completely irrelevant — the only question is who recorded first. Cartman recorded Friday, Mort Saturday, Cleveland Sunday. Cartman wins. This is the harshest result and exactly why most jurisdictions have moved away from pure race statutes — they reward bad actors who KNOW about prior sales but race to the courthouse. Under a RACE-NOTICE statute, Cartman would LOSE because he must satisfy BOTH prongs: (1) record first ✓ AND (2) lack notice ✗ — he had actual notice from the rumor. Under NOTICE, Cartman also loses. Only under pure race does his sprint to the recorder's office pay off. This is why understanding the statute type is critical on the exam.`,
+  },
+  judge:{
+    q:"As the judge under a RACE-NOTICE statute, determine the rightful owner:",
+    opts:[
+      "Cleveland — first in time, first in right",
+      "Cartman — first to record",
+      "Mort — he is the only subsequent purchaser who BOTH lacked notice of prior sales AND recorded before Cleveland (though after Cartman). Cartman fails the notice prong (actual knowledge of rumor). Cleveland never had BFP status (he was first buyer, not subsequent). Mort is the only one satisfying both race-notice requirements as against Cleveland",
+      "The property escheats to the state because Homer committed fraud"
+    ],
+    correct:2,
+    feedback:`Under race-notice, a subsequent purchaser prevails ONLY if they (1) lack notice AND (2) record before the prior holder. Analyzing each: Cleveland (Monday buyer): He's the first purchaser — the common law baseline gives him priority, but recording statutes exist to modify this. Cartman (Friday, recorded Friday): He had ACTUAL NOTICE (the rumor). Fails the notice prong. Eliminated. Mort (Wednesday, recorded Saturday): He lacked notice of Cleveland's purchase ✓. He recorded Saturday, before Cleveland recorded Sunday ✓. Mort satisfies BOTH prongs of race-notice as against Cleveland. MORT WINS. The three statutes give three different results: Race → Cartman. Notice → Mort. Race-Notice → Mort. This is exactly why professors test all three.`,
+  },
+  doctrine:"Recording Statutes — Three Types: RACE: first to record wins, knowledge irrelevant. NOTICE: subsequent BFP without notice wins over unrecorded prior holder (recording not required). RACE-NOTICE: subsequent BFP must BOTH lack notice AND record first. Three types of notice: Actual (you knew), Constructive (properly recorded in chain of title), Inquiry (facts prompting reasonable investigation). BFP = real consideration (amount doesn't need to be market value). Nemo dat (common law baseline): first in time, first in right."
+},
+
+// ══════════ 5. EASEMENTS — SCOPE ══════════
+{
+  topic:"Express Easements & Scope",
+  title:"Swanson v. Cartman — The Wheelchair Ramp Wars",
+  char:"🦽",
+  text:`When Joe Swanson moved to Spooner Street, the prior owner granted him a written easement: "A 4-foot wide path for wheelchair ingress and egress across the eastern edge of Lot 32 [now Cartman's lot], to the grantee, his heirs and assigns."
+
+Cartman recently bought Lot 32 and is immediately furious. He's even MORE furious when Joe starts:
+1. Using a 6-foot-wide motorized wheelchair that doesn't fit the 4-foot path
+2. Widening the path to 6 feet with a jackhammer
+3. Running a wheelchair delivery service with 40+ daily trips
+4. Installing speed bumps and LED runway lights
+
+Cartman screams: "RESPECT MY AUTHORITAH AND MY PROPERTY!" and builds a wall across the path.
+
+Joe sues to enforce the easement. Cartman countersues to terminate it.`,
+  prosecution:{
+    q:"As Cartman's attorney arguing the easement has been exceeded, what is your STRONGEST argument?",
+    opts:[
+      "The easement is void because Cartman never consented to it — he wasn't the original grantor",
+      "Joe has exceeded BOTH the physical scope (expanding from 4 feet to 6 feet, adding structures) AND the use scope (commercial delivery service with 40+ daily trips was never contemplated by 'ingress and egress'). Under Cox v. Glenbrook, the physical footprint is fixed by the grant and increased use cannot create an undue burden on the servient estate",
+      "The easement terminated automatically when the property was sold to Cartman",
+      "Joe's modifications constitute adverse possession of the easement strip"
+    ],
+    correct:1,
+    feedback:`Cox v. Glenbrook is your playbook! Two separate scope violations: PHYSICAL SCOPE — the grant says "4-foot wide." Just as Cox held that "now located" pins the geographic footprint, "4-foot wide" is specific dimensional language. Joe can MAINTAIN the path (repave, clear snow) but CANNOT expand the territorial footprint to 6 feet or add structures (speed bumps, LED lights). USE SCOPE — "ingress and egress" for personal wheelchair access does not contemplate 40+ commercial delivery trips daily. The original purpose governs scope. As for Cartman's wall — he can't do that either. The easement is valid and runs with the land (appurtenant, "heirs and assigns"). Cartman bought subject to it. But Joe has to use it as granted.`,
+  },
+  defense:{
+    q:"As Joe's attorney, what is your BEST argument to preserve and potentially expand the easement's use?",
+    opts:[
+      "The Americans with Disabilities Act preempts any private property restrictions on wheelchair access",
+      "While conceding the physical expansion to 6 feet exceeds the grant, argue that 'ingress and egress' should be read to accommodate REASONABLE changes in wheelchair technology. A modern motorized wheelchair is the functional equivalent of the manual wheelchair contemplated in the original grant, and the easement should evolve with reasonable use patterns — though the commercial delivery service is a harder sell",
+      "Cartman's wall constitutes an illegal obstruction entitling Joe to triple damages",
+      "Twenty years of use has expanded the easement by prescription to include the wider path"
+    ],
+    correct:1,
+    feedback:`This is the sophisticated advocacy answer. You concede the clear losses (6-foot expansion violates the grant, commercial deliveries exceed scope) but fight for the middle ground: modern wheelchair technology. Your argument: the original grant contemplated wheelchair access. Wheelchairs have evolved. A reasonable reading of "ingress and egress" by wheelchair should accommodate the standard wheelchair of the current era, not freeze technology at 1990s manual chairs. This is similar to how Cox allowed "maintenance" that adapts to modern conditions. However, you'd need to argue for a wheelchair that FITS the 4-foot path, not for expanding the path itself. The commercial service is likely indefensible — "ingress and egress" is personal access language, not commercial.`,
+  },
+  judge:{
+    q:"As the judge, how should you rule on the competing claims?",
+    opts:[
+      "Terminate the easement entirely — Joe's violations show abandonment",
+      "The easement remains valid and runs with the land to Cartman (appurtenant, 'heirs and assigns'). Joe may NOT expand the 4-foot physical scope or add structures. The commercial delivery service exceeds use scope. However, reasonable accommodation for modern wheelchair technology within the 4-foot width is permitted. Cartman's wall must come down — he cannot obstruct a valid easement",
+      "Joe gets a prescriptive easement for the full 6-foot width",
+      "Remand everything for a jury trial on reasonableness"
+    ],
+    correct:1,
+    feedback:`Correct! The easement is VALID — it's appurtenant ("heirs and assigns" per Green v. Lupo), so it runs with the land regardless of Cartman's feelings. Cartman bought subject to it and cannot obstruct it. But Joe has clearly exceeded both physical and use scope under Cox v. Glenbrook. The physical footprint (4 feet) is fixed. The use scope ("ingress and egress") covers personal wheelchair access, not commercial operations. Joe's violations don't TERMINATE the easement — they just require him to return to the original terms. The sophisticated point: evolution of wheelchair technology within the granted scope is reasonable (modern wheelchair within 4 feet), but expansion beyond it is not.`,
+  },
+  doctrine:"Easement Scope (Cox v. Glenbrook): Physical scope fixed by grant — maintenance allowed, expansion NOT. Use scope governed by original purpose — increased use may create undue burden (fact question). Green v. Lupo: 'Heirs and assigns' = strong appurtenant presumption; runs with land indefinitely. Servient owner cannot obstruct valid easement. Violations of scope don't terminate the easement — they limit use to original terms. Easement termination requires: express agreement, merger, abandonment (clear intent, not just non-use), adverse possession, or frustration of purpose."
+},
+
+// ══════════ 6. PRESCRIPTIVE EASEMENT ══════════
+{
+  topic:"Prescriptive Easements",
+  title:"Kenny's Eternal Path — South Park Kids v. Griffin Estate",
+  char:"💀",
+  text:`For the past 20 years, Kenny McCormick has been walking through the Griffins' backyard every day as a shortcut to school. This is remarkable because Kenny dies roughly twice a week but always resurrects and resumes the exact same path the next day.
+
+The path is worn down to bare dirt. Brian (the dog) barks at Kenny every single time. Peter once put up a sign that said "NO TRESPASING" (misspelled). Lois told Kenny once: "You're welcome to use the path, sweetie."
+
+The statutory period is 15 years. The Griffins now want to build a pool over the path.
+
+Kenny's friends — Kyle, Stan, and Cartman — have also occasionally used the path, though less frequently.`,
+  prosecution:{
+    q:"As the Griffins' attorney, what is your STRONGEST argument against Kenny's prescriptive easement?",
+    opts:[
+      "Kenny's frequent deaths break the continuity requirement — each resurrection restarts the statutory clock",
+      "Lois's statement — 'You're welcome to use the path, sweetie' — constitutes an express grant of permission, defeating the adverse/hostile element. Permissive use, no matter how long, NEVER ripens into a prescriptive easement",
+      "Kenny's friends' occasional use means Kenny's use wasn't exclusive",
+      "The misspelled 'NO TRESPASING' sign constitutes adequate notice of opposition"
+    ],
+    correct:1,
+    feedback:`This is the killer argument. Under Fresh v. Pontkowski, the adverse element requires that use be WITHOUT the owner's permission. Lois's statement — "You're welcome to use the path" — is an unambiguous grant of permission. Unlike mere silence (which doesn't defeat adversity), this is an affirmative oral license. Once permission is granted, ALL subsequent use becomes permissive, and the prescriptive clock stops. Kenny's 20 years of use mean nothing if they were permissive. This is why savvy property owners GRANT permission rather than trying to exclude — giving permission is the most effective way to prevent prescriptive easements.`,
+  },
+  defense:{
+    q:"As Kenny's attorney, what is your BEST argument for a prescriptive easement?",
+    opts:[
+      "Argue Lois lacked authority to grant permission on behalf of the property — if Peter is the title holder, Lois's permission is legally ineffective. Then all elements are met: actual use (daily path), open and notorious (visible worn path, Brian barking), continuous (20 years, seasonal consistency not required per Fresh v. Pontkowski), adverse (no VALID permission from the title holder), for the statutory period",
+      "Kenny's deaths and resurrections prove supernatural adverse possession, which has a shorter statutory period",
+      "The misspelled sign shows Peter is too incompetent to own property",
+      "Brian barking constitutes an invitation in dog language"
+    ],
+    correct:0,
+    feedback:`Brilliant advocacy! Your argument hinges on WHO has authority to grant permission. If Peter holds title (or if it's joint), Lois alone may not be able to create a license that defeats adversity. You'd also argue: even if Lois's statement is permission, it was a REVOCABLE license, and the Griffins' subsequent hostility (Peter's sign, Brian's barking) effectively revoked it — after revocation, Kenny's continued use became adverse again. The Fresh v. Pontkowski elements map perfectly: (1) actual use — daily walks; (2) open and notorious — bare dirt path visible to anyone; (3) continuous — 20 years of daily use; (4) adverse — if Lois's permission is ineffective or revoked; (5) statutory period — 20 > 15. Note: exclusivity is NOT required for prescriptive easements (unlike adverse possession) — the friends' use is irrelevant.`,
+  },
+  judge:{
+    q:"As the judge, what is the critical factual question you need resolved?",
+    opts:[
+      "Whether Kenny's deaths legally interrupt continuous use",
+      "Whether Lois had actual or apparent authority to grant permission on behalf of the property owners, and if so, whether subsequent hostile acts (sign, barking) effectively revoked that permission — because the existence of valid permission is the dispositive issue for the adverse element",
+      "Whether the misspelled sign counts as proper notice",
+      "Whether Kenny's friends' use defeats exclusivity"
+    ],
+    correct:1,
+    feedback:`The case turns entirely on the PERMISSION QUESTION. If Lois had authority to grant permission and it wasn't revoked, Kenny's entire 20 years of use is permissive and no prescriptive easement can arise — period. Factual questions: (1) Who holds title? If joint tenancy, either tenant can likely grant permission. If Peter alone, Lois may lack authority. (2) Even if permission was valid, was it revoked? Peter's sign and Brian's barking could constitute revocation — after which Kenny's continued use becomes adverse, potentially restarting the clock. Exclusivity is NOT required for prescriptive easements (distinguishing from adverse possession), so the friends' use is irrelevant. Kenny's deaths are legally irrelevant — the statutory period measures continuous use patterns, not continuous physical existence.`,
+  },
+  doctrine:"Prescriptive Easements (Fresh v. Pontkowski): Elements — (1) Actual use (NOT exclusive, unlike adverse possession); (2) Open and visible; (3) Continuous as property normally used; (4) Adverse/without permission; (5) For statutory period. Permission is FATAL — even oral permission defeats adversity. Owner granting permission is the best defense against prescriptive claims. Tacking allowed. 'No trespassing' signs may be insufficient without written notice of dispute (Fresh). Revocation of permission can restart the adverse clock."
+},
+
+// ══════════ 7. LIGHT & AIR / NUISANCE ══════════
+{
+  topic:"Nuisance — Light & Air",
+  title:"Burns v. Marsh — The Sun-Blocker Returns",
+  char:"☀️",
+  text:`Mr. Burns, having relocated his operations from Springfield to Quahog, has constructed a massive "Sun-Blocking Device" over his new industrial complex. It blocks sunlight to:
+
+1. Brian Griffin's $60,000 rooftop solar panel array (Brian went green after his environmentalism phase actually stuck for once)
+2. Randy Marsh's "completely legal agricultural operation" (the herbs need sunlight)
+3. Meg Griffin's community garden (the only thing that brings Meg joy)
+
+Brian sues for nuisance. Burns's attorney argues: "There is no right to unobstructed sunlight in American law. Read Fontainebleau Hotel Corp. v. Forty-Five Twenty-Five, Inc. and weep, you mongrel."
+
+Brian's attorney cites Pra v. Moretti in response.`,
+  prosecution:{
+    q:"As Brian's attorney, argue why Pra v. Moretti should control over Fontainebleau:",
+    opts:[
+      "Fontainebleau was decided in Florida where the sun always shines; Quahog has limited sunlight making it more valuable",
+      "Pra v. Moretti modernized the ancient lights analysis: (1) sunlight now has demonstrable ECONOMIC value through solar energy — Brian's $60K system is quantifiable; (2) the policy rationale of encouraging development is less compelling in already-developed areas; (3) nuisance doctrine is flexible enough to balance these interests without a rigid 'no right to light' rule. Brian's solar panels have clear economic value distinguishable from mere aesthetic preference",
+      "Burns's device serves no legitimate purpose — it exists solely to block sunlight, proving malice",
+      "The community garden establishes a public interest that trumps Burns's property rights"
+    ],
+    correct:1,
+    feedback:`Pra v. Moretti explicitly rejected the Fontainebleau bright-line rule. Your argument tracks the court's reasoning: (1) ECONOMIC VALUE — in 1959, sunlight was just light; in 2026, solar panels convert it to electricity with quantifiable value. Brian's $60K system produces real economic returns; (2) DEVELOPMENT RATIONALE OUTDATED — the American rejection of ancient lights was designed to encourage development in an undeveloped country. Quahog is already developed; (3) NUISANCE FLEXIBILITY — rather than adopting rigid ancient lights, the court applies standard nuisance balancing. The $60K solar system is NOT a hypersensitive use (the Pra dissent's concern) — modern solar is mainstream technology with significant economic and policy support. Burns's sun-blocker has limited social utility compared to the aggregate harm to multiple neighbors.`,
+  },
+  defense:{
+    q:"As Burns's attorney, what is your STRONGEST defense drawing from the Pra v. Moretti dissent?",
+    opts:[
+      "Burns has a constitutional right to build whatever he wants on his property",
+      "Institutional competence — the legislature, not the courts, should regulate sunlight access. Solar panel owners assumed the risk by investing without first securing an express easement for light. Applying nuisance doctrine retroactively to existing structures creates uncertainty that chills development and investment without clear, predictable standards",
+      "Brian's solar panels are an 'attractive nuisance' that endangered the neighborhood",
+      "Nuclear power makes solar panels obsolete, so Brian's investment has no value"
+    ],
+    correct:1,
+    feedback:`This is the Pra v. Moretti DISSENT's strongest argument. Justice Callow raised critical concerns: (1) INSTITUTIONAL COMPETENCE — the legislature can create clear, prospective rules about solar access; courts applying nuisance retroactively creates unpredictable, ad hoc determinations that chill development; (2) NOTICE — Burns (or any developer) had no advance notice that building would trigger nuisance liability for blocking light; (3) RELIANCE — parties invest based on existing rules; changing them retroactively is unfair; (4) HYPERSENSITIVE USE — the dissent would argue solar dependence on unobstructed light is a special sensitivity the law shouldn't protect. This is a legitimate policy argument even though the majority rejected it. On an exam, showing you understand BOTH sides is what gets the A.`,
+  },
+  judge:{
+    q:"As the judge, apply the correct modern framework:",
+    opts:[
+      "Fontainebleau controls — no right to unobstructed light in America, case dismissed",
+      "Ancient lights doctrine applies — Burns must remove the sun-blocker entirely",
+      "Apply Pra v. Moretti's nuisance balancing: weigh the utility of Burns's sun-blocker against the harm to Brian's solar investment. Brian's $60K solar system has demonstrable economic value; Burns must show substantial utility for the sun-blocker. The mere fact that Burns complies with zoning does NOT bar the nuisance claim. Remand for balancing if necessary",
+      "This is a taking requiring just compensation under the Fifth Amendment"
+    ],
+    correct:2,
+    feedback:`Pra v. Moretti modernized the framework without adopting rigid ancient lights. The court REJECTED both extremes — neither "no right to light ever" (Fontainebleau) nor "automatic right to light after X years" (English ancient lights). Instead: standard nuisance balancing. Critical points for the exam: (1) Zoning compliance does NOT bar nuisance claims (Pra principle — also applies to covenants); (2) Solar panels have economic value distinguishing them from purely aesthetic concerns like flower gardens; (3) The sun-blocker's utility matters — if it serves legitimate purpose (Burns would argue industrial operations), the balance shifts; if it's purely malicious (Fontainebleau: malice alone insufficient if social utility exists), still must balance. (4) Remedy could be damages rather than injunction if dismantling creates greater hardship.`,
+  },
+  doctrine:"Light & Air Evolution: Fontainebleau (1959) — No ancient lights in U.S.; owner can build even if blocking neighbor's light. Pra v. Moretti (1982) — Modernized: nuisance claim recognized for solar interference. Rationale: (1) sunlight has economic value; (2) development rationale outdated; (3) nuisance balancing is flexible. Dissent: institutional competence (legislature should decide), no notice, hypersensitive use. KEY: zoning compliance does NOT bar nuisance claims. Character of harm matters — economic (solar panels) stronger than aesthetic (garden)."
+},
+
+// ══════════ 8. COVENANTS — HOA ══════════
+{
+  topic:"Covenants & Equitable Servitudes",
+  title:"Cartman v. Spooner Street HOA — Respect My Authoritah",
+  char:"🏘️",
+  text:`Eric Cartman has somehow become president of the Spooner Street HOA. The original recorded CC&Rs state: "Earth tone exteriors only. $500 annual maintenance fee. No commercial activity on residential lots."
+
+Cartman immediately passes NEW bylaws: "All homes must display a portrait of the HOA president. No one under 5'5" may own property on Spooner Street. All residents must contribute to Cartman's Cheesy Poofs fund."
+
+Peter Griffin ignores everything and paints his house neon green with a 40-foot mural of the Giant Chicken. He also refuses to pay the $500 fee, claiming "I didn't sign any HOA documents."
+
+Kyle Broflovski (5'3") has just purchased a home on Spooner Street. The HOA demands he sell immediately.`,
+  prosecution:{
+    q:"As the HOA's attorney enforcing the ORIGINAL recorded restrictions against Peter, what standard applies?",
+    opts:[
+      "The HOA must prove the restrictions are reasonable because Peter never signed the CC&Rs personally",
+      "Under Nahrstedt v. Lakeside Village, RECORDED declarations are presumed reasonable — the burden is on PETER to show the restrictions are wholly arbitrary, violate fundamental public policy, or impose burdens far outweighing benefits. Peter has constructive notice through the recorded CC&Rs and actual notice if told at closing. Earth tone requirements, maintenance fees, and no-commercial-use are all facially reasonable",
+      "The restrictions are unenforceable because they're older than 30 years",
+      "The HOA can only enforce through fines, not through equitable relief"
+    ],
+    correct:1,
+    feedback:`Nahrstedt v. Lakeside Village is the definitive framework. For RECORDED declarations (the original CC&Rs): presumed reasonable, burden on challenger to show "wholly arbitrary, violate fundamental public policy, or impose burden far outweighing benefit." Peter's "I didn't sign" argument fails completely — equitable servitudes require NOTICE, not privity or signature. Peter has constructive notice (recorded CC&Rs in chain of title) and likely actual notice (told at closing). The FACIAL standard applies — the court evaluates whether the restriction is reasonable generally, not as applied to Peter's specific situation. Earth tones, $500 maintenance fee (Naonset: fees touch and concern land), no-commercial-use — all facially reasonable. Peter's neon chicken mural has to go.`,
+  },
+  defense:{
+    q:"As Kyle's attorney challenging Cartman's NEW bylaw (no owners under 5'5\"), what is your BEST argument?",
+    opts:[
+      "Cartman lacks standing to pass any bylaws because he's 9 years old",
+      "The height restriction in Cartman's new bylaw fails under the DIFFERENT standard that applies to later-adopted rules vs. recorded declarations: the HOA must show the bylaw is REASONABLE (burden on HOA, not challenger — opposite of Nahrstedt's standard for recorded declarations). The height restriction is arbitrary, has no rational relationship to property values or community welfare, likely violates fair housing protections, and was adopted in bad faith targeting specific residents",
+      "The bylaw violates the Rule Against Perpetuities",
+      "Kyle can claim adverse possession of his own home after 15 years of being short"
+    ],
+    correct:1,
+    feedback:`The KEY exam distinction from Nahrstedt: RECORDED DECLARATIONS get heavy deference (presumed reasonable, challenger bears burden). LATER-ADOPTED bylaws and rules get the OPPOSITE standard — the HOA must demonstrate reasonableness (burden on HOA). Why? Recorded declarations exist BEFORE purchase — buyers have advance notice. Later bylaws are imposed after purchase without the same notice protection. Cartman's height restriction fails easily under this standard: (1) Arbitrary — height has zero relationship to property values or community welfare; (2) Discriminatory — likely violates the Fair Housing Act's disability provisions (many height-related conditions qualify) and possibly familial status (excludes families with children); (3) Bad faith — transparently targeting Kyle specifically; (4) No rational basis — can't pass even the more lenient reasonableness test.`,
+  },
+  judge:{
+    q:"As the judge, how do you distinguish between the ORIGINAL CC&Rs and Cartman's NEW bylaws?",
+    opts:[
+      "All HOA rules get the same standard of review regardless of when adopted",
+      "Both are unenforceable because HOAs are unconstitutional",
+      "Original RECORDED declarations: presumed reasonable under Nahrstedt — burden on challenger to prove wholly arbitrary or violating public policy (FACIAL standard). Later-adopted bylaws: HOA must prove reasonable — burden on HOA. The original earth-tone and fee restrictions survive; Cartman's portrait requirement, height restriction, and Cheesy Poofs fund fail as arbitrary, discriminatory, and unrelated to property values",
+      "Cartman's bylaws are enforceable if a majority of HOA members voted for them, regardless of content"
+    ],
+    correct:2,
+    feedback:`This distinction is one of the most important Nahrstedt takeaways for the exam. TWO STANDARDS: (1) Recorded CC&Rs → presumed reasonable, burden on CHALLENGER, facial analysis. Rationale: buyers had notice before purchasing. (2) Later-adopted rules/bylaws → HOA must prove reasonable, burden on HOA. Rationale: adopted after purchase without equivalent notice. The original restrictions (earth tones, $500 fee, no commercial use) easily survive under the deferential standard. Cartman's new rules fail even under the more lenient standard: portrait requirement is arbitrary, height restriction is discriminatory and bears no rational relationship to property interests, Cheesy Poofs fund is not maintenance. The Restatement test (unreasonable if: arbitrary, violates public policy, unreasonable restraint on alienation, unconscionable) would also invalidate Cartman's bylaws.`,
+  },
+  doctrine:"HOA Restrictions (Nahrstedt v. Lakeside Village): TWO STANDARDS — (1) Recorded CC&Rs: presumed reasonable, burden on CHALLENGER to show wholly arbitrary, violates public policy, or burden far outweighs benefit. FACIAL standard (not as-applied). (2) Later bylaws/rules: burden on HOA to show reasonable. EQUITABLE SERVITUDES: require writing, intent, touch and concern, NOTICE (not privity). Naonset: maintenance fees touch and concern land. Touch and concern expanded beyond formalistic test to functional analysis of property value impact."
+},
+
+// ══════════ 9. CHANGED CIRCUMSTANCES ══════════
+{
+  topic:"Covenant Termination",
+  title:"Moe v. Bethany Beach II — The Drunken Clam's Last Stand",
+  char:"🍻",
+  text:`The Drunken Clam sits on land from a 1925 subdivision with a recorded covenant: "All lots shall be used exclusively for single-family residential purposes. No commercial establishments. No sale of intoxicating beverages. This is a community for wholesome Christian living."
+
+It's now 2026. The neighborhood has: a Krusty Burger franchise (Homer's favorite), Randy Marsh's dispensary, Rick's garage laboratory (frequently explodes), a Kwik-E-Mart run by Apu, and Bender's "Totally Not Illegal" Robot Fight Club.
+
+The covenant hasn't been enforced in 40 years. The entire area was rezoned commercial in 1998.
+
+The great-great-grandchild of the original subdivider sues Jerome (Drunken Clam owner) to enforce the residential-only covenant because Jerome is expanding with an outdoor patio.`,
+  prosecution:{
+    q:"As the subdivider descendant's attorney, what is your BEST argument to enforce the covenant?",
+    opts:[
+      "Covenants are sacred and run with the land forever — changed circumstances is not a recognized defense",
+      "Despite neighborhood changes, the ORIGINAL intent of the covenant should be honored. Some evidence suggests pockets of the neighborhood retain residential character, and the court should enforce the original bargain the parties agreed to. Courts should not lightly disregard recorded restrictions that purchasers relied upon",
+      "The commercial rezoning actually strengthens the covenant because it shows the area needs protection from further commercialization",
+      "Jerome lacks standing because the Drunken Clam was never a 'wholesome Christian' establishment"
+    ],
+    correct:1,
+    feedback:`This is the LD v. Bethany Beach DISSENT position — and it's not frivolous. Your argument: (1) Sanctity of contract — parties made an agreement; courts should enforce it; (2) Possible remaining pockets of residential character (maybe some homes still exist); (3) Slippery slope — if courts can just dissolve covenants whenever neighborhoods change, what's the point of recording them? However, this argument faces a massive uphill battle when the ENTIRE area has transformed, the covenant hasn't been enforced in 40 years, and the area was rezoned commercial. On an exam, making this argument well (while acknowledging its weaknesses) shows sophistication.`,
+  },
+  defense:{
+    q:"As Jerome's attorney, what combination of defenses is STRONGEST?",
+    opts:[
+      "The covenant violates the First Amendment's separation of church and state because it references 'Christian living'",
+      "Changed circumstances + acquiescence + unclean hands: (1) Fundamental change in neighborhood character renders the residential purpose incapable of enjoyment — Robot Fight Clubs and dispensaries killed 'wholesome Christian living'; (2) The family acquiesced by not enforcing for 40 years while every violation went unchallenged; (3) Selective enforcement against Jerome alone while tolerating Krusty Burger, the dispensary, and everything else constitutes unclean hands",
+      "The covenant expired after 100 years under the Rule Against Perpetuities",
+      "Jerome has a prescriptive right to operate commercially based on 20+ years of use"
+    ],
+    correct:1,
+    feedback:`This is the LD v. Bethany Beach majority position with extra firepower! THREE overlapping defenses: (1) CHANGED CIRCUMSTANCES — "the court will not enforce a restrictive covenant where fundamental change has occurred in the intended character of the neighborhood that renders benefits underlying the restriction incapable of enjoyment." Robot Fight Clubs and weed dispensaries are not "wholesome Christian living." (2) ACQUIESCENCE — 40 years of non-enforcement despite open violations = the family slept on its rights. (3) UNCLEAN HANDS — targeting Jerome specifically while tolerating Krusty Burger and the dispensary is inequitable selective enforcement. Any ONE of these might suffice; together, they're devastating.`,
+  },
+  judge:{
+    q:"As the judge, what is the correct legal standard for changed circumstances?",
+    opts:[
+      "Any change in the neighborhood automatically terminates all covenants",
+      "Changed circumstances requires showing that the FUNDAMENTAL character of the neighborhood has changed so completely that the BENEFITS underlying the restriction are incapable of enjoyment. Here, the transformation from residential to commercial (Robot Fight Club, dispensary, Krusty Burger, rezoning, Kwik-E-Mart, exploding lab) renders 'wholesome residential living' impossible. Combined with 40 years of acquiescence, the covenant is unenforceable",
+      "The covenant is enforceable because it was properly recorded and recording provides permanent notice",
+      "The court should modify the covenant to allow commercial use but maintain the 'wholesome' requirement"
+    ],
+    correct:1,
+    feedback:`The LD v. Bethany Beach standard: courts won't enforce covenants where "fundamental change in the intended character of the neighborhood renders the benefits underlying the restriction incapable of enjoyment." This isn't just "some change" — it requires the FUNDAMENTAL CHARACTER to shift so completely that the covenant's PURPOSE is destroyed. Here: the purpose was wholesome residential living. The reality is Robot Fight Clubs, dispensaries, fast food, and exploding garages. The benefit is incapable of enjoyment. Add the equitable defenses: acquiescence (40 years), abandonment (so many violations the covenant appears abandoned), and unclean hands (selective enforcement). Important: REZONING does NOT automatically terminate private covenants (covenants and zoning operate independently), but it IS powerful evidence of changed circumstances.`,
+  },
+  doctrine:"Changed Circumstances (LD v. Bethany Beach): Court won't enforce covenant where fundamental change renders benefits incapable of enjoyment. Must show PURPOSE of covenant is destroyed, not just some change. Equitable defenses: Acquiescence (tolerated violations), Abandonment (so many violations = appears abandoned), Unclean Hands (plaintiff violates too), Estoppel (told party 'it's fine'), Laches (unreasonable delay), Relative Hardship (burden >> benefit). IMPORTANT: Zoning does NOT preempt private covenants — they operate independently. Rezoning is EVIDENCE of changed circumstances, not automatic termination."
+},
+
+// ══════════ 10. ESTATES & FUTURE INTERESTS ══════════
+{
+  topic:"Present Estates & Future Interests",
+  title:"In re Estate of Pewterschmidt — Carter's Revenge from Beyond the Grave",
+  char:"📜",
+  text:`Carter Pewterschmidt, determined to control his family forever, creates this conveyance in his will:
+
+"Pewterschmidt Manor to Lois FOR LIFE, then to Chris SO LONG AS the property is never used for anything Peter would enjoy, but if Peter is ever found on the premises eating chicken, then to Stewie and his heirs."
+
+Carter also adds: "The Newport Beach House to Meg FOR LIFE, then to Brian IF Brian graduates from law school, but if Brian never graduates, then to the Quahog Historical Society."
+
+Carter dies. Peter is already on the Manor premises with a bucket of fried chicken. Brian is currently a 2L at a terrible law school.`,
+  prosecution:{
+    q:"As Peter's attorney (trying to get Peter access to the Manor), identify the estates created in the FIRST conveyance and your argument:",
+    opts:[
+      "Lois has a fee simple absolute, and the conditions are void as unreasonable restraints on alienation — Peter can enter freely",
+      "Lois has a life estate. Chris has a fee simple subject to executory limitation ('so long as' + gift over to third party). Stewie has a shifting executory interest. The condition ('never used for anything Peter would enjoy') is arguably void for vagueness — what does Peter enjoy? Everything? Nothing? — making Chris's estate a fee simple absolute and eliminating Stewie's interest entirely",
+      "Lois has a fee tail, and Chris has a remainder",
+      "The entire conveyance fails because you can't condition property on food preferences"
+    ],
+    correct:1,
+    feedback:`Excellent identification AND attack! The estates: (1) Lois: LIFE ESTATE ('for life' — clear durational language); (2) Chris: FEE SIMPLE SUBJECT TO EXECUTORY LIMITATION — the 'so long as' language looks determinable, but because there's a gift to a THIRD PARTY (Stewie, not back to grantor), it's subject to executory limitation; (3) Stewie: SHIFTING EXECUTORY INTEREST (divests Chris's estate in favor of another grantee). Your ATTACK: the condition "never used for anything Peter would enjoy" is hopelessly vague. What does Peter enjoy? Beer? TV? Breathing? A court could strike the condition as void for vagueness, which would leave Chris with a fee simple absolute and eliminate Stewie's executory interest. This is a strong argument for Peter's access.`,
+  },
+  defense:{
+    q:"As Stewie's attorney (trying to trigger the executory interest), identify the estates in the SECOND conveyance and explain the contingency:",
+    opts:[
+      "Meg: fee simple determinable. Brian: possibility of reverter. Historical Society: nothing",
+      "Meg: life estate. Brian: contingent remainder in fee simple (contingent on graduating law school — condition precedent not yet satisfied). Historical Society: shifting executory interest (takes if Brian's contingent remainder never vests). Carter's heirs: reversion (if Meg dies before Brian graduates and before the condition resolves)",
+      "Meg: life estate. Brian: vested remainder. Historical Society: executory interest",
+      "Meg: life estate. Brian: fee simple absolute. The graduation condition is an unenforceable penalty"
+    ],
+    correct:1,
+    feedback:`Precise analysis! The second conveyance: (1) Meg: LIFE ESTATE; (2) Brian: CONTINGENT REMAINDER — it's a remainder (follows naturally after the life estate) that is contingent on a CONDITION PRECEDENT (graduating law school). It's not vested because Brian hasn't satisfied the condition yet; (3) Historical Society: SHIFTING EXECUTORY INTEREST (takes if Brian's condition fails — divesting the interest that would otherwise go to Brian); (4) Carter's heirs: REVERSION — if Meg dies while Brian is still in law school and the condition hasn't resolved either way, the property reverts to Carter's estate until the contingency is resolved. As Stewie's attorney for the FIRST conveyance: Peter was found eating chicken on the premises — the executory condition is triggered, and the estate should shift from Chris to Stewie.`,
+  },
+  judge:{
+    q:"As the judge, if Peter is currently eating chicken at the Manor, what happens to the estate?",
+    opts:[
+      "Nothing — the condition is too vague to enforce",
+      "Chris's fee simple subject to executory limitation is divested. Stewie's shifting executory interest is triggered. Lois retains her life estate (it's unaffected by the condition on Chris's remainder). After Lois dies, the property goes to Stewie and his heirs in fee simple absolute",
+      "Peter gets the property because he was there first",
+      "Chris keeps the property but Peter must leave"
+    ],
+    correct:1,
+    feedback:`The condition is specific: "if Peter is ever found on the premises eating chicken." Peter is doing exactly that. This triggers the executory limitation, automatically divesting Chris's interest and shifting it to Stewie. Critically, LOIS'S LIFE ESTATE IS UNAFFECTED — her interest was unconditional ("to Lois for life"). The condition only applied to Chris's remainder. So during Lois's life, she still possesses the Manor. After Lois dies, the property passes to Stewie (whose executory interest has vested through the condition being triggered). Stewie receives a fee simple absolute ("to Stewie and his heirs"). Had the condition not triggered, Chris would have held the property after Lois's death subject to the ongoing condition, with Stewie's executory interest waiting in the wings.`,
+  },
+  doctrine:"Present Estates & Future Interests: Life Estate — measured by life, unconditional here. Fee Simple Subject to Executory Limitation — defeasible fee where condition triggers transfer to THIRD PARTY (not grantor). Shifting Executory Interest — divests another grantee's interest. Contingent Remainder — remainder subject to condition precedent not yet satisfied. Key language: 'so long as' (determinable), 'but if' (executory condition), 'on condition that' (condition subsequent). Distinguish: Possibility of Reverter (returns to grantor) vs. Right of Entry (grantor must act) vs. Executory Interest (goes to third party)."
+},
+
+// ══════════ 11. CONCURRENT TENANCIES ══════════
+{
+  topic:"Concurrent Tenancies",
+  title:"In re Simpson-Griffin Beach House — The Severance Chaos",
+  char:"🏖️",
+  text:`Grandpa Simpson dies and leaves his beach house: "To Homer Simpson, Bart Simpson, and Peter Griffin as JOINT TENANTS WITH RIGHT OF SURVIVORSHIP."
+
+Homer immediately sells his 1/3 interest to Moe Szyslak for beer money.
+
+Three months later, Bart (skateboarding accident) and Peter (chicken fight) die on the same day. Bart's will leaves everything to Lisa. Peter's will leaves everything to Lois.
+
+Moe shows up at the beach house with a suitcase. So does Lisa. So does Lois. They all stare at each other.`,
+  prosecution:{
+    q:"As Lisa's attorney, argue that Lisa owns a share of the beach house:",
+    opts:[
+      "Lisa inherited Bart's share through his will because joint tenancy doesn't override testamentary wishes",
+      "Homer's sale to Moe severed Homer's share but preserved the joint tenancy between Bart and Peter. When both died simultaneously, the Uniform Simultaneous Death Act treats each as predeceasing the other — since neither can take from the other through survivorship, Bart's 1/3 passes through his estate to Lisa, and Peter's 1/3 passes through his estate to Lois. Result: Moe 1/3, Lisa 1/3, Lois 1/3 as tenants in common",
+      "Lisa is the smartest person in the room and therefore deserves the most property",
+      "Bart's skateboarding constitutes adverse possession of the entire beach house"
+    ],
+    correct:1,
+    feedback:`This is the sophisticated answer that addresses the simultaneous death wrinkle! Step by step: (1) Homer's sale to Moe severed the joint tenancy ONLY as to Homer's 1/3 — Moe becomes a tenant in common; (2) Bart and Peter remained joint tenants with each other for the other 2/3; (3) Normally, when one joint tenant dies, the survivor takes — but SIMULTANEOUS death creates a problem: neither can be shown to have survived the other; (4) Under the Uniform Simultaneous Death Act, when joint tenants die simultaneously, each is treated as predeceasing the other — survivorship FAILS; (5) Each deceased tenant's share passes through their respective estates: Bart's 1/3 → Lisa (per will); Peter's 1/3 → Lois (per will). Final result: Moe 1/3, Lisa 1/3, Lois 1/3 — all as tenants in common.`,
+  },
+  defense:{
+    q:"As Moe's attorney, argue Moe should own MORE than 1/3:",
+    opts:[
+      "Moe's 1/3 is all he can claim — Homer only had a 1/3 interest to convey (nemo dat). However, argue that the other 2/3 should be subject to PARTITION — Moe can force a partition sale of the entire property, and as a co-tenant in common, he's entitled to his proportional share of the proceeds. This maximizes Moe's economic position even though his ownership share is fixed at 1/3",
+      "Homer actually owned the whole beach house because he was listed first in the conveyance",
+      "Moe's purchase price was so high that equitable considerations give him a larger share",
+      "The beer Homer received as consideration was worth more than 1/3 of the property"
+    ],
+    correct:0,
+    feedback:`Smart advocacy — you can't increase Moe's ownership share (nemo dat: Homer could only convey what he had), but you CAN maximize his economic position. As a tenant in common, Moe has the RIGHT TO PARTITION. He can force a partition by sale (court orders the entire property sold and divides proceeds proportionally) or partition in kind (physical division, unlikely for a beach house). This is Moe's power play: Lisa and Lois may not be able to afford to buy him out, and a forced sale puts cash in Moe's pocket. This is a key exam concept — partition rights are the exit mechanism for co-tenants who can't agree.`,
+  },
+  judge:{
+    q:"As the judge, determine final ownership and explain the legal mechanics:",
+    opts:[
+      "Moe owns 100% by right of survivorship",
+      "Homer's sale to Moe severed Homer's 1/3 (Moe = tenant in common for 1/3). Bart and Peter's joint tenancy for the other 2/3 survived the partial severance. Their simultaneous death means survivorship cannot operate — each 1/3 passes through their respective estates. Final ownership: Moe 1/3, Lisa 1/3, Lois 1/3, ALL as tenants in common. No right of survivorship exists between any of them",
+      "The entire property goes to Grandpa Simpson's estate because all beneficiaries are effectively deceased or divested",
+      "Moe 1/3, and the remaining 2/3 goes entirely to whichever of Bart or Peter was technically alive one second longer"
+    ],
+    correct:1,
+    feedback:`The mechanics: (1) SEVERANCE: A joint tenant can unilaterally sever by conveying their interest. Homer's sale to Moe severed ONLY Homer's 1/3 share. Moe is now a TENANT IN COMMON for 1/3 (no survivorship rights). (2) PARTIAL PRESERVATION: The joint tenancy between Bart and Peter for the remaining 2/3 was NOT severed by Homer's sale — severance only affects the conveying tenant's share. (3) SIMULTANEOUS DEATH: When joint tenants die simultaneously and the order of death cannot be established, the Uniform Simultaneous Death Act treats each as predeceasing the other. Survivorship fails. Each tenant's share passes through their estate. (4) RESULT: Moe 1/3 (tenant in common), Lisa 1/3 (inherited from Bart's estate), Lois 1/3 (inherited from Peter's estate). All tenants in common — no survivorship between any of them.`,
+  },
+  doctrine:"Joint Tenancy: Created by unity of time, title, interest, possession + express survivorship language. Right of Survivorship: surviving tenant automatically takes deceased tenant's share — bypasses will/intestacy. Severance: any joint tenant can unilaterally sever by conveying their share — ONLY that share becomes tenancy in common; remaining JT preserved. Simultaneous Death (USDA): when JTs die simultaneously, each treated as predeceasing the other — survivorship fails, shares pass through respective estates. Tenant in Common: default; no survivorship; freely alienable; partition available."
+},
+
+// ══════════ 12. CONSTRUCTIVE EVICTION & WARRANTY OF HABITABILITY ══════════
+{
+  topic:"Constructive Eviction & Habitability",
+  title:"Morty v. Slumlord Rick — The Worst Apartment in the Multiverse",
+  char:"🏚️",
+  text:`Morty rents an apartment from his grandfather Rick, who owns the building. Within a month:
+• The heating fails (it's January in Rhode Island — 15°F outside)
+• A portal residue leak in the ceiling drips glowing green fluid onto Morty's bed
+• Interdimensional cockroaches the size of footballs have colonized the kitchen — they've established a democratic government and are demanding representation
+• The toilet opens to another dimension (it works, but the privacy situation is... complicated)
+
+Morty calls Rick 23 times. Rick's response each time: "Not my problem, Morty. Rent is due on the *burp* first."
+
+Morty stops paying rent and moves in with the Griffins. Rick sues for unpaid rent.
+
+Morty countersues.`,
+  prosecution:{
+    q:"As Morty's attorney, what is your STRONGEST combination of claims against Rick?",
+    opts:[
+      "Negligence and intentional infliction of emotional distress only",
+      "Constructive eviction AND breach of the implied warranty of habitability — they're complementary but doctrinally distinct. Constructive eviction: Rick's failure to maintain heat, fix the portal leak, and address the infestation after notice substantially interfered with use and enjoyment, and Morty vacated within a reasonable time. Warranty of habitability: the conditions (no heat in January, toxic leak, infestation) render the premises unfit for human habitation, entitling Morty to withhold rent regardless of whether he vacated",
+      "Trespass by the cockroaches, for which Rick is vicariously liable",
+      "Adverse possession by the cockroach democracy"
+    ],
+    correct:1,
+    feedback:`The key exam distinction! CONSTRUCTIVE EVICTION requires: (1) Landlord's breach of duty — failed to maintain heat, fix leak, address infestation ✓; (2) Substantial interference with use and enjoyment — glowing ceiling fluid on your bed is pretty substantial ✓; (3) Notice to landlord + failure to repair — 23 calls, no action ✓; (4) Tenant VACATES within reasonable time ✓. IMPLIED WARRANTY OF HABITABILITY: conditions must render premises unfit for human habitation. No heat at 15°F ✓. Toxic leak ✓. Football-sized cockroaches ✓. KEY DIFFERENCE: constructive eviction REQUIRES vacation; warranty of habitability does NOT. Morty could have stayed and withheld rent under the warranty. By leaving, he can claim BOTH — maximum protection. The warranty provides additional remedies: repair-and-deduct, rent withholding, damages for diminished value.`,
+  },
+  defense:{
+    q:"As Rick's attorney (defending the rent claim), what is your BEST argument?",
+    opts:[
+      "The cockroaches are tenants too and should be paying their share of the rent",
+      "Morty ASSUMED THE RISK by renting from someone he knows is an interdimensional mad scientist. The portal residue and dimensional toilet are features of the building's unique character that Morty was aware of before signing the lease. Furthermore, Morty failed to mitigate damages — he could have filed complaints with the housing authority or used repair-and-deduct before vacating",
+      "Rick has sovereign immunity as the smartest being in the multiverse",
+      "The cockroaches' democratic government constitutes a new tenancy that displaces Morty's lease"
+    ],
+    correct:1,
+    feedback:`Creative defense! Two prongs: (1) ASSUMPTION OF RISK — Morty knew Rick's character and the building's... unique features. If the portal residue and dimensional issues existed at move-in, Morty arguably accepted them. However, this is weak because the WARRANTY OF HABITABILITY CANNOT BE WAIVED — even if Morty agreed to accept these conditions, the warranty is non-waivable public policy. (2) FAILURE TO MITIGATE — stronger argument. Morty could have filed housing code complaints, used repair-and-deduct (fix issues himself and deduct costs from rent), or sought a rent abatement through housing court before vacating entirely. Some courts require tenants to exhaust these remedies before claiming constructive eviction. This won't defeat the warranty claim but might reduce damages.`,
+  },
+  judge:{
+    q:"As the judge, rule on the constructive eviction claim and the warranty claim:",
+    opts:[
+      "Both claims fail — Morty is related to Rick so normal landlord-tenant law doesn't apply",
+      "Constructive eviction succeeds — all four elements met (breach, substantial interference, notice, vacation). Warranty of habitability ALSO succeeds — no heat at 15°F and toxic leak render premises uninhabitable, and the warranty CANNOT be waived even by agreement. Morty owes no rent for the period of uninhabitable conditions and may recover damages for the difference between rent paid and the value of the premises in their defective condition",
+      "Only the warranty claim succeeds because Morty waited too long to vacate for constructive eviction",
+      "Only constructive eviction succeeds because the warranty only applies to conditions existing at move-in"
+    ],
+    correct:1,
+    feedback:`Both doctrines apply and provide overlapping but distinct relief. CONSTRUCTIVE EVICTION: (1) Rick breached his duty to maintain ✓; (2) No heat + portal fluid + infestation = substantial interference ✓; (3) 23 calls = adequate notice ✓; (4) Morty vacated within reasonable time ✓. The vacation requirement is satisfied — Morty moved to the Griffins' promptly. WARRANTY OF HABITABILITY: the conditions render the premises unfit for human habitation. This is a NON-WAIVABLE obligation — Rick cannot contract around it, and Morty's knowledge of Rick's character is irrelevant. Remedies: (1) No rent owed for uninhabitable period; (2) Damages for difference between rent paid and actual value of defective premises; (3) Potential consequential damages (moving costs, etc.). The warranty applies to conditions arising DURING tenancy as well as at move-in.`,
+  },
+  doctrine:"Constructive Eviction: (1) Landlord's breach of duty; (2) Substantial interference with use/enjoyment; (3) Notice + failure to repair; (4) Tenant vacates within reasonable time. Implied Warranty of Habitability: landlord must maintain habitable conditions. NON-WAIVABLE — tenant cannot contract around it. Remedies WITHOUT vacating: withhold rent, repair-and-deduct, damages. KEY DISTINCTION: constructive eviction requires vacation; warranty does not. Both can be claimed simultaneously. Four leasehold types: term of years (fixed), periodic (auto-renews), tenancy at will (either party terminates), tenancy at sufferance (holdover)."
+},
+
+// ══════════ 13. FAIR HOUSING ACT ══════════
+{
+  topic:"Fair Housing Act",
+  title:"Quahog Fair Housing Commission v. Pewterschmidt Properties",
+  char:"🏛️",
+  text:`Carter Pewterschmidt owns luxury apartments in Quahog. His rental application asks: "Country of origin?" and "Number of children under 18?"
+
+His property manager's instructions (found in a leaked email): "We're cultivating an exclusive community. You know the type we want. Use your judgment. Also, the third floor units are perfect for 'certain applicants' — you know which ones."
+
+When Cleveland Brown applies with his family, the manager says the unit is "just taken." When Kyle Broflovski's family applies, the manager mentions the building "isn't really designed for families." Five minutes later, a single white applicant is shown three available units, including the one that was "just taken."
+
+Apu Nahasapeemapetilon is told the building requires "documentation of American cultural familiarity" — a requirement that appears nowhere in the lease.`,
+  prosecution:{
+    q:"As the Fair Housing Commission's attorney, identify ALL protected categories being violated:",
+    opts:[
+      "Race only — all other categories require proof of specific statutory language targeting them",
+      "Race and national origin only — familial status protections don't apply to luxury buildings",
+      "Race (Cleveland's treatment), color, national origin (Apu's 'cultural familiarity' requirement + application's 'country of origin' question), and familial status (Kyle's family told building 'not designed for families' + application asking about children) — the application itself constitutes discriminatory terms and conditions, the 'steering' email directs certain applicants to specific floors, and differential treatment of Cleveland establishes disparate treatment on the basis of race",
+      "All seven protected categories under the Fair Housing Act are violated"
+    ],
+    correct:2,
+    feedback:`The Fair Housing Act (42 U.S.C. § 3604) protects: race, color, religion, national origin, sex, familial status, and disability. Here: (1) RACE/COLOR — Cleveland told unit is "taken" while white applicant shown the same unit minutes later = classic disparate treatment. No explicit racial statement needed — differential treatment IS the evidence; (2) NATIONAL ORIGIN — "country of origin" question + Apu's "American cultural familiarity" requirement are facially discriminatory; (3) FAMILIAL STATUS — asking about children under 18 and telling the Broflovskis the building isn't "designed for families" targets families with children (protected class). The "steering" email ("third floor for certain applicants") suggests race-based steering. The application questions THEMSELVES violate the Act as discriminatory terms and conditions even before any adverse action.`,
+  },
+  defense:{
+    q:"As Carter's attorney, what is your MOST plausible (though difficult) defense?",
+    opts:[
+      "The Fair Housing Act doesn't apply to luxury apartments",
+      "Argue the differential treatment had legitimate non-discriminatory explanations: the unit shown to Cleveland was under a pending application (timing, not race); the 'families' comment referred to genuine building design limitations (no playground, lead paint concerns); Apu's requirement was a miscommunication about lease language competency. Then argue the application questions were included by error and have been removed. This shifts the burden back to the plaintiff to show pretext",
+      "Carter has First Amendment freedom of association rights that override the Fair Housing Act",
+      "The property manager acted outside the scope of his employment, so Carter isn't liable"
+    ],
+    correct:1,
+    feedback:`This is the standard defense playbook (though it's weak here). In employment and housing discrimination, the burden-shifting framework works like this: (1) Plaintiff establishes prima facie case (discriminatory treatment) ✓; (2) Defendant articulates legitimate non-discriminatory reason; (3) Plaintiff shows the reason is pretext. Carter's best shot is offering alternative explanations for each incident. BUT the leaked email is devastating — "You know the type we want" + steering instructions are direct evidence of discriminatory intent that's nearly impossible to explain away. The application questions asking about national origin and children are facially discriminatory and essentially indefensible. On an exam, argue this defense to show you understand the framework, but acknowledge it's likely to fail given the direct evidence.`,
+  },
+  judge:{
+    q:"As the judge, what types of discrimination are present and what evidence is most damning?",
+    opts:[
+      "Only disparate impact — no direct evidence of intentional discrimination exists",
+      "Multiple types: (1) OVERT DISCRIMINATION — application questions targeting national origin and familial status; (2) DISPARATE TREATMENT — Cleveland told unit taken while white applicant offered same unit; (3) STEERING — email directing 'certain applicants' to specific floors; (4) DISCRIMINATORY TERMS — Apu's invented 'cultural familiarity' requirement. The leaked email constitutes DIRECT EVIDENCE of discriminatory intent, which is the most damning element because it eliminates the need for inferential proof",
+      "Disparate impact only — the policies are facially neutral but have discriminatory effects",
+      "Only the application questions are illegal; the rest is permissible landlord discretion"
+    ],
+    correct:1,
+    feedback:`Multiple overlapping violations: (1) OVERT DISCRIMINATION — the application questions facially target protected classes (national origin, familial status). These are illegal per se; (2) DISPARATE TREATMENT — Cleveland's differential treatment compared to the white applicant is circumstantial evidence of racial discrimination. The temporal proximity (5 minutes) makes pretext arguments nearly impossible; (3) STEERING — directing applicants to specific units/floors based on protected characteristics violates § 3604; (4) DISCRIMINATORY TERMS — inventing a "cultural familiarity" requirement for certain applicants = discriminatory terms and conditions. The LEAKED EMAIL is the smoking gun — it's direct evidence of discriminatory intent, the strongest possible proof. With direct evidence, the plaintiff doesn't need to rely on the burden-shifting framework.`,
+  },
+  doctrine:"Fair Housing Act (42 U.S.C. § 3604): Protected classes — race, color, religion, national origin, sex, familial status, disability. Types of discrimination: (1) Overt/direct — explicit targeting of protected class; (2) Disparate treatment — differential treatment based on protected class, proved by comparison; (3) Steering — directing people to certain areas/units; (4) Discriminatory terms — imposing different requirements; (5) Disparate impact — facially neutral policy with discriminatory effect. Direct evidence (emails, statements) is strongest proof. Discriminatory intent can be INFERRED from differential treatment."
+},
+
+// ══════════ 14. EASEMENT BY NECESSITY & ESTOPPEL ══════════
+{
+  topic:"Easement by Necessity & Estoppel",
+  title:"Morty's Landlocked Lot & Brian's Broken Promise",
+  char:"🌀",
+  text:`TWO scenarios the Quahog Court hears back-to-back:
+
+CASE A: Rick Sanchez owned a large parcel. He gave Morty the back portion as a birthday gift. Problem: Morty's parcel is completely surrounded by Rick's remaining land and by the ocean on one side. There is zero road access. Rick says: "Figure it out, Morty. That's *burp* the whole point of the gift — adversity builds character."
+
+CASE B: Brian Griffin told Stewie: "You can always use my driveway to reach your evil lair." Relying on this, Stewie spent $200,000 building an elaborate underground lair with its only vehicle entrance aligned to Brian's driveway. Stewie's been using it for 5 years. Brian now wants to build a croquet court over the driveway and tells Stewie the promise "wasn't legally binding because dogs can't enter contracts."`,
+  prosecution:{
+    q:"As Morty's attorney in Case A, establish the easement by necessity:",
+    opts:[
+      "Rick's gift was unconscionable, so the entire conveyance should be rescinded",
+      "All three elements are met: (1) the dominant (Morty's lot) and servient (Rick's remaining land) estates were formerly ONE PARCEL under common ownership; (2) the severance (Rick's gift) left Morty's parcel LANDLOCKED; (3) there is no other adequate access to a public road. Rick's intent to be cruel is irrelevant — the doctrine is based on the implied intent that a grantor would not render conveyed land worthless. The gift vs. sale distinction doesn't matter — necessity arises from severance itself",
+      "Morty can build a dock and access via the ocean, so necessity doesn't apply",
+      "Rick's portal gun provides adequate access, eliminating necessity"
+    ],
+    correct:1,
+    feedback:`Finn v. Williams! All elements satisfied: (1) Common ownership — Rick owned the entire parcel; (2) Severance created landlocked parcel — Morty's lot has zero road access; (3) No adequate access to public road — the ocean doesn't count as a public road. Rick's spite is irrelevant — the doctrine rests on the legal fiction that a grantor IMPLICITLY intended to provide access because no rational grantor would render land worthless. The gift vs. sale question doesn't defeat the claim — easement by necessity arises from the SEVERANCE itself, not from the type of consideration. Importantly, unlike prescriptive easements, NO PRIOR USE OR STATUTORY PERIOD is required. The easement can even "rise from dormancy" (Finn: 50-year gap didn't defeat the claim).`,
+  },
+  defense:{
+    q:"As Stewie's attorney in Case B, establish the easement by estoppel:",
+    opts:[
+      "Brian's oral promise is enforceable under the statute of frauds because it was witnessed by other family members",
+      "All elements of estoppel are met: (1) Brian permitted driveway use (oral promise); (2) Brian should have FORESEEN Stewie would substantially change position (building a $200K lair aligned to the driveway); (3) Stewie BELIEVED the permission wouldn't be revoked (5 years of uninterrupted use); (4) Stewie SUBSTANTIALLY CHANGED POSITION in reliance ($200K investment with entrance specifically aligned); (5) INJUSTICE avoided only by recognizing the easement — Stewie's lair is useless without driveway access. This is a Statute of Frauds EXCEPTION — no writing required",
+      "Five years of use creates a prescriptive easement",
+      "Stewie's lair constitutes adverse possession of the subsurface"
+    ],
+    correct:1,
+    feedback:`Lobato v. Taylor estoppel framework! Every element is met with overwhelming force: (1) Permission — Brian explicitly said "you can always use my driveway"; (2) Foreseeability — Brian watched Stewie build the lair and knew the entrance aligned to his driveway; (3) Belief — "always" implies permanence; 5 years reinforced this; (4) Substantial change — $200K is massive, quantifiable reliance; (5) Injustice — Stewie's lair entrance is worthless without driveway access. This is MUCH stronger than a typical estoppel case. Note: prescriptive easement FAILS because the use was WITH permission (Brian said yes) — adversity element is missing. Estoppel is the correct doctrine precisely because there WAS permission followed by detrimental reliance.`,
+  },
+  judge:{
+    q:"As the judge, distinguish WHY different easement doctrines apply to each case:",
+    opts:[
+      "Both are prescriptive easements based on long use",
+      "Case A = easement by necessity (landlocked parcel from severance, no prior use needed, no permission involved). Case B = easement by estoppel (permission was granted, reliance occurred, but no writing exists — estoppel is the Statute of Frauds exception for detrimental reliance on oral permission). Prescriptive easement fails for BOTH: Case A has no adverse use history, and Case B's use was permissive, negating adversity",
+      "Both are easements implied from prior use because the parcels were formerly unified",
+      "Case A is express and Case B is prescriptive"
+    ],
+    correct:1,
+    feedback:`This is the doctrinal distinction that separates A students from B students. WHY does each doctrine apply? Case A — NECESSITY: Morty has no prior use of any path, no permission was given, no prescriptive period was met. The ONLY doctrine that works is necessity — it requires: (1) common ownership, (2) severance causing landlocked parcel, (3) no adequate access. No use history needed. Case B — ESTOPPEL: Stewie had PERMISSION (killing prescriptive claims), no common ownership (killing implied from prior use), and no landlocked parcel (killing necessity). Estoppel is the only doctrine that converts an oral license into an irrevocable interest based on detrimental reliance. The Statute of Frauds normally requires easements in writing — estoppel is the exception when the license-holder detrimentally relied.`,
+  },
+  doctrine:"Easement by Necessity (Finn v. Williams): (1) Common ownership; (2) Severance created landlocked parcel; (3) No adequate road access. No prior use required. Can lie dormant. Based on implied grantor intent. Easement by Estoppel (Lobato v. Taylor): (1) Owner permitted use; (2) Foreseeable reliance; (3) Belief permission permanent; (4) Substantial change in position; (5) Injustice without recognition. Statute of Frauds exception. Use was PERMISSIVE — distinguishes from prescription. Easement Implied from Prior Use (Granite v. Manns): requires common ownership + prior apparent continuous use + reasonable necessity. Each doctrine fills a specific gap — learn WHEN each applies."
+},
+
+// ══════════ 15. POSSESSION & CAPTURE ══════════
+{
+  topic:"Possession & Capture",
+  title:"The Great Quahog Thanksgiving Turkey Chase",
+  char:"🦃",
+  text:`It's Thanksgiving. A legendary 40-pound wild turkey appears in downtown Quahog. Three hunters converge:
+
+PETER GRIFFIN chases the turkey for 4 hours through downtown, knocking over food carts and causing $30,000 in property damage. He corners it in an alley.
+
+Just as Peter reaches for it, HOMER SIMPSON (visiting from Springfield) dives from a fire escape and GRABS the turkey with both hands. He has physical possession for exactly 3 seconds before...
+
+ERIC CARTMAN (disguised as a pilgrim) deploys a net launcher from a nearby rooftop, netting both Homer and the turkey. Cartman claims the turkey and refuses to release Homer.
+
+Peter screams: "I CHASED THAT TURKEY FOR FOUR HOURS!" Homer screams (muffled from inside the net): "I HAD IT FIRST!" Cartman says: "I do what I want."`,
+  prosecution:{
+    q:"As Peter's attorney, make the BEST argument for Peter's claim to the turkey:",
+    opts:[
+      "Peter's 4-hour pursuit and cornering established constructive possession — the turkey was deprived of natural liberty in the alley",
+      "Invoke the Livingston DISSENT in Pierson v. Post: pursuit-based customs should govern, and Peter's sustained effort should be rewarded to incentivize socially useful activity. Also argue the turkey was effectively 'cornered' in the alley — arguably deprived of natural liberty and within Peter's certain control before Homer interfered. If the court follows the dissent's flexible standard over the majority's bright-line rule, Peter has the strongest claim",
+      "Peter caused $30,000 in damages, proving his superior commitment to catching the turkey",
+      "First-in-time, first-in-right applies to turkey chasing under common law"
+    ],
+    correct:1,
+    feedback:`As Peter's advocate, your best move is to invoke Justice Livingston's DISSENT — the flexible, custom-based standard that would protect hunters in hot pursuit. Your argument: (1) Peter's 4-hour chase and cornering in an alley meant the turkey was within his "certain control" — the alley limited the turkey's "natural liberty"; (2) Custom among hunters (if established) would recognize the pursuer's claim; (3) The policy behind Pierson's dissent — that protecting pursuit incentivizes socially useful activity — supports rewarding Peter's effort. You'd acknowledge the majority rule goes against you but argue the cornering distinguishes this from mere open-field pursuit. This is the kind of creative advocacy that impresses professors.`,
+  },
+  defense:{
+    q:"As Homer's attorney, argue Homer rightfully possessed the turkey:",
+    opts:[
+      "Homer had actual bodily seizure — the gold standard under the Pierson v. Post MAJORITY rule. He physically grabbed the turkey with both hands, establishing occupancy through 'certain control.' The fact that Cartman subsequently took it doesn't retroactively negate Homer's prior possession — it means CARTMAN committed a wrongful taking from Homer, giving Homer a claim against Cartman rather than negating Homer's original capture",
+      "Homer's 'D'oh!' constitutes a verbal claim of possession recognized under maritime law",
+      "Homer outweighs both Peter and Cartman, giving him superior physical possession",
+      "Homer's intent to eat the turkey is stronger than anyone else's, satisfying the mental element"
+    ],
+    correct:0,
+    feedback:`This is the strongest legal position. Under the Pierson v. Post MAJORITY, occupancy requires "actual bodily seizure" or deprivation of natural liberty + certain control. Homer GRABBED THE TURKEY WITH BOTH HANDS. That's actual bodily seizure — game over under the majority rule. The 3 seconds of possession is irrelevant to whether possession was established — duration doesn't matter, capture does. Cartman's subsequent netting constitutes a WRONGFUL TAKING from Homer's rightful possession. Compare Popov v. Hayashi — when capture is interrupted by wrongful conduct, the original possessor has a claim. Homer established clear possession; Cartman wrongfully took it. Peter's pursuit, no matter how lengthy, never ripened into capture.`,
+  },
+  judge:{
+    q:"As the judge applying the Pierson v. Post majority rule strictly, who gets the turkey?",
+    opts:[
+      "Peter — longest pursuit",
+      "Homer — he achieved actual bodily seizure (physical capture with both hands), establishing rightful possession under the majority's bright-line rule. Cartman's subsequent netting was a wrongful taking from Homer's established possession, not an independent capture of a wild animal. Peter's pursuit, no matter how extensive, never reached the level of 'certain control' required by the majority. Under Popov v. Hayashi, when possession is interrupted by wrongdoing, the original possessor maintains their claim",
+      "Cartman — final possession is all that matters",
+      "Split the turkey three ways under equitable principles (Popov v. Hayashi)"
+    ],
+    correct:1,
+    feedback:`Under the Pierson v. Post MAJORITY'S bright-line rule: possession of wild animals requires occupancy — "deprivation of natural liberty" through actual bodily seizure or certain control. Peter NEVER achieved this. He chased and cornered, but the majority explicitly rejects mere pursuit as sufficient. Homer GRABBED the turkey — actual bodily seizure, the clearest form of capture. Once Homer had possession, the turkey ceased to be ferae naturae in the legal sense. Cartman didn't "capture a wild turkey" — he took Homer's property. Under Popov v. Hayashi, when capture is interrupted by another's wrongful act, the original possessor maintains their claim. The policy rationale of the bright-line rule: certainty prevents exactly these kinds of disputes. Homer had it. Done.`,
+  },
+  doctrine:"Pierson v. Post — Rule of Capture: Occupancy requires actual bodily seizure or deprivation of natural liberty + certain control. Mere pursuit insufficient. MAJORITY: bright-line rule promotes certainty and prevents disputes. DISSENT (Livingston): flexible standard based on custom; rewards effort and socially useful activity. Popov v. Hayashi: when capture interrupted by wrongdoing, equitable division possible. Elliff v. Texon: rule of capture for oil/gas with negligence exception. Key tension: RULES (certainty, administrability) vs. STANDARDS (fairness, context)."
+}
+];
+
+// ═══════════════════════════════════════════════════
+//  GAME ENGINE
+// ═══════════════════════════════════════════════════
+let G = {
+  screen:'title', mode:null, qi:0, score:0, streak:0, best:0,
+  answered:false, sel:-1, results:[], topics:{}
+};
+
+const MODES = {
+  prosecution:{name:"Prosecution",icon:"⚔️",desc:"Represent the plaintiff or state. Find the STRONGEST argument to WIN for your client.",think:"Think like an advocate — best case for YOUR side"},
+  defense:{name:"Defense",icon:"🛡️",desc:"Represent the defendant. Find the BEST defense to PROTECT your client from liability.",think:"Think like an advocate — best case for the OTHER side"},
+  judge:{name:"Judge",icon:"⚖️",desc:"Apply the law objectively. Determine the CORRECT legal ruling regardless of sympathy.",think:"Think like a neutral arbiter — what does the LAW say?"}
+};
+
+const $ = id => document.getElementById(id);
+const L = ['A','B','C','D'];
+
+function render(){
+  const a = $('app');
+  if(G.screen==='title') a.innerHTML = titleHTML();
+  else if(G.screen==='game') a.innerHTML = gameHTML();
+  else a.innerHTML = resultsHTML();
+  bind();
+}
+
+function titleHTML(){
+  let cards = Object.entries(MODES).map(([k,m])=>`
+    <div class="mode-card${G.mode===k?' selected':''}" data-mode="${k}">
+      <span class="mode-icon">${m.icon}</span>
+      <div class="mode-name">${m.name}</div>
+      <div class="mode-desc">${m.desc}</div>
+      <span class="think">${m.think}</span>
+    </div>`).join('');
+
+  return `<div class="title">
+    <span class="gavel">⚖️</span>
+    <h1>PROPERTY LAW</h1>
+    <h2>Quahog Courtroom</h2>
+    <p class="tagline">15 cases. 3 game modes. Every doctrine from Prof. Stern's course.<br>
+    Play as prosecution, defense, or judge — each forces you to think about the law differently.</p>
+    <p class="universes">Featuring characters from Family Guy · The Simpsons · South Park · Rick and Morty</p>
+    <div class="mode-select">${cards}</div>
+    <button class="go-btn" id="go" ${G.mode?'':'disabled'}>COURT IS IN SESSION</button>
+    <p style="margin-top:20px;color:#555;font-size:0.8rem">Keyboard: 1-4 or A-D to answer · Enter/Space to advance</p>
+  </div>`;
+}
+
+function gameHTML(){
+  const s = S[G.qi], m = G.mode, d = s[m];
+  const pct = (G.qi/S.length*100).toFixed(0);
+  const mInfo = MODES[m];
+  let roleClass = `role-${m}`;
+
+  let optsH = d.opts.map((o,i)=>{
+    let c='opt';
+    if(G.answered){
+      c+=' dis';
+      if(i===d.correct) c+=' correct';
+      else if(i===G.sel&&i!==d.correct) c+=' wrong';
+    }
+    return `<button class="${c}" data-i="${i}"><span class="letter">${L[i]}</span>${o}</button>`;
+  }).join('');
+
+  let fbH='';
+  if(G.answered){
+    const ok = G.sel===d.correct;
+    const quip = ok
+      ? ["Freakin' sweet!","Giggity!","Excellent, counselor!","Holy crap, you nailed it!","That's what she... said? No wait — that's correct!","D'oh-n't change a thing!","Now THAT'S using your law degree!"][G.qi%7]
+      : ["Oh no... oh no no no.","Even Homer would've gotten that one.","Cartman is laughing at you right now.","You just got disbarred in Quahog.","Rick says you belong in the dumbest timeline.","That answer was worse than Meg's self-esteem.","Even the cockroach democracy disagrees."][G.qi%7];
+
+    fbH=`<div class="fb ${ok?'fb-ok':'fb-no'}">
+      <div class="fb-head">${ok?'✅':'❌'} ${quip}</div>
+      <div class="fb-body">${d.feedback}</div>
+      <div class="doctrine"><div class="dl">📚 Exam Doctrine — Write This on Your Final</div><div class="dt">${s.doctrine}</div></div>
+      <div class="objection"><div class="ol">💡 Mode Insight — Why ${mInfo.name} Thinks Differently</div>
+      <div class="ot">${m==='prosecution'
+        ?`As prosecution/plaintiff's attorney, your job is to find the STRONGEST argument for your client. Even if the law is uncertain, advocate for the interpretation most favorable to your side — then acknowledge weaknesses. This is how real lawyers think on exam hypos.`
+        :m==='defense'
+        ?`As defense attorney, your job is to find the BEST shield for your client. Look for elements the plaintiff can't prove, affirmative defenses, and policy arguments that favor your side. A great defense attorney concedes the obvious and fights on the close calls.`
+        :`As judge, you must apply the law objectively regardless of sympathy. Identify the correct legal standard, apply it to the facts, and explain your reasoning. Acknowledge competing arguments but reach a definitive ruling. Exam graders want to see you engage both sides before deciding.`
+      }</div></div>
+      <button class="nxt" id="nxt">${G.qi<S.length-1?'Next Case →':'Final Verdict →'}</button>
+    </div>`;
+  }
+
+  return `
+    <div class="hud">
+      <div class="hud-item"><div class="hud-label">Score</div><div class="hud-val hud-score">${G.score}/${S.length}</div></div>
+      <div class="hud-item"><div class="hud-label">Case</div><div class="hud-val hud-q">${G.qi+1}/${S.length}</div></div>
+      <div class="hud-item"><div class="hud-label">Streak</div><div class="hud-val hud-streak">${G.streak}🔥</div></div>
+      <div class="hud-item"><div class="hud-label">Role</div><div class="hud-val hud-role">${mInfo.icon} ${mInfo.name}</div></div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="scene">
+      <span class="topic-tag">${s.topic}</span>
+      <span class="role-tag ${roleClass}">${mInfo.icon} Playing as ${mInfo.name}</span>
+      <div class="scene-head">
+        <span class="char">${s.char}</span>
+        <h2 class="scene-title">${s.title}</h2>
+      </div>
+      <div class="scene-text">${s.text}</div>
+      <div class="scene-q">${d.q}</div>
+      <div class="opts">${optsH}</div>
+      ${fbH}
+    </div>`;
+}
+
+function resultsHTML(){
+  const pct=Math.round(G.score/S.length*100);
+  let gr,gc;
+  if(pct>=93){gr='A';gc='g-a'}else if(pct>=85){gr='A-';gc='g-a'}
+  else if(pct>=80){gr='B+';gc='g-b'}else if(pct>=73){gr='B';gc='g-b'}
+  else if(pct>=70){gr='C+';gc='g-c'}else if(pct>=63){gr='C';gc='g-c'}
+  else if(pct>=60){gr='D';gc='g-d'}else{gr='F';gc='g-f'}
+
+  let weak=[],strong=[];
+  for(let t in G.topics){
+    const x=G.topics[t];
+    if(x.c/x.t<0.5) weak.push(t);
+    else if(x.c/x.t>=1) strong.push(t);
+  }
+
+  const mInfo=MODES[G.mode];
+  let wH=weak.length?`<div class="weak"><h3>🎯 Review These Topics</h3>${weak.map(t=>`<div class="ritem">• ${t}</div>`).join('')}</div>`:'';
+  let sH=strong.length?`<div class="strong"><h3>💪 Mastered</h3>${strong.map(t=>`<div class="ritem">• ${t}</div>`).join('')}</div>`:'';
+
+  let revH=G.results.map((r,i)=>{
+    const sc=S[i];
+    return `<div class="rev-item ${r.ok?'rev-ok':'rev-no'}">
+      <div class="rev-q">${i+1}. ${sc.title} (${sc.topic})</div>
+      <div class="rev-a">${r.ok?'✅ Correct':'❌ Missed — Review: '+sc.doctrine.split('.')[0]+'.'}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="results">
+    <h1>${mInfo.icon} ${mInfo.name} Mode — Final Verdict</h1>
+    <div class="grade ${gc}">${gr}</div>
+    <div class="rstats">
+      <div class="rbox"><div class="rn">${G.score}/${S.length}</div><div class="rl">Correct</div></div>
+      <div class="rbox"><div class="rn">${pct}%</div><div class="rl">Accuracy</div></div>
+      <div class="rbox"><div class="rn">${G.best}</div><div class="rl">Best Streak</div></div>
+    </div>
+    ${pct>=90?'<p style="color:#00ff6a;font-size:1.1rem;margin:15px 0">You\'re getting that A. Keep going.</p>'
+      :pct>=70?'<p style="color:var(--cyan);font-size:1.1rem;margin:15px 0">Solid foundation — review the misses and try another mode!</p>'
+      :'<p style="color:var(--orange);font-size:1.1rem;margin:15px 0">Hit the outlines and come back. Try Judge mode for objective analysis.</p>'}
+    ${wH}${sH}
+    <div class="review"><h3>Case-by-Case Review</h3>${revH}</div>
+    <div style="text-align:center;margin-top:35px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap">
+      <button class="go-btn" id="retry" style="font-size:1.3rem;padding:13px 35px">Retry ${mInfo.name} Mode</button>
+      <button class="nxt" id="switch" style="font-size:1.1rem;padding:13px 35px">Switch Mode</button>
+    </div>
+    <p style="text-align:center;margin-top:25px;color:#444;font-size:0.75rem">
+      Property Law: Quahog Courtroom — Built for Presley's Finals · Prof. Stern · BU Law
+    </p>
+  </div>`;
+}
+
+function bind(){
+  document.querySelectorAll('.mode-card').forEach(c=>{
+    c.addEventListener('click',()=>{G.mode=c.dataset.mode;render()});
+  });
+  const go=$('go');if(go)go.addEventListener('click',()=>{if(G.mode){G.screen='game';render()}});
+  const retry=$('retry');if(retry)retry.addEventListener('click',()=>{resetGame();G.screen='game';render()});
+  const sw=$('switch');if(sw)sw.addEventListener('click',()=>{resetGame();G.screen='title';G.mode=null;render()});
+  if(!G.answered){
+    document.querySelectorAll('.opt').forEach(b=>{
+      b.addEventListener('click',()=>answer(parseInt(b.dataset.i)));
+    });
+  }
+  const nxt=$('nxt');if(nxt)nxt.addEventListener('click',next);
+}
+
+function answer(i){
+  if(G.answered)return;
+  G.answered=true;G.sel=i;
+  const d=S[G.qi][G.mode];
+  const ok=i===d.correct;
+  if(ok){G.score++;G.streak++;if(G.streak>G.best)G.best=G.streak}else{G.streak=0}
+  G.results.push({ok,topic:S[G.qi].topic});
+  const t=S[G.qi].topic;
+  if(!G.topics[t])G.topics[t]={c:0,t:0};
+  G.topics[t].t++;if(ok)G.topics[t].c++;
+  render();
+  setTimeout(()=>{const f=document.querySelector('.fb');if(f)f.scrollIntoView({behavior:'smooth',block:'center'})},80);
+}
+
+function next(){
+  if(G.qi<S.length-1){G.qi++;G.answered=false;G.sel=-1;G.screen='game'}
+  else{G.screen='results'}
+  render();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetGame(){
+  G.qi=0;G.score=0;G.streak=0;G.best=0;G.answered=false;G.sel=-1;G.results=[];G.topics={};
+}
+
+document.addEventListener('keydown',e=>{
+  if(G.screen==='game'&&!G.answered){
+    const m={'1':0,'2':1,'3':2,'4':3,'a':0,'b':1,'c':2,'d':3};
+    if(m[e.key.toLowerCase()]!==undefined)answer(m[e.key.toLowerCase()]);
+  }
+  if(G.screen==='game'&&G.answered&&(e.key==='Enter'||e.key===' ')){e.preventDefault();next()}
+  if(G.screen==='title'&&G.mode&&(e.key==='Enter'||e.key===' ')){e.preventDefault();G.screen='game';render()}
+});
+
+render();
+</script>
+</body>
+</html>

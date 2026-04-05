@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Galactic High Tribunal — Criminal Law RPG</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body, #root { min-height: 100vh; background: #080c18; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #d0d8e0; }
+  ::selection { background: #FFE81F33; color: #FFE81F; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0e1a; }
+  ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #2a5080; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+  @keyframes glow { 0%, 100% { box-shadow: 0 0 5px rgba(255,232,31,0.3); } 50% { box-shadow: 0 0 20px rgba(255,232,31,0.5); } }
+  @keyframes crawl { 0% { transform: perspective(400px) rotateX(25deg) translateY(100%); } 100% { transform: perspective(400px) rotateX(25deg) translateY(-300%); } }
+  @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+/* ───── CAREER LADDER ───── */
+const CAREER = [
+  { title: "Junior Public Defender", location: "Tatooine", desc: "Mos Eisley Legal Aid Office", art: "tatooine", color: "#c2873a", requiredWins: 0 },
+  { title: "Assistant District Attorney", location: "Naboo", desc: "Theed Royal Courthouse", art: "naboo", color: "#4a9e6e", requiredWins: 2 },
+  { title: "Senior Prosecutor", location: "Coruscant", desc: "Republic Central Judiciary", art: "coruscant", color: "#5588cc", requiredWins: 4 },
+  { title: "High Tribunal Advocate", location: "Galactic High Tribunal", desc: "Supreme Judicial Chamber", art: "tribunal", color: "#9966cc", requiredWins: 6 },
+  { title: "Attorney General of the Galactic Republic", location: "Galactic Senate", desc: "Office of the AG", art: "senate", color: "#FFE81F", requiredWins: 8 }
+];
+
+/* ───── CHARACTERS ───── */
+const CH = {
+  mothma: { name: "Mon Mothma", title: "Chief Justice", color: "#c9b8a0" },
+  tano: { name: "Ahsoka Tano", title: "Senior Counsel", color: "#e87040" },
+  hondo: { name: "Hondo Ohnaka", title: "Court Informant", color: "#8bc34a" },
+  yoda: { name: "Grand Master Yoda", title: "Judicial Elder", color: "#a8d870" }
+};
+
+/* ───── CASES WITH MULTIPLE CHOICE QUESTIONS ───── */
+const CASES = [
+  /* ─── RANK 0: Tatooine ─── */
+  {
+    rank: 0,
+    title: "The Jawa Junk Deal",
+    subtitle: "Stolen Droid Parts Ring",
+    defendant: "Rikkit the Jawa",
+    crime: "Trafficking in stolen droid components",
+    storyIntro: "Your very first case. A Jawa clan leader has been caught operating a chop shop near Mos Eisley, stripping stolen droids for parts and reselling them to moisture farmers.",
+    holobrief: [
+      "Rikkit purchased crates of droid parts from Tusken Raiders, knowing the parts were likely stolen from settler homesteads. When questioned, Rikkit said: 'Utinni! Me no ask where parts come from — better not to know!'",
+      "The prosecution must prove Rikkit acted with the requisite mental state. Rikkit claims ignorance of the stolen nature of the goods."
+    ],
+    prosecutorArg: "Rikkit deliberately avoided learning the true origin of these parts. This is textbook willful blindness — the defendant suspected illegal activity and took deliberate steps to avoid confirming it.",
+    questions: [
+      {
+        question: "Under the MPC framework, what mental state best describes Rikkit's conduct when he said 'better not to know'?",
+        doctrine: "Willful Blindness / MPC §2.02(7)",
+        choices: [
+          { text: "Purposely — Rikkit's conscious object was to traffic in stolen goods", correct: false, explanation: "Purpose requires that it be the defendant's 'conscious object' to engage in the prohibited conduct. Rikkit's conscious object was to make money selling parts — the stolen nature was something he avoided confirming, not something he desired." },
+          { text: "Knowingly — willful blindness satisfies the knowledge requirement when the defendant is aware of a high probability and deliberately avoids learning the truth", correct: true, explanation: "Correct! Under MPC §2.02(7), knowledge is established when a person is aware of a high probability of the fact's existence, unless he actually believes it does not exist. Willful blindness (deliberate avoidance of knowledge) satisfies the 'knowingly' standard. This was confirmed in Global-Tech Appliances v. SEB S.A." },
+          { text: "Recklessly — Rikkit consciously disregarded a substantial and unjustifiable risk", correct: false, explanation: "While recklessness involves conscious disregard of risk, willful blindness goes beyond recklessness. Rikkit didn't merely disregard a risk — he affirmatively avoided confirming what he suspected to be true. Courts treat willful blindness as equivalent to knowledge, not mere recklessness." },
+          { text: "Negligently — Rikkit should have known the parts were stolen", correct: false, explanation: "Negligence is a failure to be aware of a substantial risk that a reasonable person would have perceived. Rikkit WAS aware of the risk — he explicitly said 'better not to know.' His awareness elevates this well above negligence." }
+        ]
+      },
+      {
+        question: "The MPC hierarchy of mental states, from most to least culpable, is:",
+        doctrine: "MPC §2.02 — Culpability Hierarchy",
+        choices: [
+          { text: "Knowingly → Purposely → Recklessly → Negligently", correct: false, explanation: "Close, but Purposely is more culpable than Knowingly. Purpose requires conscious object (desire), while knowledge merely requires awareness. A person who wants the result is more culpable than one who merely knows it will happen." },
+          { text: "Purposely → Knowingly → Negligently → Recklessly", correct: false, explanation: "This incorrectly ranks Negligently above Recklessly. Recklessness requires conscious awareness of the risk, making it more culpable than negligence, where the person fails to perceive the risk at all." },
+          { text: "Purposely → Knowingly → Recklessly → Negligently", correct: true, explanation: "Correct! The MPC hierarchy: (1) Purposely = conscious object, (2) Knowingly = practically certain awareness, (3) Recklessly = conscious disregard of substantial risk, (4) Negligently = should have been aware. Each level subsumes those below it — purpose satisfies knowledge, knowledge satisfies recklessness, etc." },
+          { text: "Purposely → Recklessly → Knowingly → Negligently", correct: false, explanation: "Knowingly is more culpable than recklessly. Knowing something is practically certain to occur reflects greater culpability than merely being aware of a substantial risk." }
+        ]
+      },
+      {
+        question: "If Rikkit genuinely believed the parts were legally salvaged (not stolen), how would this affect liability under the MPC?",
+        doctrine: "Mistake of Fact / MPC §2.04",
+        choices: [
+          { text: "It would be irrelevant — ignorance of the law is no excuse", correct: false, explanation: "This confuses mistake of fact with mistake of law. Rikkit wouldn't be claiming ignorance of the trafficking statute — he'd be claiming a factual mistake about whether the goods were stolen. These are different doctrines with different rules." },
+          { text: "It would negate the knowledge element if the belief were honest, even if unreasonable", correct: true, explanation: "Correct! Under MPC §2.04(1), a mistake of fact is a defense if it negates the mental state required for the offense. Since trafficking requires 'knowledge' that goods are stolen, a genuine (honest) belief they were not stolen — even if unreasonable — would negate knowledge. The MPC does not require mistake of fact to be reasonable when the crime requires knowledge or purpose." },
+          { text: "It would only be a defense if the belief were both honest AND reasonable", correct: false, explanation: "This is the common law approach, not the MPC approach. Under the MPC, whether the mistake must be reasonable depends on the mens rea of the crime. For crimes requiring knowledge or purpose, even an unreasonable mistake negates the mental state. Only for negligence crimes must the mistake be reasonable." },
+          { text: "It would create an affirmative defense shifting the burden to Rikkit", correct: false, explanation: "Mistake of fact under the MPC is not an affirmative defense — it negates an element of the offense. The prosecution still bears the burden of proving knowledge beyond a reasonable doubt. If there's reasonable doubt about whether Rikkit knew the goods were stolen, the prosecution hasn't met its burden." }
+        ]
+      }
+    ],
+    loreReward: "You've earned your first case file! The Mos Eisley Legal Aid Office adds your name to the duty roster. Chancellor Mothma notes your potential."
+  },
+  {
+    rank: 0,
+    title: "The Cantina Brawl",
+    subtitle: "When Is an Act Truly Voluntary?",
+    defendant: "Ponda Baba",
+    crime: "Aggravated assault in the Mos Eisley Cantina",
+    storyIntro: "A vicious cantina fight left a young moisture farmer seriously injured. But the defendant claims he was shoved into the victim by a third party, and that his arm struck the victim involuntarily.",
+    holobrief: [
+      "Multiple witnesses confirm a chaotic scene. Greedo bumped into Ponda Baba from behind, causing Ponda to stumble forward. As he fell, Ponda's arm struck the victim across the face, breaking his jaw.",
+      "Ponda says the contact was entirely involuntary — a reflex from being shoved. The prosecution argues Ponda was already threatening the victim moments before."
+    ],
+    prosecutorArg: "Even if the final blow was triggered by a shove, Ponda had been menacing the victim for several minutes prior. He positioned himself aggressively and created the conditions for the violent contact.",
+    questions: [
+      {
+        question: "Under the voluntary act requirement (actus reus), which of the following would NOT qualify as a 'voluntary act'?",
+        doctrine: "Actus Reus — Voluntary Act Requirement / MPC §2.01",
+        choices: [
+          { text: "A habitual action performed without conscious thought", correct: false, explanation: "Habitual actions ARE voluntary acts, even if done without active deliberation. The MPC distinguishes between actions that are products of the actor's effort or determination (voluntary) and those that are not. Habitual actions still originate from the actor's will, even if they're automatic." },
+          { text: "A reflex or convulsion — a muscular movement not the product of effort or determination", correct: true, explanation: "Correct! MPC §2.01(2) lists reflexes and convulsions as involuntary. A voluntary act must be a product of the actor's effort or determination. Pure reflexes bypass conscious will entirely. If Ponda's arm movement was truly reflexive from being shoved, it wasn't voluntary." },
+          { text: "An act performed under extreme duress from a third party", correct: false, explanation: "An act under duress is still a voluntary act — the person chooses to act, even if the choice is coerced. Duress is an affirmative defense, not a negation of the voluntary act requirement. The person's muscles are still responding to their will." },
+          { text: "An act performed while extremely intoxicated", correct: false, explanation: "Intoxicated acts are still voluntary acts. The person's muscles respond to their will, even if their judgment is impaired. Intoxication may affect mens rea analysis but doesn't negate the voluntary act requirement." }
+        ]
+      },
+      {
+        question: "The prosecution argues that even if the final blow was involuntary, Ponda's earlier threatening behavior satisfies the act requirement. Is this legally correct?",
+        doctrine: "Actus Reus — Sufficient Voluntary Act in the Chain",
+        choices: [
+          { text: "No — the specific act causing harm must itself be voluntary", correct: false, explanation: "This is too narrow. The MPC requires that liability be based on conduct that 'includes' a voluntary act — not that every component of the harmful conduct be voluntary. If Ponda's voluntary threatening behavior set in motion the chain of events leading to injury, that may suffice." },
+          { text: "Yes — liability requires only that the conduct 'include' a voluntary act; the entire sequence need not be voluntary", correct: true, explanation: "Correct! MPC §2.01(1) states that a person is not guilty unless liability is based on conduct that 'includes a voluntary act.' This means at least one act in the sequence must be voluntary. If Ponda voluntarily positioned himself aggressively and menaced the victim, those voluntary acts are part of the conduct leading to harm." },
+          { text: "Yes — once someone engages in threatening behavior, all subsequent actions are deemed voluntary", correct: false, explanation: "This is too broad. The law doesn't create a blanket rule that all subsequent actions become voluntary once threatening behavior begins. The voluntary act must still be part of the conduct forming the basis of liability, and there must be a sufficient causal connection." },
+          { text: "No — the prosecution must prove the defendant specifically intended the particular injury that occurred", correct: false, explanation: "This confuses the voluntary act requirement with mens rea. The voluntary act requirement is about whether the physical conduct was willed, not whether the specific result was intended. Intent goes to mens rea, which is a separate element." }
+        ]
+      },
+      {
+        question: "Martin v. State held that the defendant could not be convicted of public drunkenness when police carried him onto the street. This case illustrates:",
+        doctrine: "Voluntary Act — Martin v. State / Status Crimes",
+        choices: [
+          { text: "That intoxication is always a defense to criminal liability", correct: false, explanation: "Martin isn't about intoxication as a defense — it's about the voluntary act requirement. The issue was that Martin didn't voluntarily appear in public. He was involuntarily taken there by police. Intoxication itself was not the defense." },
+          { text: "That the government cannot punish a status or condition, only voluntary conduct", correct: false, explanation: "While related, this better describes Robinson v. California (criminalizing the status of addiction). Martin specifically addressed the voluntary act requirement — the defendant's appearance in public was not his own voluntary act because police physically brought him there." },
+          { text: "That a person cannot be convicted when the act element (appearing in public) was not performed voluntarily by the defendant", correct: true, explanation: "Correct! Martin v. State stands for the fundamental principle that criminal liability requires a voluntary act by the defendant. Martin was intoxicated at home; police took him to the street and then arrested him for public drunkenness. His appearance in public was not his voluntary act, so conviction was reversed." },
+          { text: "That police entrapment automatically negates criminal liability", correct: false, explanation: "Martin isn't an entrapment case. Entrapment involves the government inducing someone to commit a crime they weren't predisposed to commit. Martin is about the voluntary act requirement — the physical act of being in public wasn't Martin's voluntary conduct at all." }
+        ]
+      }
+    ],
+    loreReward: "Your analysis of the voluntariness doctrine impresses the Mos Eisley magistrate. Word spreads about the sharp new defender."
+  },
+
+  /* ─── RANK 1: Naboo ─── */
+  {
+    rank: 1,
+    title: "The Gungan Contamination",
+    subtitle: "Strict Liability & Public Welfare Offenses",
+    defendant: "Boss Nass Industries Ltd.",
+    crime: "Illegal dumping of plasma waste into Lake Paonga",
+    storyIntro: "You've been transferred to Naboo as an Assistant DA. A Gungan corporation dumped industrial waste into the lake, poisoning the water supply. The CEO claims he didn't know the waste was toxic.",
+    holobrief: [
+      "Boss Nass Industries operates a plasma refining facility. Waste byproducts were discharged into Lake Paonga for three months. Testing confirmed dangerous contamination levels.",
+      "CEO Roos Tarpals says he relied on his environmental officer's assurance that the discharge was within legal limits. He never personally reviewed the testing data."
+    ],
+    prosecutorArg: "This is a public welfare offense. The statute prohibits discharge of toxic waste — period. No mental state is required. The defendant's corporation discharged the waste, and that's sufficient for liability.",
+    questions: [
+      {
+        question: "Under Morissette v. United States and the public welfare offense doctrine, which factor would LEAST support treating this as a strict liability crime?",
+        doctrine: "Strict Liability / Morissette v. United States / Public Welfare Offenses",
+        choices: [
+          { text: "The crime carries a maximum sentence of 10 years imprisonment", correct: true, explanation: "Correct! Morissette and Staples v. United States emphasize that harsh penalties (especially significant imprisonment) weigh AGAINST strict liability. Public welfare offenses typically involve light penalties — fines or short jail terms. When severe punishment is at stake, courts presume Congress intended to require mens rea. A 10-year max would strongly suggest a mens rea requirement." },
+          { text: "The statute regulates a heavily regulated industry (plasma refining)", correct: false, explanation: "Being in a heavily regulated industry actually SUPPORTS strict liability. Under the public welfare doctrine, those who operate in regulated industries are on notice that their conduct may be subject to strict regulation. United States v. Dotterweich and United States v. Park establish that corporate officers in regulated industries may face strict liability." },
+          { text: "The harm poses a danger to public health and safety", correct: false, explanation: "Danger to public health supports treating this as a public welfare offense subject to strict liability. The public welfare offense doctrine was specifically developed for crimes that endanger community health and safety — like food safety, drug purity, and environmental protection." },
+          { text: "The statute does not include any express mens rea term like 'knowingly' or 'willfully'", correct: false, explanation: "The absence of a mens rea term in the statute supports a strict liability reading. While Morissette says courts should presume mens rea requirements even when not stated, this presumption is weakest for public welfare offenses. The absence of an express mens rea term is consistent with (though not conclusive of) strict liability." }
+        ]
+      },
+      {
+        question: "If this offense requires knowledge, can CEO Tarpals avoid liability by saying he relied on his environmental officer and never personally checked?",
+        doctrine: "Willful Blindness / Corporate Officer Liability",
+        choices: [
+          { text: "Yes — delegation of responsibility to a qualified expert negates knowledge", correct: false, explanation: "Delegation doesn't automatically negate knowledge. Under United States v. Park, corporate officers have an affirmative duty to implement measures ensuring compliance with regulations. Simply delegating and ignoring the results may constitute willful blindness rather than a valid defense." },
+          { text: "No — a corporate officer has an affirmative duty to ensure compliance, and deliberate ignorance of subordinates' conduct can establish knowledge", correct: true, explanation: "Correct! Under the responsible corporate officer doctrine (U.S. v. Park/U.S. v. Dotterweich), officers in regulated industries have a duty to implement measures ensuring compliance. Deliberately choosing not to review testing data when you have reason to be concerned is willful blindness, which satisfies knowledge. You can't insulate yourself by simply not looking." },
+          { text: "Yes — the knowledge element requires actual subjective awareness, which Tarpals lacked", correct: false, explanation: "While knowledge generally requires awareness, willful blindness is treated as its equivalent. If Tarpals was aware of a high probability that the waste was toxic and deliberately avoided confirming it, that satisfies the knowledge requirement under MPC §2.02(7)." },
+          { text: "No — strict liability applies to all environmental crimes regardless of mental state", correct: false, explanation: "Not all environmental crimes are strict liability. Many environmental statutes do include mens rea requirements (often 'knowingly'). Whether strict liability applies depends on the specific statute, the severity of penalties, and the public welfare offense analysis from Morissette." }
+        ]
+      },
+      {
+        question: "The MPC generally disfavors strict liability. Under MPC §2.05, how does it handle public welfare offenses?",
+        doctrine: "MPC §2.05 — Strict Liability Under the MPC",
+        choices: [
+          { text: "The MPC abolishes strict liability entirely for all offenses", correct: false, explanation: "The MPC doesn't completely abolish strict liability. It severely limits it but allows it for 'violations' — offenses that cannot result in imprisonment or probation. The MPC distinguishes between serious crimes (which require mens rea) and regulatory violations." },
+          { text: "The MPC permits strict liability only for 'violations' — offenses not subject to imprisonment", correct: true, explanation: "Correct! MPC §2.05 provides that strict liability is only appropriate for 'violations' (infractions that carry no imprisonment). For all true 'crimes,' the MPC requires at least negligence as a minimum culpability level. If no mens rea is specified, the MPC defaults to recklessness (§2.02(3)). This is the MPC's compromise between eliminating strict liability and recognizing regulatory needs." },
+          { text: "The MPC treats all public welfare offenses as requiring recklessness at minimum", correct: false, explanation: "This is partially right but imprecise. The MPC does default to recklessness when no culpability is stated (§2.02(3)), but it also carves out 'violations' where strict liability is acceptable. The key distinction is between violations (no imprisonment possible) and crimes (mens rea required)." },
+          { text: "The MPC applies strict liability to any crime where the legislature clearly intends it", correct: false, explanation: "The MPC does NOT simply defer to legislative intent for strict liability. It takes the normative position that strict liability is inappropriate for crimes that carry imprisonment. Even if a legislature wants strict liability for a serious offense, the MPC framework would oppose it on principle." }
+        ]
+      }
+    ],
+    loreReward: "The Naboo judiciary commends your understanding of regulatory law. Queen Amidala's office requests your reassignment to higher-profile matters."
+  },
+  {
+    rank: 1,
+    title: "The Omission at Otoh Gunga",
+    subtitle: "Duty to Act & Failure to Rescue",
+    defendant: "Jar Jar Binks",
+    crime: "Criminal negligent homicide by omission",
+    storyIntro: "A Gungan child fell into a drainage channel in the underwater city. Jar Jar, a trained lifeguard and the child's appointed caretaker, stood frozen with fear and did nothing. The child drowned.",
+    holobrief: [
+      "Jar Jar Binks was hired by the child's parents as a caretaker for the day. He is also a certified aquatic rescue specialist. When the child fell into the channel, multiple witnesses saw Jar Jar standing nearby, visibly panicked but making no effort to help.",
+      "The defense argues Jar Jar was paralyzed by a fear response and could not physically move — making his failure to act involuntary."
+    ],
+    prosecutorArg: "Jar Jar had every legal duty to act — as an appointed caretaker, as someone with a special relationship to the victim, and as a trained professional. His failure to act when he had the ability to do so constitutes criminal omission.",
+    questions: [
+      {
+        question: "Under the common law, which of the following does NOT create a legal duty to act (making failure to act potentially criminal)?",
+        doctrine: "Omission Liability — Duty to Act Categories",
+        choices: [
+          { text: "A special relationship (parent-child, spouse)", correct: false, explanation: "Special relationships DO create a duty to act. Parents have a legal duty to protect their children, spouses to each other. This is one of the most well-established categories of duty." },
+          { text: "A voluntary assumption of care that secludes the helpless person", correct: false, explanation: "Voluntary assumption of care DOES create a duty. When someone takes charge of another person (especially if doing so secludes them from other potential helpers), the law imposes a duty to continue providing care." },
+          { text: "Being a bystander who witnesses someone in danger and could easily help", correct: true, explanation: "Correct! The common law does NOT impose a general duty to rescue, no matter how easy it would be. A mere bystander has no legal obligation to help a stranger in danger — even if rescue would require minimal effort. This is the 'no duty to rescue' rule. Some find it morally troubling, but it remains the default common law position. Only specific relationship categories create the duty." },
+          { text: "A contractual obligation to provide care or protection", correct: false, explanation: "Contractual duty DOES create a legal duty to act. If you are hired to provide care (lifeguard, babysitter, nurse), your contract creates a legal duty, and failure to perform can constitute criminal omission." }
+        ]
+      },
+      {
+        question: "Jar Jar has at least two independent bases for a duty to act in this scenario. They are:",
+        doctrine: "Omission Liability — Multiple Duty Sources",
+        choices: [
+          { text: "Good Samaritan statute and moral obligation", correct: false, explanation: "Neither of these is correct. Good Samaritan statutes PROTECT rescuers from civil liability — they don't create a duty to rescue. And moral obligation alone is never a legal duty at common law, no matter how strong." },
+          { text: "Contractual duty (hired caretaker) and voluntary assumption of care (took charge of the child)", correct: true, explanation: "Correct! Jar Jar was (1) hired as a caretaker — creating a contractual duty, and (2) voluntarily assumed responsibility for the child's welfare — creating a duty through voluntary assumption of care. Either basis independently establishes the duty to act. His certified training further reinforces that he had the ability to act." },
+          { text: "Status as a trained professional and duty to report under mandatory reporting laws", correct: false, explanation: "While being a trained professional is relevant to ability to act, professional training alone doesn't create a common-law duty to rescue. And mandatory reporting laws (which require reporting suspected abuse) aren't applicable to an emergency rescue scenario." },
+          { text: "Creation of the peril and special relationship with the victim", correct: false, explanation: "Jar Jar didn't create the peril — the child fell on their own. And while Jar Jar has a custodial relationship, calling it a 'special relationship' in the parent-child/spouse sense is imprecise. The clearest bases are his contract and voluntary assumption of care." }
+        ]
+      },
+      {
+        question: "The defense claims Jar Jar was 'paralyzed by fear' and physically couldn't move. If true, how does this affect liability?",
+        doctrine: "Omission Liability — Capacity to Act",
+        choices: [
+          { text: "It is irrelevant — once a duty to act exists, failure to act is always criminal", correct: false, explanation: "Wrong. Criminal omission requires not just a duty but also the capacity to act. A person who is physically unable to perform the required act cannot be held criminally liable for failing to do it. The law doesn't punish the impossible." },
+          { text: "It negates the duty to act entirely, as duty is conditioned on ability", correct: false, explanation: "It doesn't negate the duty itself — the duty still exists based on the relationship. What it potentially negates is the ability to fulfill that duty. The distinction matters: the duty remains, but liability may not attach if performance was genuinely impossible." },
+          { text: "It could negate liability if the paralysis was truly involuntary, since criminal omission requires the capacity to perform the required act", correct: true, explanation: "Correct! Omission liability requires: (1) a legal duty to act, (2) knowledge of the facts giving rise to the duty, and (3) the capacity/ability to act. If Jar Jar was genuinely physically paralyzed by a fear response, he lacked the capacity to perform the duty. However, courts would scrutinize this claim carefully — true involuntary paralysis is rare and difficult to prove." },
+          { text: "It establishes an insanity defense because fear-paralysis is a mental defect", correct: false, explanation: "Fear-paralysis is not insanity. The insanity defense requires a mental disease or defect that prevents the defendant from appreciating the wrongfulness of their conduct or conforming to the law. A momentary fear response is neither a mental disease nor a defect — it's a physiological reaction." }
+        ]
+      }
+    ],
+    loreReward: "Senator Amidala personally thanks you for your thorough handling of this tragic case. Your reputation on Naboo grows."
+  },
+
+  /* ─── RANK 2: Coruscant ─── */
+  {
+    rank: 2,
+    title: "The Senate District Killing",
+    subtitle: "Voluntary Manslaughter & Heat of Passion",
+    defendant: "Commander Rex (Ret.)",
+    crime: "Murder / Voluntary Manslaughter",
+    storyIntro: "A retired clone commander discovered his spouse in their quarters with another person. In a blind rage, Rex struck and killed the other person with a decorative blaster rifle mounted on the wall.",
+    holobrief: [
+      "Rex returned home to find his spouse in a compromising position with a Senate aide. Rex grabbed a heavy mounted blaster rifle from the wall and struck the aide, killing him instantly.",
+      "Rex immediately called emergency services and was found weeping at the scene. He told officers: 'I just saw them and lost it. I couldn't think straight.'"
+    ],
+    prosecutorArg: "Rex retrieved a weapon and delivered a fatal blow. This was a deliberate killing. While the circumstances may be sympathetic, the law does not excuse lethal violence in response to discovering infidelity.",
+    questions: [
+      {
+        question: "For Rex to receive a voluntary manslaughter instruction (rather than murder), which elements must be established under the common law 'heat of passion' doctrine?",
+        doctrine: "Voluntary Manslaughter — Heat of Passion / Provocation",
+        choices: [
+          { text: "Adequate provocation, actual heat of passion, no cooling time, and a causal connection between provocation and killing", correct: true, explanation: "Correct! The four elements of heat of passion/provocation: (1) Adequate provocation — would provoke a reasonable person into passion; (2) Actual heat of passion — the defendant was actually provoked; (3) No adequate cooling time — not enough time elapsed for a reasonable person to cool off; (4) Causal connection — the defendant actually did not cool off and the killing was in response to the provocation. All four must be satisfied for the mitigation from murder to voluntary manslaughter." },
+          { text: "Sudden provocation and immediate response — no other elements required", correct: false, explanation: "This is incomplete. Merely showing suddenness isn't enough. The provocation must also be 'adequate' (measured by an objective reasonable person standard), and there must not have been sufficient cooling time. The doctrine has four specific elements, not just two." },
+          { text: "Self-defense, retreat if possible, and proportional force", correct: false, explanation: "These are elements of self-defense, not heat of passion. Self-defense justifies a killing entirely (complete defense). Heat of passion is a partial defense that mitigates murder to voluntary manslaughter — the killing is still unlawful, just less culpable." },
+          { text: "Mental disturbance, inability to form intent, and psychiatric evaluation", correct: false, explanation: "This sounds more like diminished capacity or insanity. Heat of passion doesn't require inability to form intent — rather, the defendant DID intend to kill but did so in a state of passion that partially excuses the conduct. It's about the circumstances, not a mental defect." }
+        ]
+      },
+      {
+        question: "Under the MPC's 'extreme mental or emotional disturbance' (EMED) standard, how does the analysis differ from common law heat of passion?",
+        doctrine: "MPC §210.3 — Extreme Mental or Emotional Disturbance",
+        choices: [
+          { text: "The MPC requires a specific enumerated provocation (like adultery or assault), while common law is more flexible", correct: false, explanation: "It's actually the opposite! The common law traditionally required specific categories of 'adequate provocation' (physical assault, mutual combat, witnessing adultery, etc.). The MPC's EMED standard is BROADER — it doesn't require any specific type of provocation and can be triggered by any circumstances." },
+          { text: "The MPC eliminates the cooling time requirement, uses a subjective 'reasonable person in the actor's situation' test, and doesn't require a specific provoking event", correct: true, explanation: "Correct! Three key differences: (1) No cooling time requirement — the MPC allows the disturbance to build over time (smoldering passion); (2) The reasonableness test is partially subjective — 'reasonable person in the actor's situation,' which can account for personal circumstances; (3) No specific provoking event is required — any source of extreme disturbance qualifies. This makes EMED significantly broader than common law heat of passion." },
+          { text: "The MPC makes heat of passion a complete defense rather than a mitigation", correct: false, explanation: "EMED under the MPC is still a partial defense — it reduces murder to manslaughter, just like heat of passion at common law. Neither doctrine completely excuses the killing." },
+          { text: "The MPC applies an entirely objective standard with no consideration of the defendant's personal characteristics", correct: false, explanation: "The MPC's test is actually MORE subjective than common law. It asks about a 'reasonable person in the actor's situation' — the phrase 'in the actor's situation' imports subjective characteristics of the defendant into the reasonableness analysis. This is one of the key expansions of the MPC approach." }
+        ]
+      },
+      {
+        question: "If Rex had discovered the affair, left the house for 3 hours, then returned and killed the aide, how would this affect the heat of passion defense?",
+        doctrine: "Heat of Passion — Cooling Time",
+        choices: [
+          { text: "Under common law, likely fatal to the defense because a reasonable person would have cooled off; under MPC EMED, the defense could still succeed", correct: true, explanation: "Correct! At common law, 3 hours would likely be considered adequate 'cooling time' for a reasonable person, destroying the heat of passion defense. But under the MPC's EMED, there is no rigid cooling time requirement. The question is simply whether the defendant acted under extreme emotional disturbance for which there is a reasonable explanation. A 'slow burn' or delayed emotional breakdown can still qualify." },
+          { text: "It would destroy the defense under both common law and MPC standards", correct: false, explanation: "While it would likely defeat the common law defense (due to cooling time), the MPC specifically eliminates the cooling time requirement. Under EMED, emotional disturbance can build over time rather than requiring immediate response to provocation." },
+          { text: "It would strengthen the defense by showing Rex tried to calm down but couldn't", correct: false, explanation: "Under common law, leaving and returning actually weakens the defense — it suggests Rex had time to cool off and his return was deliberate rather than passionate. The cooling time analysis is objective (reasonable person), not based on whether this particular defendant actually cooled off." },
+          { text: "The 3-hour gap is irrelevant under both standards because adultery is always adequate provocation", correct: false, explanation: "While adultery is traditionally recognized as adequate provocation, the cooling time requirement is a separate element that must be independently satisfied at common law. Adequate provocation alone isn't enough — all four elements must be met." }
+        ]
+      }
+    ],
+    loreReward: "Senior Counsel Tano observes: 'Your understanding of how passion intersects with criminal intent is maturing. Coruscant needs prosecutors who can see the humanity in even the darkest cases.'"
+  },
+  {
+    rank: 2,
+    title: "The Spice Cartel Conspiracy",
+    subtitle: "Conspiracy & Pinkerton Liability",
+    defendant: "Ziro the Hutt",
+    crime: "Conspiracy to distribute illegal spice & resulting deaths",
+    storyIntro: "You're prosecuting a sprawling spice cartel. The alleged leader, Ziro the Hutt, claims he withdrew from the conspiracy before the deadly shipment that killed 14 beings on Coruscant's lower levels.",
+    holobrief: [
+      "Intelligence shows Ziro organized a spice distribution network spanning three systems. Six months ago, Ziro sent a hologram to all co-conspirators saying: 'I'm out. This has gotten too dangerous. Don't contact me again.'",
+      "Three months after Ziro's message, his former lieutenant Cad Bane arranged a massive spice shipment. The contaminated spice killed 14 beings. Ziro was on Nal Hutta and had no involvement in this particular shipment."
+    ],
+    prosecutorArg: "Ziro built this machine of death. Under Pinkerton, he is liable for all foreseeable crimes committed by co-conspirators in furtherance of the conspiracy — even after his supposed withdrawal. Mere words aren't enough to escape.",
+    questions: [
+      {
+        question: "Under Pinkerton v. United States, a co-conspirator is liable for substantive crimes committed by other members of the conspiracy when:",
+        doctrine: "Pinkerton Liability / Vicarious Conspiracy Liability",
+        choices: [
+          { text: "The crimes were committed by any member of the conspiracy, regardless of foreseeability", correct: false, explanation: "Pinkerton liability is NOT unlimited. It requires that the substantive crimes be (1) committed in furtherance of the conspiracy, and (2) reasonably foreseeable as a natural consequence of the conspiratorial agreement. Without these limits, the doctrine would be unconstitutionally broad." },
+          { text: "The crimes were committed in furtherance of the conspiracy and were reasonably foreseeable as a natural consequence of the conspiratorial agreement", correct: true, explanation: "Correct! Pinkerton liability attaches when co-conspirators commit crimes that are (1) in furtherance of the conspiracy and (2) reasonably foreseeable. The rationale is that by joining a conspiracy, each member implicitly authorizes others to act on behalf of the group. If distributing contaminated spice and causing deaths was a foreseeable consequence of a spice distribution conspiracy, all members face liability — even for acts they didn't personally commit." },
+          { text: "The co-conspirator personally aided, abetted, or directed the specific criminal act", correct: false, explanation: "This describes accomplice liability, not Pinkerton liability. The whole point of Pinkerton is that it DOESN'T require personal involvement in the specific crime. It's vicarious liability arising from membership in the conspiracy itself." },
+          { text: "The co-conspirator was physically present when the crime was committed", correct: false, explanation: "Physical presence is not required under Pinkerton. The doctrine specifically allows liability for crimes committed by co-conspirators when the defendant was elsewhere. That's what makes it such a powerful prosecutorial tool — and why it's controversial." }
+        ]
+      },
+      {
+        question: "What must Ziro demonstrate to effectively withdraw from the conspiracy and avoid Pinkerton liability for subsequent acts?",
+        doctrine: "Withdrawal from Conspiracy",
+        choices: [
+          { text: "Simply ceasing to participate in conspiracy activities", correct: false, explanation: "Mere cessation of activity is NOT sufficient for withdrawal. A conspirator who simply stops participating but doesn't take affirmative steps to withdraw remains liable for ongoing acts of co-conspirators. The law requires more than passive disengagement." },
+          { text: "An affirmative act of withdrawal communicated to all co-conspirators, and some jurisdictions require informing law enforcement or taking steps to thwart the conspiracy's objectives", correct: true, explanation: "Correct! Effective withdrawal requires an affirmative act — typically communicating withdrawal to all co-conspirators. Some jurisdictions also require reasonable efforts to thwart the conspiracy's success (like informing authorities). Ziro's hologram might satisfy the communication requirement, but he took no steps to thwart the conspiracy (didn't contact law enforcement, didn't try to stop the operation). Under stricter standards, his withdrawal may be insufficient." },
+          { text: "Filing a formal legal declaration of withdrawal with the court", correct: false, explanation: "There's no requirement for a formal legal filing. Withdrawal is proven through evidence of affirmative acts — communication to co-conspirators and/or efforts to thwart the conspiracy. It's a factual question, not a procedural one." },
+          { text: "Withdrawing before any overt act in furtherance of the conspiracy has occurred", correct: false, explanation: "This is a timing issue for conspiracy liability itself, not for Pinkerton withdrawal. Once the conspiracy exists (agreement + overt act in many jurisdictions), withdrawal doesn't undo conspiracy liability — it only potentially limits liability for future substantive crimes committed by remaining conspirators." }
+        ]
+      },
+      {
+        question: "The MPC rejects Pinkerton liability. Under MPC §2.06, how would Ziro's liability for the deaths be analyzed?",
+        doctrine: "MPC §2.06 — Rejection of Pinkerton / Accomplice Liability",
+        choices: [
+          { text: "Ziro would be automatically liable as the conspiracy's founder regardless of his withdrawal", correct: false, explanation: "The MPC doesn't impose automatic vicarious liability based on conspiracy membership. Each person's liability must be independently established based on their own conduct and mental state." },
+          { text: "Ziro could only be liable if he personally aided, agreed to aid, or attempted to aid in the specific criminal conduct causing the deaths", correct: true, explanation: "Correct! The MPC requires individual accomplice liability under §2.06 rather than vicarious Pinkerton liability. Ziro would need to have personally aided, agreed to aid, or attempted to aid Cad Bane in the specific shipment that caused deaths. Since Ziro withdrew and had no involvement in that shipment, he likely wouldn't be liable for the deaths under the MPC — though he'd still be liable for the conspiracy itself." },
+          { text: "The analysis would be identical to Pinkerton because the MPC adopted vicarious conspiracy liability", correct: false, explanation: "The MPC explicitly REJECTED Pinkerton-style vicarious liability. The MPC drafters viewed Pinkerton as imposing guilt by association and insisted that each person's liability be based on their own culpable conduct. This is one of the major differences between federal law and the MPC." },
+          { text: "Ziro could be liable under transferred intent since his original conspiracy set events in motion", correct: false, explanation: "Transferred intent is a different doctrine — it applies when a defendant intends to harm one person but accidentally harms another. It doesn't apply to the situation of a former conspirator being held liable for acts of remaining members." }
+        ]
+      }
+    ],
+    loreReward: "Hondo Ohnaka, your court informant, whispers: 'This prosecution of the Hutt cartel has made you famous — and very dangerous to the wrong people. The Tribunal has noticed.'"
+  },
+
+  /* ─── RANK 3: Galactic High Tribunal ─── */
+  {
+    rank: 3,
+    title: "The Order 66 Trials",
+    subtitle: "Superior Orders, Duress & Necessity",
+    defendant: "CT-7567 'Rex' Clone Battalion",
+    crime: "War crimes — execution of Jedi during Order 66",
+    storyIntro: "The galaxy's most politically charged trial. Clone troopers who carried out Order 66 argue they were following lawful orders from their Supreme Commander and had no choice due to their inhibitor chips.",
+    holobrief: [
+      "When Order 66 was issued, clone troopers across the galaxy turned on their Jedi commanders. Most clones had inhibitor chips that compelled obedience, but evidence shows some clones — like Rex — partially resisted, suggesting varying degrees of free will.",
+      "The prosecution faces the question: can soldiers who followed orders under biological compulsion be held criminally responsible? The defense raises three theories: superior orders, duress, and involuntary act."
+    ],
+    prosecutorArg: "Even under military law, 'I was following orders' is not an absolute defense. If the order was manifestly illegal — and ordering the extermination of an entire group is manifestly illegal — then obedience to that order is not excused. Some clones DID resist, proving compliance was not truly involuntary.",
+    questions: [
+      {
+        question: "Under modern criminal law principles, the 'superior orders' defense (I was just following orders) is:",
+        doctrine: "Superior Orders Defense / Nuremberg Principles",
+        choices: [
+          { text: "An absolute defense — soldiers must always obey orders from superiors", correct: false, explanation: "Superior orders is NOT an absolute defense. This was definitively established at the Nuremberg Trials. If it were absolute, any atrocity could be justified by claiming it was ordered by a superior. The law places some responsibility on individuals to refuse manifestly illegal orders." },
+          { text: "Never a defense — individuals are always personally responsible regardless of orders", correct: false, explanation: "While Nuremberg rejected superior orders as an absolute defense, it's not completely irrelevant either. Some jurisdictions allow it as a mitigating factor, and it may be a defense where the order was not 'manifestly illegal' — i.e., where a reasonable person wouldn't have known the order was unlawful." },
+          { text: "Not a defense when the order is 'manifestly illegal' — an order so clearly unlawful that a reasonable person would know it's illegal — but may mitigate in less clear cases", correct: true, explanation: "Correct! The modern rule (from Nuremberg forward): superior orders is not a defense when the order is 'manifestly illegal' — meaning so clearly unlawful that any reasonable person would recognize it as illegal. Ordering the systematic execution of an entire group (the Jedi) would be manifestly illegal. However, for ambiguous orders, following superior commands may be a mitigating factor or even a defense." },
+          { text: "A complete defense under military law but not under civilian criminal law", correct: false, explanation: "Even military law doesn't make superior orders a complete defense for manifestly illegal orders. The Uniform Code of Military Justice and international humanitarian law both require soldiers to refuse clearly illegal orders. The military/civilian distinction doesn't create an absolute safe harbor." }
+        ]
+      },
+      {
+        question: "If the inhibitor chips created an irresistible compulsion, which defense theory best applies?",
+        doctrine: "Duress vs. Involuntary Act / MPC §2.09",
+        choices: [
+          { text: "Duress — because the chips placed the clones under threat of harm if they didn't comply", correct: false, explanation: "Duress requires a threat from another person — typically a threat of imminent death or serious bodily harm that a person of reasonable firmness couldn't resist. An inhibitor chip isn't a 'threat' — it's a biological mechanism that overrides free will. Duress assumes the defendant still had a choice (even if coerced); the chip removes choice entirely." },
+          { text: "Involuntary act — because a biologically compelled action is not a product of the actor's effort or determination", correct: true, explanation: "Correct! If the inhibitor chip truly overrode the clone's free will — making their body act without voluntary control — then the act fails the voluntary act requirement of MPC §2.01. An action that isn't a product of the actor's 'effort or determination' isn't a voluntary act, and no criminal liability can attach. This is more fundamental than duress — it negates the actus reus entirely rather than providing an excuse." },
+          { text: "Necessity — because the clones had to follow the order to prevent greater harm", correct: false, explanation: "Necessity requires a conscious choice of the lesser evil — the defendant must choose to commit a crime to avoid a greater harm. If the chips removed free will, there was no 'choice' to analyze under necessity. And even with free will, it's hard to argue that killing Jedi was the lesser evil compared to disobeying the order." },
+          { text: "Insanity — because the chips created a mental defect preventing appreciation of wrongfulness", correct: false, explanation: "The insanity defense applies to mental disease or defect. An inhibitor chip that overrides motor control is more like physical compulsion than mental illness. If the clones KNEW what they were doing was wrong but physically couldn't stop (like Rex, who partially resisted), that's not insanity — it's involuntary action." }
+        ]
+      },
+      {
+        question: "For clones who partially resisted (suggesting some free will), the defense might alternatively argue duress. Under the MPC, duress requires:",
+        doctrine: "Duress / MPC §2.09",
+        choices: [
+          { text: "A threat that would cause a person of reasonable firmness in the actor's situation to commit the crime — measured by an objective standard with subjective situational factors", correct: true, explanation: "Correct! MPC §2.09 defines duress as a threat that 'a person of reasonable firmness in [the actor's] situation' would be unable to resist. This blends objective and subjective: the 'person of reasonable firmness' is objective, but 'in the actor's situation' imports the specific circumstances the defendant faced. The MPC also doesn't limit duress to threats of death/bodily harm and doesn't categorically exclude it from murder charges (unlike common law)." },
+          { text: "An imminent threat of death — and only death, not other types of harm", correct: false, explanation: "This is too narrow even for common law. The common law requires imminent threat of death or serious bodily harm (not just death). The MPC is even broader — it doesn't limit the type of threat, asking only whether a person of reasonable firmness would have been coerced." },
+          { text: "A threat from a human actor — duress cannot arise from natural circumstances", correct: false, explanation: "While traditional duress does typically involve threats from other persons (natural circumstances fall under necessity), the MPC's formulation focuses on coercive conditions more broadly. The key analytical framework asks whether the defendant's will was overborne, though the threat typically does come from another person." },
+          { text: "That the defendant had no opportunity to escape the threatening situation", correct: false, explanation: "While opportunity to escape is relevant, it's not a separate required element under the MPC. It's folded into the 'person of reasonable firmness' analysis — if escape was readily available, a person of reasonable firmness would have escaped rather than committed the crime." }
+        ]
+      }
+    ],
+    loreReward: "Grand Master Yoda speaks: 'The hardest cases, these are. When free will itself is in question, the very foundations of criminal law, test you must. Ready for the highest stage, you are.'"
+  },
+  {
+    rank: 3,
+    title: "The Death Star Sabotage",
+    subtitle: "Necessity, Defense of Others & Causation",
+    defendant: "Galen Erso",
+    crime: "High treason — sabotaging Imperial military project",
+    storyIntro: "Galen Erso, the scientist who built a fatal flaw into the Death Star, faces trial. He argues his sabotage was necessary to save billions of lives — but the Empire claims it was treason, pure and simple.",
+    holobrief: [
+      "Galen Erso deliberately designed a vulnerability in the Death Star's reactor system. The flaw was exploited by Rebel forces, leading to the station's destruction and the deaths of over 1 million Imperial personnel.",
+      "Erso argues he acted out of necessity — the Death Star would have destroyed entire planets (as it did with Alderaan), and his sabotage was the only way to enable its eventual destruction. The prosecution argues he could have simply refused to work on the project."
+    ],
+    prosecutorArg: "Erso didn't just commit sabotage — he facilitated the deaths of over a million beings. He had other options: he could have refused to work, he could have gone public, he could have fled. Necessity does not apply when the defendant himself chose to participate in the project.",
+    questions: [
+      {
+        question: "For the necessity (choice of evils) defense to apply under the MPC, which conditions must be met?",
+        doctrine: "Necessity / Choice of Evils / MPC §3.02",
+        choices: [
+          { text: "The defendant must face an imminent natural disaster; necessity cannot apply to human-created threats", correct: false, explanation: "The MPC does not limit necessity to natural disasters. While common law historically distinguished necessity (natural threats) from duress (human threats), the MPC's choice of evils defense under §3.02 applies broadly to any situation where the defendant believes the conduct is necessary to avoid a greater evil." },
+          { text: "The defendant must believe the conduct is necessary to avoid a harm greater than the harm caused, and the legislature must not have already addressed the situation", correct: true, explanation: "Correct! MPC §3.02 requires: (1) The defendant believes their conduct is necessary to avoid an evil to themselves or others; (2) The evil sought to be avoided is greater than the evil of the criminal conduct; (3) No legislative purpose to exclude the justification is plainly apparent. Erso could argue that preventing planetary genocide (billions of lives) is a greater good than the harm from his sabotage — but the prosecution would argue he had lawful alternatives." },
+          { text: "The defendant must have exhausted all legal alternatives before resorting to criminal conduct", correct: false, explanation: "While the availability of legal alternatives is relevant (and works against the necessity defense), it's not an absolute requirement under the MPC. The MPC frames it as a balancing test — the evil avoided must be greater than the evil caused. Having alternatives weakens but doesn't automatically destroy the defense." },
+          { text: "The defendant must not have been at fault in creating the situation requiring the choice of evils", correct: false, explanation: "This is a common law limitation on necessity, but the MPC takes a different approach. Under MPC §3.02, the key question is the balance of evils, not how the defendant came to face the choice. However, fault in creating the situation may be relevant to the court's overall analysis." }
+        ]
+      },
+      {
+        question: "Regarding causation: Erso designed the flaw, but Rebel pilots actually fired the shots that destroyed the Death Star. Is Erso a but-for cause of the million deaths?",
+        doctrine: "Causation — But-For (Actual) Cause & Intervening Acts",
+        choices: [
+          { text: "No — the Rebel pilots who fired the shots are the sole but-for cause, breaking the causal chain", correct: false, explanation: "But-for causation isn't exclusive — multiple actors can each be but-for causes. Without Erso's flaw, the Rebel attack would have failed. Without the Rebels' attack, the flaw would never have been exploited. Both are but-for causes. An intervening act only breaks the chain if it's a 'superseding' cause — independent, unforeseeable, and sufficient on its own." },
+          { text: "Yes — but for Erso's deliberate flaw, the Death Star would not have been destroyed by the Rebel attack", correct: true, explanation: "Correct! The but-for test: would the harm have occurred 'but for' the defendant's conduct? Without Erso's designed vulnerability, the Rebel attack would have failed (the Death Star was otherwise impervious). The Rebels' actions don't break the causal chain because they were the foreseeable consequence Erso intended — he designed the flaw specifically so someone could exploit it. When an intervening act is foreseeable (or even intended), it doesn't supersede the original cause." },
+          { text: "Causation is irrelevant because this is an inchoate crime (sabotage)", correct: false, explanation: "Even if the sabotage charge is inchoate, the prosecution is also charging him in connection with the resulting deaths. And even inchoate crimes have causation elements — attempt requires conduct that is a substantial step, conspiracy requires an overt act in some jurisdictions." },
+          { text: "Yes, but the causal chain is too attenuated for proximate cause because years passed between the sabotage and the destruction", correct: false, explanation: "Temporal distance alone doesn't sever proximate cause. The key question is foreseeability and whether the result was within the scope of the risk created by the defendant's conduct. Erso specifically intended his flaw to be exploited — the destruction was not just foreseeable, it was his purpose. Time delay doesn't defeat proximate cause when the chain of events unfolds as the defendant planned." }
+        ]
+      },
+      {
+        question: "If Erso argues 'defense of others' — he was protecting the future victims of the Death Star — which limitation poses the greatest obstacle?",
+        doctrine: "Defense of Others / Justification Limitations",
+        choices: [
+          { text: "Defense of others only protects against threats to people you personally know", correct: false, explanation: "The modern rule (and MPC) doesn't limit defense of others to people you know. The old 'alter ego' rule (you step into the shoes of the person defended) has been largely abandoned. The MPC allows defense of any person you believe is threatened." },
+          { text: "Defense of others requires an imminent threat — future, speculative threats are insufficient even if highly probable", correct: true, explanation: "Correct! Both common law and the MPC generally require that the threat be imminent — meaning immediate and about to occur. Erso's 'defense' was against future, potential planetary destruction. While Alderaan's destruction later proved his fears correct, at the time of his sabotage, the threat was speculative. The imminence requirement exists to prevent vigilante justice based on predicted future harms." },
+          { text: "Defense of others is limited to non-deadly force; lethal force can never be used to protect third parties", correct: false, explanation: "This is incorrect. Deadly force CAN be used in defense of others when the person being protected would be justified in using deadly force in self-defense — typically when facing a threat of death or serious bodily harm." },
+          { text: "Defense of others requires retreat before using force", correct: false, explanation: "Even in 'duty to retreat' jurisdictions, the retreat requirement applies primarily to self-defense, and many jurisdictions don't impose it at all. More importantly, retreat isn't the main obstacle here — the imminence requirement is the fundamental problem with Erso's claim." }
+        ]
+      }
+    ],
+    loreReward: "Ahsoka Tano speaks: 'The Erso case will be studied for generations. You've shown the Tribunal you can navigate the most morally complex cases in the galaxy. One final challenge awaits.'"
+  },
+
+  /* ─── RANK 4: Galactic Senate / AG ─── */
+  {
+    rank: 4,
+    title: "The Trial of Emperor Palpatine",
+    subtitle: "The People v. Sheev Palpatine",
+    defendant: "Sheev Palpatine / Darth Sidious",
+    crime: "Conspiracy, mass murder, crimes against the galaxy",
+    storyIntro: "The final case of your career. As Attorney General, you must prosecute the most powerful being in galactic history. Palpatine orchestrated the Clone Wars, destroyed the Jedi Order, and enslaved entire star systems. Every doctrine you've learned leads to this moment.",
+    holobrief: [
+      "Palpatine manipulated both sides of the Clone Wars, secretly controlling the Separatists while serving as Supreme Chancellor of the Republic. He issued Order 66, destroying the Jedi. He dissolved the Senate and ruled as Emperor.",
+      "His defense team argues: (1) Palpatine had lawful authority as Supreme Chancellor; (2) His actions were taken under the emergency powers legally granted by the Senate; (3) The Jedi were staging a coup and Order 66 was a lawful military response.",
+      "Your prosecution must prove that Palpatine's authority was obtained through fraud and conspiracy, that emergency powers don't authorize genocide, and that the Jedi 'coup' was provoked by Palpatine himself."
+    ],
+    prosecutorArg: "This is the most extensive criminal conspiracy in galactic history. Palpatine conspired with Count Dooku, General Grievous, and others to manufacture a war. Every death in the Clone Wars, every Jedi executed under Order 66, every being enslaved under the Empire — all flow from this conspiracy.",
+    questions: [
+      {
+        question: "The prosecution charges Palpatine with conspiracy. Under the common law, what are the essential elements of conspiracy?",
+        doctrine: "Conspiracy — Elements",
+        choices: [
+          { text: "An agreement between two or more persons to commit an unlawful act — the agreement itself is the crime, and most jurisdictions also require an overt act in furtherance", correct: true, explanation: "Correct! Conspiracy requires: (1) An agreement between two or more persons (2) to commit a crime or unlawful act, and (3) most jurisdictions require at least one overt act in furtherance of the agreement (though a few, like federal conspiracy under 18 U.S.C. §371, don't require an overt act for certain offenses). The agreement is the essence of conspiracy — it's a crime of planning, not just execution." },
+          { text: "A formal written agreement, at least three participants, and completion of the target offense", correct: false, explanation: "Conspiracy doesn't require a formal or written agreement — it can be inferred from conduct and circumstances. It requires only two (not three) persons under traditional bilateral conspiracy. And crucially, the target offense does NOT need to be completed — conspiracy is an inchoate crime punishable even if the planned crime never occurs." },
+          { text: "Shared criminal intent and substantial steps toward completion of the offense", correct: false, explanation: "This sounds more like attempt than conspiracy. Attempt requires a substantial step toward commission of a crime. Conspiracy requires an agreement plus (usually) an overt act — which can be far less significant than a 'substantial step.' A phone call to discuss plans can be an overt act for conspiracy." },
+          { text: "Planning a crime, acquiring materials, and having the means to carry it out", correct: false, explanation: "This describes preparation, which falls short of even attempt. Conspiracy is specifically about the agreement between persons — the collective danger of group criminal planning. Materials and means aren't elements of conspiracy." }
+        ]
+      },
+      {
+        question: "Palpatine argues his emergency powers authorized his actions. Under the legality principle (nulla poena sine lege), what is the strongest counterargument?",
+        doctrine: "Legality Principle / Void for Vagueness / Rule of Lenity",
+        choices: [
+          { text: "Emergency powers cannot authorize actions that violate jus cogens norms (fundamental, non-derogable principles of law like the prohibition on genocide)", correct: true, explanation: "Correct! The legality principle ensures fair notice and limits arbitrary enforcement. But some acts — genocide, mass murder, enslavement — violate norms so fundamental (jus cogens) that no legal authority can authorize them. Even if Palpatine's emergency powers were facially broad, they cannot be construed to authorize genocide and mass extermination. The legality principle protects defendants from vague laws, but it doesn't protect government officials who commit atrocities under color of authority." },
+          { text: "The emergency powers were void for vagueness and therefore Palpatine lacked any legal authority", correct: false, explanation: "Void for vagueness protects DEFENDANTS from being prosecuted under unclear laws. It wouldn't help Palpatine — he's the one who drafted the vague powers to give himself cover. Vagueness doctrine exists to protect ordinary citizens from unfair surprise, not to shield those who exploited ambiguity in laws they controlled." },
+          { text: "The rule of lenity requires interpreting the emergency powers narrowly against the government, benefiting Palpatine", correct: false, explanation: "The rule of lenity requires ambiguous criminal statutes to be interpreted in favor of the defendant. But lenity applies to criminal statutes being used to prosecute someone — it doesn't mean that vague authorizing legislation gives unlimited power. Palpatine can't use lenity to expand his authority while simultaneously claiming it was clearly authorized." },
+          { text: "No counterargument exists — if the Senate legally granted the powers, the actions were lawful", correct: false, explanation: "Legal positivism has limits. The grant of authority obtained through fraud (Palpatine manufactured the war that justified emergency powers) is voidable. Moreover, certain actions are criminal regardless of domestic authorization — this principle was established at Nuremberg, where 'lawful authority under German law' was rejected as a defense to crimes against humanity." }
+        ]
+      },
+      {
+        question: "Palpatine provoked the Jedi 'coup attempt' by revealing himself as a Sith Lord, then used the Jedi's response to justify Order 66. In causation terms, the Jedi's attack on Palpatine would be considered:",
+        doctrine: "Causation — Intervening & Superseding Causes / Provocation",
+        choices: [
+          { text: "A superseding cause that breaks the causal chain — the Jedi made their own independent choice to attack", correct: false, explanation: "A superseding cause must be unforeseeable and independent. The Jedi's response to discovering a Sith Lord controlling the Republic was entirely foreseeable — Palpatine counted on it! When the defendant deliberately provokes a response and then uses that response as justification, the provoked response is not superseding. It's part of the defendant's plan." },
+          { text: "A dependent intervening cause — foreseeable because Palpatine deliberately provoked it, and therefore it does NOT break the causal chain", correct: true, explanation: "Correct! A dependent intervening cause is one that is a foreseeable response to the defendant's conduct. When a defendant deliberately provokes a response, that response is by definition foreseeable (intended, even). Palpatine engineered the situation: he revealed himself as a Sith specifically to provoke the Jedi, then used their predictable response to justify Order 66. The Jedi's response was a dependent intervening cause that does not sever Palpatine's causal responsibility." },
+          { text: "Irrelevant to causation — only the final act (Order 66) matters for the causal analysis", correct: false, explanation: "Causation analysis traces the entire chain of events from the defendant's initial conduct to the ultimate harm. The Jedi's attack is relevant because it's a link in that chain. Courts examine intervening events to determine whether they break or maintain the causal connection." },
+          { text: "An act of self-defense by the Jedi that legally breaks the causal chain regardless of foreseeability", correct: false, explanation: "Even if the Jedi acted in self-defense, that doesn't automatically sever the causal chain. The legal character of an intervening act (defensive, negligent, criminal) is less important than its foreseeability. A foreseeable defensive response provoked by the defendant remains within the chain of causation." }
+        ]
+      },
+      {
+        question: "Under the felony murder doctrine, if Palpatine committed treason (a felony) and deaths resulted during the commission of that felony, could felony murder apply?",
+        doctrine: "Felony Murder Rule & Limitations",
+        choices: [
+          { text: "Yes, with no limitations — any death during any felony is automatically murder", correct: false, explanation: "The felony murder rule has significant limitations. Most jurisdictions limit it to 'inherently dangerous' felonies (or specific enumerated felonies), require that deaths be foreseeable, and apply the merger doctrine to prevent its overuse. An unlimited felony murder rule would essentially eliminate the mens rea requirement for murder." },
+          { text: "Yes, but subject to limitations: the felony must be inherently dangerous, the death must be foreseeable, and the merger doctrine may apply if the underlying felony is assaultive", correct: true, explanation: "Correct! Key limitations on felony murder: (1) The predicate felony must typically be 'inherently dangerous' (either per se or as committed); (2) The death must occur during or in furtherance of the felony; (3) The merger doctrine prevents using the killing itself as the predicate felony (to prevent all murders from becoming felony murders); (4) Some jurisdictions require that the death be a foreseeable consequence. For Palpatine's massive conspiracy, the felony murder doctrine would complement, not replace, the direct murder charges." },
+          { text: "No — felony murder only applies to traditional felonies like robbery and burglary, not political crimes", correct: false, explanation: "Felony murder isn't limited to specific traditional felonies (though many statutes enumerate which felonies qualify). The doctrine focuses on whether the underlying felony is sufficiently dangerous, not on whether it's 'traditional.' Treason, as a felony inherently involving danger to life, could certainly support felony murder." },
+          { text: "No — the MPC abolishes the felony murder rule entirely", correct: false, explanation: "The MPC does essentially abolish the traditional felony murder rule, but it creates a rebuttable presumption of extreme indifference (the recklessness element for murder) when death occurs during certain felonies (§210.2(1)(b)). And many U.S. jurisdictions retain the felony murder rule despite the MPC's recommendation. The question asks about 'the felony murder doctrine' generally, not exclusively the MPC." }
+        ]
+      }
+    ],
+    loreReward: "The galaxy watches as you deliver the closing argument of the millennium. Chancellor Mothma rises: 'The Attorney General has proven that no one — not even an Emperor — stands above the law. Justice will be the foundation of our New Republic.'"
+  }
+];
+
+/* ───── STARFIELD COMPONENT ───── */
+function Starfield() {
+  const canvasRef = useRef(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animId;
+    const stars = [];
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    resize();
+    window.addEventListener('resize', resize);
+    for (let i = 0; i < 200; i++) {
+      stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 1.5 + 0.5, twinkle: Math.random() * Math.PI * 2, speed: Math.random() * 0.02 + 0.01 });
+    }
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(s => {
+        s.twinkle += s.speed;
+        const a = 0.4 + 0.6 * Math.abs(Math.sin(s.twinkle));
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fill();
+      });
+      animId = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize); };
+  }, []);
+  return <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }} />;
+}
+
+/* ───── LOCATION SCENE (SVG ART) ───── */
+function LocationScene({ type, color }) {
+  const scenes = {
+    tatooine: (
+      <svg viewBox="0 0 400 200" style={{ width: '100%', maxWidth: 400 }}>
+        <defs><linearGradient id="tsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#1a0a2e"/><stop offset="100%" stopColor="#c2873a"/></linearGradient></defs>
+        <rect width="400" height="200" fill="url(#tsky)"/>
+        <circle cx="320" cy="50" r="25" fill="#FFE81F" opacity="0.9"/><circle cx="280" cy="70" r="15" fill="#ff8844" opacity="0.7"/>
+        <rect x="50" y="130" width="30" height="40" rx="3" fill="#8B7355"/><rect x="55" y="120" width="20" height="15" rx="10" fill="#9B8365"/>
+        <rect x="150" y="125" width="40" height="50" rx="3" fill="#7B6345"/><rect x="155" y="115" width="30" height="15" rx="10" fill="#8B7355"/>
+        <rect x="250" y="135" width="25" height="35" rx="3" fill="#6B5335"/>
+        <ellipse cx="200" cy="175" rx="200" ry="30" fill="#c2873a" opacity="0.5"/>
+        <text x="200" y="195" textAnchor="middle" fill="#FFE81F" fontSize="11" fontFamily="monospace">MOS EISLEY · TATOOINE</text>
+      </svg>
+    ),
+    naboo: (
+      <svg viewBox="0 0 400 200" style={{ width: '100%', maxWidth: 400 }}>
+        <defs><linearGradient id="nsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0a1628"/><stop offset="100%" stopColor="#1a4a3a"/></linearGradient></defs>
+        <rect width="400" height="200" fill="url(#nsky)"/>
+        <rect x="140" y="80" width="120" height="80" rx="5" fill="#2a6a4a"/><rect x="160" y="60" width="80" height="30" rx="3" fill="#3a7a5a"/>
+        <rect x="185" y="45" width="30" height="20" rx="15" fill="#4a9a6e"/><rect x="175" y="55" width="50" height="10" fill="#3a7a5a"/>
+        <ellipse cx="200" cy="165" rx="180" ry="20" fill="#1a5a3a" opacity="0.5"/>
+        <circle cx="100" cy="130" r="20" fill="#2a6a4a" opacity="0.6"/><circle cx="310" cy="125" r="25" fill="#2a6a4a" opacity="0.5"/>
+        <rect x="80" y="140" width="40" height="2" fill="#4a9a6e" opacity="0.3"/><rect x="290" y="145" width="50" height="2" fill="#4a9a6e" opacity="0.3"/>
+        <text x="200" y="195" textAnchor="middle" fill="#8ce8b0" fontSize="11" fontFamily="monospace">THEED · NABOO</text>
+      </svg>
+    ),
+    coruscant: (
+      <svg viewBox="0 0 400 200" style={{ width: '100%', maxWidth: 400 }}>
+        <defs><linearGradient id="csky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0a0e2a"/><stop offset="100%" stopColor="#1a2a4a"/></linearGradient></defs>
+        <rect width="400" height="200" fill="url(#csky)"/>
+        {[60,100,140,180,220,260,300].map((x,i) => <rect key={i} x={x} y={70+Math.sin(i)*20} width={20+i*2} height={100-Math.sin(i)*20} fill={`rgba(80,120,180,${0.3+i*0.08})`} rx="2"/>)}
+        {[80,130,170,210,250,290].map((x,i) => <rect key={i+'w'} x={x+3} y={80+Math.sin(i)*20} width="3" height="3" fill="#FFE81F" opacity="0.6"/>)}
+        <text x="200" y="195" textAnchor="middle" fill="#88aaee" fontSize="11" fontFamily="monospace">REPUBLIC JUDICIARY · CORUSCANT</text>
+      </svg>
+    ),
+    tribunal: (
+      <svg viewBox="0 0 400 200" style={{ width: '100%', maxWidth: 400 }}>
+        <defs><linearGradient id="trsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#1a0a2e"/><stop offset="100%" stopColor="#2a1a4a"/></linearGradient></defs>
+        <rect width="400" height="200" fill="url(#trsky)"/>
+        <rect x="120" y="70" width="160" height="100" rx="8" fill="#2a1a4a" stroke="#9966cc" strokeWidth="1"/>
+        <rect x="160" y="50" width="80" height="25" rx="12" fill="#3a2a5a" stroke="#9966cc" strokeWidth="1"/>
+        <circle cx="200" cy="100" r="20" fill="none" stroke="#bb88ee" strokeWidth="2" opacity="0.5"/>
+        <line x1="200" y1="85" x2="200" y2="115" stroke="#bb88ee" strokeWidth="1" opacity="0.5"/>
+        <line x1="185" y1="100" x2="215" y2="100" stroke="#bb88ee" strokeWidth="1" opacity="0.5"/>
+        <text x="200" y="195" textAnchor="middle" fill="#bb88ee" fontSize="11" fontFamily="monospace">GALACTIC HIGH TRIBUNAL</text>
+      </svg>
+    ),
+    senate: (
+      <svg viewBox="0 0 400 200" style={{ width: '100%', maxWidth: 400 }}>
+        <defs><linearGradient id="ssky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0a0a1a"/><stop offset="100%" stopColor="#1a1a3a"/></linearGradient></defs>
+        <rect width="400" height="200" fill="url(#ssky)"/>
+        <ellipse cx="200" cy="120" rx="100" ry="60" fill="#1a1a3a" stroke="#FFE81F" strokeWidth="1"/>
+        <ellipse cx="200" cy="120" rx="70" ry="40" fill="#0a0a2a" stroke="#FFE81F" strokeWidth="0.5" opacity="0.5"/>
+        <circle cx="200" cy="120" r="15" fill="#FFE81F" opacity="0.2"/>
+        <text x="200" y="118" textAnchor="middle" fill="#FFE81F" fontSize="8" fontFamily="monospace">AG</text>
+        <text x="200" y="195" textAnchor="middle" fill="#FFE81F" fontSize="11" fontFamily="monospace">GALACTIC SENATE · OFFICE OF THE AG</text>
+      </svg>
+    )
+  };
+  return <div style={{ textAlign: 'center', marginBottom: 16 }}>{scenes[type] || null}</div>;
+}
+
+/* ───── OPENING CRAWL ───── */
+function OpeningCrawl({ onComplete }) {
+  useEffect(() => { const t = setTimeout(onComplete, 22000); return () => clearTimeout(t); }, [onComplete]);
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 100, overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} onClick={onComplete}>
+      <div style={{ color: '#4ae', fontSize: 18, marginBottom: 40, letterSpacing: 2 }}>A long time ago in a galaxy far, far away....</div>
+      <div style={{ perspective: 400, width: '80%', maxWidth: 600, height: '60vh', overflow: 'hidden' }}>
+        <div style={{ animation: 'crawl 20s linear forwards', transformOrigin: '50% 100%', color: '#FFE81F', fontSize: 20, lineHeight: 1.8, textAlign: 'center' }}>
+          <p style={{ fontSize: 32, fontWeight: 'bold', marginBottom: 30 }}>THE GALACTIC HIGH TRIBUNAL</p>
+          <p>The galaxy stands at the precipice of justice. A young legal mind emerges from the dusty courts of Tatooine, destined to reshape the Republic's understanding of criminal law.</p>
+          <br/>
+          <p>From defending petty thieves in Mos Eisley to prosecuting the Emperor himself before the Galactic Senate, one attorney's journey will test every doctrine of criminal jurisprudence.</p>
+          <br/>
+          <p>Master the elements of crime. Understand mens rea, actus reus, causation, and defenses. Rise through the ranks. Become the Attorney General of the Galactic Republic.</p>
+          <br/>
+          <p style={{ fontSize: 14, opacity: 0.7 }}>Click anywhere to skip...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───── REUSABLE UI ───── */
+function Panel({ children, style }) {
+  return <div style={{ background: 'rgba(10,14,26,0.92)', border: '1px solid rgba(255,232,31,0.15)', borderRadius: 12, padding: '24px 28px', marginBottom: 16, backdropFilter: 'blur(8px)', ...style }}>{children}</div>;
+}
+
+function Dialogue({ char, children }) {
+  const c = CH[char] || { name: 'Unknown', color: '#888' };
+  return (
+    <Panel style={{ borderLeft: `3px solid ${c.color}` }}>
+      <div style={{ fontSize: 12, color: c.color, fontWeight: 600, marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1 }}>{c.name} · {c.title}</div>
+      <div style={{ fontSize: 15, lineHeight: 1.7, color: '#bcc8d4' }}>{children}</div>
+    </Panel>
+  );
+}
+
+function Btn({ children, onClick, primary, disabled, style }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        background: primary ? 'linear-gradient(135deg, #FFE81F, #ff8844)' : 'rgba(255,232,31,0.08)',
+        color: primary ? '#0a0e1a' : '#FFE81F',
+        border: primary ? 'none' : '1px solid rgba(255,232,31,0.3)',
+        borderRadius: 8, padding: '12px 24px', fontSize: 15, fontWeight: 600, cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0.5 : 1, transition: 'all 0.2s', width: '100%', textAlign: 'left', lineHeight: 1.5,
+        ...style
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function Badge({ children, color }) {
+  return <span style={{ display: 'inline-block', background: `${color}22`, color, border: `1px solid ${color}44`, borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>{children}</span>;
+}
+
+/* ───── MAIN GAME ───── */
+function Game() {
+  const [screen, setScreen] = useState('crawl');
+  const [caseIdx, setCaseIdx] = useState(0);
+  const [wins, setWins] = useState(0);
+  const [reputation, setReputation] = useState(50);
+  const [questionIdx, setQuestionIdx] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [answeredQuestions, setAnsweredQuestions] = useState([]);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [phase, setPhase] = useState('story'); // story, briefing, arguments, quiz, results, promotion
+
+  const safeCaseIdx = Math.min(caseIdx, CASES.length - 1);
+  const currentCase = CASES[safeCaseIdx];
+  const currentRank = CAREER.findIndex((c, i) => i === CAREER.length - 1 || wins < CAREER[i + 1].requiredWins);
+  const career = CAREER[currentRank] || CAREER[0];
+
+  const startCase = useCallback(() => {
+    setQuestionIdx(0);
+    setSelectedAnswer(null);
+    setCorrectCount(0);
+    setAnsweredQuestions([]);
+    setShowExplanation(false);
+    setPhase('story');
+    setScreen('case');
+  }, []);
+
+  const handleAnswer = (choiceIdx) => {
+    if (selectedAnswer !== null) return;
+    setSelectedAnswer(choiceIdx);
+    setShowExplanation(true);
+    const q = currentCase.questions[questionIdx];
+    if (q.choices[choiceIdx].correct) {
+      setCorrectCount(c => c + 1);
+    }
+    setAnsweredQuestions(prev => [...prev, { questionIdx, choiceIdx, correct: q.choices[choiceIdx].correct }]);
+  };
+
+  const nextQuestion = () => {
+    if (questionIdx < currentCase.questions.length - 1) {
+      setQuestionIdx(q => q + 1);
+      setSelectedAnswer(null);
+      setShowExplanation(false);
+    } else {
+      setPhase('results');
+    }
+  };
+
+  const finishCase = () => {
+    const pct = (correctCount / currentCase.questions.length) * 100;
+    const won = pct >= 60;
+    if (won) setWins(w => w + 1);
+    const repChange = pct >= 90 ? 12 : pct >= 60 ? 6 : -4;
+    setReputation(r => Math.max(0, Math.min(100, r + repChange)));
+
+    if (!won) {
+      // Lost — stay on same case so player can retry
+      setPhase('lost');
+      return;
+    }
+
+    const newWins = wins + 1;
+    const newRank = CAREER.findIndex((c, i) => i === CAREER.length - 1 || newWins < CAREER[i + 1].requiredWins);
+
+    if (caseIdx >= CASES.length - 1) {
+      setScreen('complete');
+    } else if (newRank > currentRank) {
+      setPhase('promotion');
+    } else {
+      setCaseIdx(i => Math.min(i + 1, CASES.length - 1));
+      setScreen('title');
+    }
+  };
+
+  const handlePromotion = () => {
+    if (caseIdx < CASES.length - 1) {
+      setCaseIdx(i => i + 1);
+    }
+    setScreen('title');
+  };
+
+  /* ── SCREENS ── */
+
+  if (screen === 'crawl') {
+    return <><Starfield /><OpeningCrawl onComplete={() => setScreen('title')} /></>;
+  }
+
+  if (screen === 'complete') {
+    return (
+      <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Starfield />
+        <div style={{ maxWidth: 650, padding: 32, animation: 'fadeIn 1s ease' }}>
+          <LocationScene type="senate" />
+          <Panel style={{ textAlign: 'center', border: '1px solid #FFE81F44' }}>
+            <div style={{ fontSize: 14, color: '#FFE81F', letterSpacing: 3, marginBottom: 8, textTransform: 'uppercase' }}>Congratulations</div>
+            <h1 style={{ fontSize: 28, color: '#FFE81F', fontWeight: 700, margin: '16px 0' }}>Attorney General of the Galactic Republic</h1>
+            <p style={{ fontSize: 16, lineHeight: 1.8, color: '#bcc8d4', margin: '16px 0' }}>
+              From the dusty courts of Tatooine to the highest office of justice in the galaxy — you have mastered the doctrines of criminal law and proven that the rule of law endures even in the darkest times.
+            </p>
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', margin: '20px 0', flexWrap: 'wrap' }}>
+              <Badge color="#FFE81F">Cases Won: {wins}/{CASES.length}</Badge>
+              <Badge color="#4ae">Reputation: {reputation}/100</Badge>
+              <Badge color="#8bc34a">Rank: {reputation >= 90 ? 'GRAND MASTER' : reputation >= 70 ? 'MASTER' : 'KNIGHT'}</Badge>
+            </div>
+            <Dialogue char="mothma">The Force of law is strong with you. May you use this power wisely, Attorney General.</Dialogue>
+            <Btn primary onClick={() => { setCaseIdx(0); setWins(0); setReputation(50); setScreen('crawl'); }} style={{ marginTop: 16 }}>
+              Play Again
+            </Btn>
+          </Panel>
+        </div>
+      </div>
+    );
+  }
+
+  if (screen === 'title') {
+    return (
+      <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Starfield />
+        <div style={{ maxWidth: 650, padding: 32, animation: 'fadeIn 0.6s ease' }}>
+          <LocationScene type={career.art} color={career.color} />
+          <Panel>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+              <Badge color={career.color}>{career.title}</Badge>
+              <Badge color="#4ae">Rep: {reputation}/100</Badge>
+            </div>
+            <h1 style={{ fontSize: 24, color: '#FFE81F', fontWeight: 700, marginBottom: 4 }}>The Galactic High Tribunal</h1>
+            <p style={{ fontSize: 13, color: '#667788', marginBottom: 20 }}>{career.desc} · {career.location}</p>
+
+            <div style={{ borderTop: '1px solid rgba(255,232,31,0.1)', paddingTop: 16 }}>
+              <div style={{ fontSize: 12, color: '#667788', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Next Case ({caseIdx + 1} of {CASES.length})</div>
+              <h2 style={{ fontSize: 20, color: '#e0e8f0', marginBottom: 4 }}>{currentCase.title}</h2>
+              <p style={{ fontSize: 14, color: '#8899aa', marginBottom: 4 }}>{currentCase.subtitle}</p>
+              <p style={{ fontSize: 13, color: '#667788' }}>Defendant: {currentCase.defendant} · Charge: {currentCase.crime}</p>
+            </div>
+
+            <div style={{ display: 'flex', gap: 16, marginTop: 20, flexWrap: 'wrap' }}>
+              <Badge color="#8bc34a">Wins: {wins}</Badge>
+              <Badge color={career.color}>Rank {currentRank + 1}/5</Badge>
+              <Badge color="#ff6b6b">{currentCase.questions.length} Questions</Badge>
+            </div>
+
+            <Btn primary onClick={startCase} style={{ marginTop: 20 }}>
+              Begin Case: {currentCase.title}
+            </Btn>
+          </Panel>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── CASE SCREEN ── */
+  return (
+    <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', justifyContent: 'center', padding: '32px 16px' }}>
+      <Starfield />
+      <div style={{ maxWidth: 700, width: '100%', animation: 'fadeIn 0.5s ease' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+          <Badge color={career.color}>{career.title}</Badge>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Badge color="#4ae">Rep: {reputation}</Badge>
+            <Badge color="#8bc34a">Wins: {wins}</Badge>
+          </div>
+        </div>
+
+        <h2 style={{ fontSize: 22, color: '#FFE81F', marginBottom: 4 }}>{currentCase.title}</h2>
+        <p style={{ fontSize: 13, color: '#667788', marginBottom: 20 }}>{currentCase.subtitle} · Defendant: {currentCase.defendant}</p>
+
+        {/* STORY PHASE */}
+        {phase === 'story' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <Panel>
+              <div style={{ fontSize: 12, color: '#FFE81F', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>Case Introduction</div>
+              <p style={{ fontSize: 15, lineHeight: 1.8, color: '#bcc8d4' }}>{currentCase.storyIntro}</p>
+            </Panel>
+            <Btn primary onClick={() => setPhase('briefing')}>Review Holobrief</Btn>
+          </div>
+        )}
+
+        {/* BRIEFING PHASE */}
+        {phase === 'briefing' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <Panel>
+              <div style={{ fontSize: 12, color: '#4ae', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>Encrypted Holobrief</div>
+              {currentCase.holobrief.map((p, i) => (
+                <p key={i} style={{ fontSize: 14, lineHeight: 1.8, color: '#8899aa', marginBottom: i < currentCase.holobrief.length - 1 ? 12 : 0 }}>{p}</p>
+              ))}
+            </Panel>
+            <Btn primary onClick={() => setPhase('arguments')}>Hear Prosecution's Argument</Btn>
+          </div>
+        )}
+
+        {/* ARGUMENTS PHASE */}
+        {phase === 'arguments' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <Panel style={{ borderLeft: '3px solid #ff6b6b' }}>
+              <div style={{ fontSize: 12, color: '#ff6b6b', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>Prosecution's Argument</div>
+              <p style={{ fontSize: 15, lineHeight: 1.8, color: '#bcc8d4' }}>{currentCase.prosecutorArg}</p>
+            </Panel>
+            <Btn primary onClick={() => setPhase('quiz')}>Begin Tribunal Examination ({currentCase.questions.length} Questions)</Btn>
+          </div>
+        )}
+
+        {/* QUIZ PHASE */}
+        {phase === 'quiz' && (
+          <div style={{ animation: 'fadeIn 0.4s ease' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <Badge color="#FFE81F">Question {questionIdx + 1} of {currentCase.questions.length}</Badge>
+              <Badge color="#8bc34a">{correctCount}/{questionIdx + (selectedAnswer !== null ? 1 : 0)} Correct</Badge>
+            </div>
+
+            <Panel>
+              <div style={{ fontSize: 11, color: '#9966cc', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{currentCase.questions[questionIdx].doctrine}</div>
+              <p style={{ fontSize: 16, lineHeight: 1.7, color: '#e0e8f0', fontWeight: 500, marginBottom: 20 }}>{currentCase.questions[questionIdx].question}</p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {currentCase.questions[questionIdx].choices.map((choice, i) => {
+                  let bg = 'rgba(255,232,31,0.05)';
+                  let borderColor = 'rgba(255,232,31,0.15)';
+                  let textColor = '#bcc8d4';
+
+                  if (selectedAnswer !== null) {
+                    if (choice.correct) {
+                      bg = 'rgba(76,175,80,0.15)';
+                      borderColor = '#4caf50';
+                      textColor = '#a5d6a7';
+                    } else if (i === selectedAnswer && !choice.correct) {
+                      bg = 'rgba(244,67,54,0.15)';
+                      borderColor = '#f44336';
+                      textColor = '#ef9a9a';
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => handleAnswer(i)}
+                      disabled={selectedAnswer !== null}
+                      style={{
+                        background: bg,
+                        border: `1px solid ${borderColor}`,
+                        borderRadius: 8,
+                        padding: '14px 18px',
+                        textAlign: 'left',
+                        cursor: selectedAnswer !== null ? 'default' : 'pointer',
+                        color: textColor,
+                        fontSize: 14,
+                        lineHeight: 1.6,
+                        transition: 'all 0.2s',
+                        fontFamily: 'inherit'
+                      }}
+                    >
+                      <span style={{ color: '#FFE81F', fontWeight: 700, marginRight: 8 }}>{String.fromCharCode(65 + i)}.</span>
+                      {choice.text}
+                    </button>
+                  );
+                })}
+              </div>
+            </Panel>
+
+            {/* Explanation */}
+            {showExplanation && selectedAnswer !== null && (
+              <Panel style={{ animation: 'fadeIn 0.4s ease', borderLeft: `3px solid ${currentCase.questions[questionIdx].choices[selectedAnswer].correct ? '#4caf50' : '#f44336'}` }}>
+                <div style={{ fontSize: 12, color: currentCase.questions[questionIdx].choices[selectedAnswer].correct ? '#4caf50' : '#f44336', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>
+                  {currentCase.questions[questionIdx].choices[selectedAnswer].correct ? '✓ Correct!' : '✗ Incorrect'}
+                </div>
+                <p style={{ fontSize: 14, lineHeight: 1.7, color: '#8899aa' }}>
+                  {currentCase.questions[questionIdx].choices[selectedAnswer].explanation}
+                </p>
+                <Btn primary onClick={nextQuestion} style={{ marginTop: 16 }}>
+                  {questionIdx < currentCase.questions.length - 1 ? 'Next Question' : 'View Case Results'}
+                </Btn>
+              </Panel>
+            )}
+          </div>
+        )}
+
+        {/* RESULTS PHASE */}
+        {phase === 'results' && (() => {
+          const pct = Math.round((correctCount / currentCase.questions.length) * 100);
+          const won = pct >= 60;
+          const rank = pct >= 90 ? 'MASTER' : pct >= 60 ? 'KNIGHT' : 'PADAWAN';
+          const rankColor = pct >= 90 ? '#FFE81F' : pct >= 60 ? '#4ae' : '#ff6b6b';
+          return (
+            <div style={{ animation: 'fadeIn 0.5s ease' }}>
+              <Panel style={{ textAlign: 'center', border: `1px solid ${rankColor}44` }}>
+                <div style={{ fontSize: 48, marginBottom: 8 }}>{won ? '⚖️' : '📜'}</div>
+                <h3 style={{ fontSize: 22, color: rankColor, marginBottom: 8 }}>{won ? 'Case Won!' : 'Case Lost'}</h3>
+                <p style={{ fontSize: 15, color: '#8899aa', marginBottom: 16 }}>{correctCount}/{currentCase.questions.length} correct ({pct}%)</p>
+                <Badge color={rankColor}>{rank} Rank</Badge>
+
+                <div style={{ margin: '20px 0', textAlign: 'left' }}>
+                  {answeredQuestions.map((aq, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, fontSize: 13 }}>
+                      <span style={{ color: aq.correct ? '#4caf50' : '#f44336' }}>{aq.correct ? '✓' : '✗'}</span>
+                      <span style={{ color: '#667788' }}>Q{i + 1}: {currentCase.questions[i].doctrine}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {won && (
+                  <Panel style={{ borderLeft: '3px solid #8bc34a', textAlign: 'left', marginTop: 16 }}>
+                    <div style={{ fontSize: 11, color: '#8bc34a', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Lore Unlocked</div>
+                    <p style={{ fontSize: 14, lineHeight: 1.7, color: '#8899aa' }}>{currentCase.loreReward}</p>
+                  </Panel>
+                )}
+
+                <Btn primary onClick={finishCase} style={{ marginTop: 16 }}>
+                  {caseIdx >= CASES.length - 1 && won ? 'Complete Your Journey' : 'Continue'}
+                </Btn>
+              </Panel>
+            </div>
+          );
+        })()}
+
+        {/* LOST PHASE — retry the same case */}
+        {phase === 'lost' && (() => {
+          const pct = Math.round((correctCount / currentCase.questions.length) * 100);
+          return (
+            <div style={{ animation: 'fadeIn 0.5s ease' }}>
+              <Panel style={{ textAlign: 'center', border: '1px solid #ff6b6b44' }}>
+                <div style={{ fontSize: 48, marginBottom: 8 }}>⚠️</div>
+                <h3 style={{ fontSize: 22, color: '#ff6b6b', marginBottom: 8 }}>Case Lost — But Justice Demands a Retrial</h3>
+                <p style={{ fontSize: 15, color: '#8899aa', marginBottom: 16 }}>You scored {correctCount}/{currentCase.questions.length} ({pct}%). You need 60% to win.</p>
+                <Dialogue char={currentRank >= 2 ? 'tano' : 'mothma'}>
+                  {currentRank >= 2
+                    ? "A setback, but not a defeat. Review the doctrine carefully — the Tribunal will grant you another hearing."
+                    : "Every great attorney has lost a case. What matters is what you learn. Study the doctrine and try again."}
+                </Dialogue>
+                <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
+                  <Btn primary onClick={startCase} style={{ flex: 1 }}>
+                    Retry: {currentCase.title}
+                  </Btn>
+                </div>
+              </Panel>
+            </div>
+          );
+        })()}
+
+        {/* PROMOTION PHASE */}
+        {phase === 'promotion' && (() => {
+          const newRank = CAREER.findIndex((c, i) => i === CAREER.length - 1 || (wins) < CAREER[i + 1].requiredWins);
+          const nr = CAREER[newRank] || CAREER[CAREER.length - 1];
+          return (
+            <div style={{ animation: 'fadeIn 0.8s ease' }}>
+              <Panel style={{ textAlign: 'center', border: '1px solid #FFE81F44' }}>
+                <div style={{ fontSize: 14, color: '#FFE81F', letterSpacing: 3, marginBottom: 8, textTransform: 'uppercase', animation: 'pulse 2s infinite' }}>Promotion!</div>
+                <LocationScene type={nr.art} color={nr.color} />
+                <h3 style={{ fontSize: 22, color: nr.color, marginBottom: 8 }}>{nr.title}</h3>
+                <p style={{ fontSize: 14, color: '#8899aa', marginBottom: 16 }}>{nr.desc} · {nr.location}</p>
+                <Dialogue char={newRank >= 3 ? 'yoda' : newRank >= 2 ? 'tano' : 'mothma'}>
+                  {newRank >= 3 ? `Ready for the greatest challenges, you are. The High Tribunal awaits your wisdom.` :
+                   newRank >= 2 ? `Coruscant's courts are unforgiving. But I've seen your work — you're ready.` :
+                   `Your record speaks for itself. Naboo's judiciary needs prosecutors of your caliber.`}
+                </Dialogue>
+                <Btn primary onClick={handlePromotion} style={{ marginTop: 16 }}>
+                  Accept Promotion to {nr.title}
+                </Btn>
+              </Panel>
+            </div>
+          );
+        })()}
+      </div>
+    </div>
+  );
+}
+
+/* ── RENDER ── */
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<Game />);
+</script>
+</body>
+</html>

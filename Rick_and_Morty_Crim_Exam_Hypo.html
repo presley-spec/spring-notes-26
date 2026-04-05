@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criminal Law Practice Exam — Rick and Morty Hypothetical</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Sans Pro', sans-serif;
+    background: #f5f0eb;
+    color: #2c2c2c;
+    line-height: 1.7;
+    padding: 40px 20px;
+  }
+
+  .container {
+    max-width: 850px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    border-bottom: 3px double #8B0000;
+    padding-bottom: 25px;
+    margin-bottom: 40px;
+  }
+
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2em;
+    color: #8B0000;
+    margin-bottom: 5px;
+  }
+
+  .header .subtitle {
+    font-size: 1.1em;
+    color: #666;
+    font-style: italic;
+  }
+
+  .header .course-info {
+    margin-top: 10px;
+    font-size: 0.95em;
+    color: #444;
+  }
+
+  .exam-instructions {
+    background: #fff8f0;
+    border: 1px solid #d4a574;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin-bottom: 35px;
+    font-size: 0.95em;
+  }
+
+  .exam-instructions h2 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #8B0000;
+    font-size: 1.3em;
+    margin-bottom: 10px;
+  }
+
+  .section {
+    margin-bottom: 45px;
+  }
+
+  .section-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6em;
+    color: #8B0000;
+    border-bottom: 2px solid #8B0000;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+  }
+
+  .hypo-box {
+    background: #ffffff;
+    border: 2px solid #3a6b35;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 35px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .hypo-box h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #3a6b35;
+    font-size: 1.4em;
+    margin-bottom: 15px;
+  }
+
+  .hypo-text {
+    font-size: 1.05em;
+    line-height: 1.85;
+    text-align: justify;
+  }
+
+  .hypo-text p {
+    margin-bottom: 14px;
+  }
+
+  .call-of-question {
+    background: #f0f7ef;
+    border-left: 4px solid #3a6b35;
+    padding: 15px 20px;
+    margin-top: 20px;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 1.05em;
+  }
+
+  .model-answer {
+    background: #fafafa;
+    border: 2px solid #1a3a5c;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .model-answer h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1a3a5c;
+    font-size: 1.5em;
+    margin-bottom: 5px;
+  }
+
+  .model-answer .grade-note {
+    color: #8B0000;
+    font-style: italic;
+    font-size: 0.95em;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .issue-block {
+    margin-bottom: 30px;
+    padding-left: 0;
+  }
+
+  .issue-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25em;
+    color: #1a3a5c;
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #bbb;
+  }
+
+  .sub-issue {
+    margin-bottom: 20px;
+    padding-left: 15px;
+    border-left: 3px solid #e0e0e0;
+  }
+
+  .sub-issue h4 {
+    color: #4a4a4a;
+    font-size: 1.05em;
+    margin-bottom: 8px;
+  }
+
+  .irac-label {
+    display: inline-block;
+    font-weight: 700;
+    color: #8B0000;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .answer-text {
+    font-size: 1em;
+    line-height: 1.8;
+    text-align: justify;
+  }
+
+  .answer-text p {
+    margin-bottom: 12px;
+  }
+
+  .key-distinction {
+    background: #fff3e0;
+    border-left: 4px solid #e65100;
+    padding: 12px 18px;
+    margin: 12px 0;
+    font-size: 0.95em;
+  }
+
+  .exam-tip {
+    background: #e8f5e9;
+    border: 1px solid #66bb6a;
+    border-radius: 6px;
+    padding: 15px 20px;
+    margin: 15px 0;
+    font-size: 0.9em;
+  }
+
+  .exam-tip strong {
+    color: #2e7d32;
+  }
+
+  .conclusion-box {
+    background: #f3e5f5;
+    border: 2px solid #7b1fa2;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin-top: 25px;
+  }
+
+  .conclusion-box h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #7b1fa2;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+  }
+
+  .scoring-notes {
+    background: #fff;
+    border: 2px dashed #999;
+    border-radius: 8px;
+    padding: 25px;
+    margin-top: 35px;
+  }
+
+  .scoring-notes h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #333;
+    font-size: 1.3em;
+    margin-bottom: 15px;
+  }
+
+  .scoring-notes ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .scoring-notes li {
+    padding: 6px 0;
+    padding-left: 25px;
+    position: relative;
+    font-size: 0.95em;
+  }
+
+  .scoring-notes li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #3a6b35;
+    font-weight: bold;
+  }
+
+  .portal-divider {
+    text-align: center;
+    margin: 40px 0;
+    font-size: 1.5em;
+    color: #97ce4c;
+    letter-spacing: 5px;
+  }
+
+  @media print {
+    body { padding: 20px; background: white; }
+    .hypo-box, .model-answer { box-shadow: none; break-inside: avoid; }
+    .portal-divider { color: #666; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>Criminal Law — Practice Exam Hypothetical</h1>
+  <div class="subtitle">"The Rickshank Redemption Gone Wrong"</div>
+  <div class="course-info">BU Law — Spring 2026 — Finals Preparation</div>
+</div>
+
+<div class="exam-instructions">
+  <h2>Instructions</h2>
+  <p>This is a single-question essay examination. You have <strong>3 hours</strong>. Identify and analyze all criminal liability issues for each party. Apply common law rules unless otherwise specified. Discuss all plausible charges, defenses, and counterarguments. Where reasonable minds could differ, argue both sides. Organize your answer by defendant.</p>
+</div>
+
+<!-- ===== THE HYPOTHETICAL ===== -->
+
+<div class="section">
+  <div class="section-label">I. The Hypothetical</div>
+
+  <div class="hypo-box">
+    <h3>🔬 "Interdimensional Incident at the Citadel Liquor Store"</h3>
+    <div class="hypo-text">
+
+      <p>Rick Sanchez, a self-described "genius scientist," has been on a three-day bender after his granddaughter Summer told him his portal gun technology "isn't even that impressive." Deeply wounded, Rick consumed approximately two liters of whiskey and became what witnesses describe as "belligerently intoxicated." Rick decides he needs more alcohol and recruits his grandson, Morty Smith (age 17), to help him rob the Citadel Liquor Mart. Rick tells Morty: "Listen Morty, we're gonna go in, I'm gonna wave my laser gun around, we grab the good stuff, and we're out. Nobody gets hurt. It's a victimless crime, Morty. The — the insurance covers it." Rick's laser gun is a modified device that, unbeknownst to Morty, is set to a "disintegration" setting powerful enough to kill a human instantly. Rick knows the gun is on this setting but doesn't mention it.</p>
+
+      <p>Morty, who is terrified of Rick but also desperate to impress him, reluctantly agrees. As they approach the store, Rick hands Morty a regular (non-functional) toy blaster and tells him to "point it at anyone who moves." They enter the Citadel Liquor Mart at 11 PM. Rick points his laser gun at the clerk, Birdperson, and yells: "Put all — all the Kalaxian crystals and — and the top shelf stuff in a bag, Birdperson, or I'll — I'll turn you into a pile of ash!"</p>
+
+      <p>Birdperson, who recognizes Rick as an old friend, calmly says: "Rick, this is not honorable. I cannot give you what you seek." Rick, enraged by the perceived betrayal, fires the laser gun. However, due to his extreme intoxication, Rick's aim is wildly off. The laser blast misses Birdperson entirely and instead strikes a large shelving unit of liquor bottles, which collapses. The falling shelf lands on an elderly customer, Mr. Poopybutthole, crushing his legs and causing severe injuries from which Mr. Poopybutthole dies two weeks later at the hospital.</p>
+
+      <p>Meanwhile, a bystander in the store — Jerry Smith, Morty's father, who happened to be buying non-alcoholic beer — sees the chaos unfold. Jerry, who has long harbored deep resentment toward Rick and once told his therapist "I swear, one of these days I'm going to kill that man," spots Rick distracted by the falling shelf. In what Jerry later describes as "a moment of pure instinct," Jerry grabs a heavy bottle of Fleeb Juice from the counter and strikes Rick in the back of the head as hard as he can. Rick collapses unconscious with a fractured skull and brain hemorrhage. He survives but suffers permanent cognitive impairment.</p>
+
+      <p>Morty, seeing his grandfather struck down, panics and runs for the exit. On his way out, Morty shoves Birdperson out of the way. Birdperson, who has a rare and undiscoverable bone condition (Squanchy Syndrome), falls, hits his head on the counter, and dies from a brain bleed that would not have been fatal in a person without the condition.</p>
+
+      <p>The next day, while Rick is still hospitalized, Rick's daughter Beth — a veterinary surgeon — arrives at the hospital. She is told Rick will likely survive but with diminished mental capacity. Beth, who has struggled her entire life with Rick's neglect and abandonment, looks at Rick on life support and says to the attending nurse: "He's suffered enough. He wouldn't want to live like this." Beth then, without authorization, adjusts Rick's IV to administer a fatal overdose of pain medication. However, an alert nurse catches the change within 30 seconds and reverses it before any harm is done.</p>
+
+      <p>Discuss the criminal liability of Rick, Morty, Jerry, and Beth.</p>
+    </div>
+    <div class="call-of-question">
+      <strong>Call of the Question:</strong> Analyze the criminal liability of each party — Rick, Morty, Jerry, and Beth — for all applicable offenses. Consider all relevant defenses.
+    </div>
+  </div>
+</div>
+
+<div class="portal-divider">⟐ ⟐ ⟐ ⟐ ⟐</div>
+
+<!-- ===== MODEL ANSWER ===== -->
+
+<div class="section">
+  <div class="section-label">II. Model Answer</div>
+
+  <div class="model-answer">
+    <h3>A+ Model Answer</h3>
+    <div class="grade-note">This answer demonstrates the depth of analysis, two-sided argumentation, and precise doctrinal application expected for top marks.</div>
+
+    <!-- ==================== RICK ==================== -->
+
+    <div class="issue-block">
+      <div class="issue-heading">I. LIABILITY OF RICK SANCHEZ</div>
+
+      <!-- ROBBERY / ARMED ROBBERY -->
+      <div class="sub-issue">
+        <h4>A. Armed Robbery of Citadel Liquor Mart</h4>
+
+        <p class="irac-label">Rule</p>
+        <div class="answer-text">
+          <p>Robbery is a larceny from the person or presence of another by force or threat of force. Armed robbery (or robbery with a dangerous weapon) elevates the offense when the defendant uses or threatens use of a weapon capable of causing death or serious bodily harm. At common law, larceny requires a trespassory taking and carrying away of the personal property of another with the intent to permanently deprive.</p>
+        </div>
+
+        <p class="irac-label">Application</p>
+        <div class="answer-text">
+          <p>Rick entered the Citadel Liquor Mart and demanded that Birdperson place merchandise ("Kalaxian crystals and the top shelf stuff") into a bag while pointing a laser gun at him and threatening to "turn [him] into a pile of ash." This constitutes a demand for property through an explicit threat of deadly force, satisfying the force/threat element of robbery. The laser gun was set to a "disintegration" setting capable of killing a human instantly, making it unquestionably a dangerous weapon. Rick had the specific intent to permanently deprive the store of its merchandise — he told Morty they would "grab the good stuff" and leave. The taking was in the "presence" of Birdperson, the clerk, satisfying that element.</p>
+
+          <p>Rick might argue that his extreme intoxication negated the specific intent required for larceny (and thus robbery). Under common law, voluntary intoxication can negate specific intent crimes. However, the facts strongly cut against this defense: Rick formulated the plan to rob the store, recruited Morty, selected and brought his weapon, identified specific items to steal, and verbally articulated the plan with coherent specificity. This demonstrates that despite his intoxication, Rick possessed the capacity to form and did form the requisite intent. A court would very likely reject the intoxication defense here.</p>
+        </div>
+
+        <p class="irac-label">Conclusion</p>
+        <div class="answer-text">
+          <p>Rick is liable for armed robbery. The intoxication defense will almost certainly fail given the extensive evidence of premeditation and purposeful conduct.</p>
+        </div>
+      </div>
+
+      <!-- MURDER OF MR. POOPYBUTTHOLE -->
+      <div class="sub-issue">
+        <h4>B. Homicide — Death of Mr. Poopybutthole</h4>
+
+        <p class="irac-label">Rule</p>
+        <div class="answer-text">
+          <p>Murder at common law is the unlawful killing of a human being with malice aforethought. Malice can be established four ways: (1) intent to kill, (2) intent to cause grievous bodily harm, (3) depraved heart — reckless indifference to an unjustifiably high risk to human life, or (4) felony murder — a killing that occurs during the commission of an inherently dangerous felony. Felony murder does not require independent proof of malice; the intent to commit the underlying felony substitutes. Under the proximate cause theory of felony murder, a defendant is liable for any death that is a reasonably foreseeable consequence of the felony. Under the agency theory, liability extends only to killings committed by the defendant or co-felons.</p>
+        </div>
+
+        <p class="irac-label">Application — Depraved Heart Murder</p>
+        <div class="answer-text">
+          <p>Rick fired a laser gun set to "disintegration" — a setting he knew was powerful enough to kill a human instantly — inside a store he knew contained other people. He fired while extremely intoxicated, meaning he was aware his aim would be unreliable. Firing a lethal weapon in an occupied building while severely impaired demonstrates a conscious disregard of a substantial and unjustifiable risk to human life. This is the paradigm of depraved heart murder: the act of shooting a death-ray in a crowded store manifests a "wanton indifference" to human life regardless of who specifically was hit. The fact that Rick missed his intended target is irrelevant — the recklessness lies in the act of firing under those conditions.</p>
+
+          <p>The prosecution need not show Rick intended to kill Mr. Poopybutthole specifically. The question is whether Rick's conduct — firing a disintegration weapon in a crowded space while blackout drunk — evinced such extreme recklessness that it rose to the level of malice. It clearly did.</p>
+
+          <div class="key-distinction">
+            <strong>Key Distinction:</strong> Voluntary intoxication is NOT a defense to depraved heart murder. Depraved heart murder is an unintentional killing; it requires recklessness, not specific intent. Because voluntary intoxication can only negate specific intent, it cannot negate the recklessness element. Rick cannot claim his drunkenness prevented him from being reckless — if anything, his decision to fire while intoxicated made his conduct MORE reckless.
+          </div>
+        </div>
+
+        <p class="irac-label">Application — Felony Murder (Alternative Theory)</p>
+        <div class="answer-text">
+          <p>Even if a court were not persuaded on depraved heart, Mr. Poopybutthole's death occurred during the commission of an armed robbery — an inherently dangerous felony. Rick was actively committing the robbery when he fired the gun, and the shot that caused the shelf collapse was part of the res gestae (the continuous transaction) of the robbery. Mr. Poopybutthole's death was a reasonably foreseeable consequence of firing a lethal weapon during a robbery, satisfying the proximate cause requirement. Under both agency and proximate cause theories, Rick — as the actual shooter — is liable.</p>
+
+          <p>Rick might raise the argument that Mr. Poopybutthole's death was too attenuated — the shot missed its target and instead struck a shelf that then fell on Mr. Poopybutthole, who died two weeks later. However, this argument fails. The chain of causation is straightforward: Rick fired the gun → the blast struck the shelf → the shelf collapsed → the shelf crushed Mr. Poopybutthole → Mr. Poopybutthole died of those injuries. There are no intervening superseding causes. The two-week delay does not break causation; the victim's injuries were the direct and proximate cause of death. A victim need not die immediately.</p>
+        </div>
+
+        <p class="irac-label">Causation Analysis</p>
+        <div class="answer-text">
+          <p><strong>But-for cause:</strong> But for Rick firing the laser gun, the shelf would not have collapsed on Mr. Poopybutthole, and he would not have died. Satisfied.</p>
+          <p><strong>Proximate cause:</strong> Was it foreseeable that firing a disintegration weapon in a store full of shelving and customers could cause objects to fall on bystanders? Absolutely. There is no superseding intervening cause. Mr. Poopybutthole's age and frailty are irrelevant under the "thin skull" (eggshell victim) rule — a defendant takes his victim as he finds him.</p>
+        </div>
+
+        <p class="irac-label">Conclusion</p>
+        <div class="answer-text">
+          <p>Rick is liable for the murder of Mr. Poopybutthole under both depraved heart murder and felony murder theories. The prosecution will likely charge both and let the jury decide. Voluntary intoxication is not a defense to either theory.</p>
+        </div>
+      </div>
+
+      <!-- ASSAULT ON BIRDPERSON -->
+      <div class="sub-issue">
+        <h4>C. Assault / Attempted Murder of Birdperson</h4>
+
+        <p class="irac-label">Application</p>
+        <div class="answer-text">
+          <p>Rick pointed a lethal weapon at Birdperson and explicitly threatened to kill him, constituting assault (intentional creation of reasonable apprehension of imminent harmful contact). When Birdperson refused to comply, Rick fired the weapon at him with the stated intent to "turn [him] into a pile of ash." This is attempted murder — Rick took a substantial step (pulling the trigger) toward intentionally killing Birdperson. The fact that he missed due to intoxication does not negate the attempt; it merely explains why the attempt was unsuccessful.</p>
+
+          <p>Here, voluntary intoxication becomes more relevant. Attempted murder requires specific intent to kill. Rick could argue his intoxication prevented him from forming a true intent to kill — that his statement was drunken bluster. However, Rick's words ("I'll turn you into a pile of ash"), combined with his act of pulling the trigger on a weapon he knew was set to disintegrate, powerfully demonstrate intent to kill. A jury would likely reject the intoxication defense, but this is the strongest context for the argument.</p>
+        </div>
+
+        <p class="irac-label">Conclusion</p>
+        <div class="answer-text">
+          <p>Rick is liable for attempted murder of Birdperson. Assault with a deadly weapon is available as a lesser included offense.</p>
+        </div>
+      </div>
+
+      <!-- CONSPIRACY / SOLICITATION -->
+      <div class="sub-issue">
+        <h4>D. Conspiracy and Solicitation</h4>
+
+        <div class="answer-text">
+          <p>Rick solicited Morty to participate in the robbery and the two agreed to commit it, establishing the elements of conspiracy (agreement between two or more persons to commit an unlawful act, plus an overt act in furtherance). Rick's planning, recruiting Morty, arming him, and entering the store all constitute overt acts. Under Pinkerton liability, Rick is responsible for all foreseeable crimes committed by Morty in furtherance of the conspiracy — including the death of Birdperson (discussed under Morty's liability below).</p>
+
+          <div class="key-distinction">
+            <strong>Note on Morty's Age:</strong> The fact that Morty is 17 raises the question of whether he can be a co-conspirator. Under the common law bilateral approach, conspiracy requires at least two "guilty minds." If Morty were found to lack capacity or were adjudicated as a juvenile, this could theoretically undermine the conspiracy charge under the bilateral rule. Under the MPC unilateral approach, Rick's culpability would stand regardless. Additionally, recruiting a minor to participate in an armed robbery could give rise to separate charges (contributing to the delinquency of a minor, endangering a child).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MORTY ==================== -->
+
+    <div class="issue-block">
+      <div class="issue-heading">II. LIABILITY OF MORTY SMITH</div>
+
+      <!-- ROBBERY AS ACCOMPLICE -->
+      <div class="sub-issue">
+        <h4>A. Robbery — Accomplice Liability</h4>
+
+        <p class="irac-label">Rule</p>
+        <div class="answer-text">
+          <p>An accomplice is one who, with the intent to assist or encourage, aids, abets, or assists the principal in the commission of a crime. At common law, accomplice liability requires: (1) the actus reus of assisting, encouraging, or facilitating the crime; and (2) the mens rea of intending to assist and intending that the principal commit the underlying offense. An accomplice is liable for the crimes of the principal to the same extent as the principal, plus any additional crimes that are the natural and probable consequences of the intended crime.</p>
+        </div>
+
+        <p class="irac-label">Application</p>
+        <div class="answer-text">
+          <p>Morty agreed to participate in the robbery, entered the store with Rick, and carried what appeared to be a weapon with instructions to "point it at anyone who moves." Even though Morty's blaster was non-functional, he provided material assistance by creating the appearance of multiple armed assailants, which enhanced the coercive threat against Birdperson. He also agreed to participate beforehand and physically accompanied Rick, demonstrating both the actus reus (assistance) and mens rea (intent to facilitate) of accomplice liability.</p>
+
+          <p><strong>Duress defense:</strong> Morty was "terrified of Rick" and only "reluctantly" agreed. Under the duress defense, a defendant is excused if he committed a crime under the threat of imminent death or serious bodily harm from another person, and a person of reasonable firmness would have yielded. However, the facts state Morty was "also desperate to impress" Rick, suggesting mixed motives — not purely fear-driven compliance. Moreover, the facts do not indicate Rick made an explicit threat of harm against Morty if he refused. Being "terrified" of someone's general demeanor may not satisfy the requirement of a specific, imminent threat. The duress defense is weak but worth raising.</p>
+
+          <p><strong>Infancy:</strong> Morty is 17. At common law, there is a rebuttable presumption that minors aged 14+ are capable of forming criminal intent. Given Morty's demonstrated understanding of the plan and his active participation, this presumption would not be rebutted.</p>
+        </div>
+
+        <p class="irac-label">Conclusion</p>
+        <div class="answer-text">
+          <p>Morty is likely liable as an accomplice to armed robbery. The duress defense is available but weak on these facts.</p>
+        </div>
+      </div>
+
+      <!-- FELONY MURDER OF MR. POOPYBUTTHOLE -->
+      <div class="sub-issue">
+        <h4>B. Felony Murder — Death of Mr. Poopybutthole</h4>
+
+        <div class="answer-text">
+          <p>As an accomplice to the robbery, Morty is liable for all deaths that occur during its commission under the felony murder rule. Mr. Poopybutthole's death resulted from Rick's act of firing the weapon during the robbery — an act committed by a co-felon in furtherance of the crime. Under both agency and proximate cause theories, the killing is attributable to Morty as a co-conspirator.</p>
+
+          <p>Morty will argue he did not know Rick's gun was set to a lethal setting and that Rick told him "nobody gets hurt." This is sympathetic but ultimately unavailing. The natural and probable consequences doctrine holds that an accomplice is liable for any crime that is a reasonably foreseeable outcome of the planned crime. When you participate in an armed robbery — particularly one involving what you believe to be a laser gun — the risk that someone will be shot or injured is plainly foreseeable. Morty need not have foreseen the precise mechanism of death (shelf collapse) — only that death or serious injury was a natural and probable consequence of an armed robbery.</p>
+
+          <div class="key-distinction">
+            <strong>Key Exam Point:</strong> Morty's lack of knowledge about the gun's lethal setting does NOT negate felony murder liability. Felony murder requires no independent mens rea as to the killing — only the intent to commit the underlying felony (robbery). Morty clearly intended to participate in the robbery.
+          </div>
+        </div>
+
+        <p class="irac-label">Conclusion</p>
+        <div class="answer-text">
+          <p>Morty is liable for felony murder of Mr. Poopybutthole.</p>
+        </div>
+      </div>
+
+      <!-- HOMICIDE OF BIRDPERSON -->
+      <div class="sub-issue">
+        <h4>C. Homicide — Death of Birdperson</h4>
+
+        <p class="irac-label">Rule</p>
+        <div class="answer-text">
+          <p>Involuntary manslaughter is an unintentional killing resulting from criminal negligence or during the commission of an unlawful act not amounting to a felony (misdemeanor manslaughter). A defendant takes his victim as he finds him under the eggshell skull rule.</p>
+        </div>
+
+        <p class="irac-label">Application</p>
+        <div class="answer-text">
+          <p>Morty shoved Birdperson while fleeing the store. The shove itself was likely a battery (unlawful application of force). Birdperson fell, hit his head on the counter, and died from a brain bleed — a result made fatal only by his undiscoverable "Squanchy Syndrome" bone condition.</p>
+
+          <p>The critical question is causation. <strong>But-for cause</strong> is satisfied: but for Morty's shove, Birdperson would not have fallen and died. <strong>Proximate cause</strong> requires foreseeability. Morty will argue that the death was unforeseeable because Birdperson had an undiscoverable rare condition, and a shove would not ordinarily kill someone. However, the eggshell skull rule squarely defeats this argument — a defendant takes his victim as he finds him, regardless of preexisting vulnerabilities. It does not matter that Morty could not have known about Squanchy Syndrome. What matters is that Morty committed an unlawful act (battery) that caused the victim's death.</p>
+
+          <p>This qualifies as involuntary manslaughter under the unlawful-act (misdemeanor manslaughter) doctrine: the shove was a battery (a misdemeanor), and that battery caused death. Alternatively, if the shove is viewed in the context of the ongoing robbery (Morty was fleeing the scene of a felony), a felony murder charge is also available — the killing occurred during the flight from the robbery, which under most jurisdictions is still within the res gestae of the felony.</p>
+
+          <div class="key-distinction">
+            <strong>Stronger Argument — Felony Murder:</strong> Morty was fleeing the armed robbery when he shoved Birdperson. Under the continuous transaction doctrine, the felony does not end until the felons reach a place of temporary safety. Morty was still in the store, actively fleeing — the robbery was ongoing. Birdperson's death during the flight is attributable to the felony. This elevates the charge from involuntary manslaughter to felony murder.
+          </div>
+        </div>
+
+        <p class="irac-label">Conclusion</p>
+        <div class="answer-text">
+          <p>Morty is liable for the death of Birdperson. The strongest charge is felony murder (killing during flight from robbery). Involuntary manslaughter is a fallback theory. The eggshell skull rule eliminates any defense based on Birdperson's preexisting condition.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== JERRY ==================== -->
+
+    <div class="issue-block">
+      <div class="issue-heading">III. LIABILITY OF JERRY SMITH</div>
+
+      <div class="sub-issue">
+        <h4>A. Battery / Aggravated Battery of Rick</h4>
+
+        <div class="answer-text">
+          <p>Jerry struck Rick in the back of the head "as hard as he can" with a heavy bottle, causing a fractured skull and permanent brain damage. This is a battery — an unlawful application of force to the person of another — and an aggravated battery given the use of a weapon (the bottle) and the serious bodily injury inflicted.</p>
+        </div>
+      </div>
+
+      <div class="sub-issue">
+        <h4>B. Attempted Murder vs. Voluntary Manslaughter Analysis</h4>
+
+        <p class="irac-label">Issue</p>
+        <div class="answer-text">
+          <p>Rick survived, so there is no completed homicide. The question is what level of attempted homicide, if any, Jerry is liable for. This turns on Jerry's mens rea at the moment he struck Rick.</p>
+        </div>
+
+        <p class="irac-label">Prosecution's Argument — Attempted Murder</p>
+        <div class="answer-text">
+          <p>Attempted murder requires specific intent to kill plus a substantial step toward that end. Jerry struck Rick in the back of the head — a vital area — with a heavy object, using maximum force ("as hard as he can"). Striking someone in the skull with a heavy bottle using full force demonstrates an intent to cause death or at minimum grievous bodily harm. Furthermore, Jerry previously told his therapist "I swear, one of these days I'm going to kill that man" — evidence of preexisting malice and premeditation. The prosecution will argue this was a deliberate, premeditated act fueled by long-harbored resentment, satisfying the elements of attempted first-degree murder.</p>
+        </div>
+
+        <p class="irac-label">Defense Arguments</p>
+        <div class="answer-text">
+          <p><strong>(1) Defense of Others:</strong> Jerry witnessed Rick — armed with a lethal laser gun — firing shots inside a store filled with people, including his own 17-year-old son Morty. A person is justified in using reasonable force to defend others when he reasonably believes the person defended is in imminent danger of unlawful bodily harm. Rick had just fired a disintegration weapon that killed someone; the threat of further shots was imminent and real. Jerry could argue he acted to neutralize an active shooter.</p>
+
+          <p>However, the force must be <em>proportional</em>. Striking an armed, active shooter in the head with a heavy object is arguably proportional to the threat — Rick was wielding a lethal weapon and had already demonstrated willingness to fire it. The real problem is that Jerry struck Rick <strong>in the back of the head</strong> while Rick was "distracted by the falling shelf." This suggests Rick was not, at that precise moment, posing an imminent threat — he was not aiming at anyone. The prosecution will argue the "imminence" requirement was not met at the moment of Jerry's strike, weakening the defense-of-others claim.</p>
+
+          <div class="key-distinction">
+            <strong>Counterargument:</strong> Even though Rick was momentarily distracted, he was still holding the lethal weapon in an active crime scene, having fired it seconds earlier. A reasonable person could believe Rick would fire again at any moment. Courts applying a "reasonable person in the defendant's shoes" standard may find the belief in imminent danger was reasonable even during a brief pause in firing.
+          </div>
+
+          <p><strong>(2) Heat of Passion / Provocation (Partial Defense):</strong> Even if defense of others fails, Jerry may argue voluntary manslaughter (or here, its attempted equivalent) on a heat-of-passion theory. Adequate provocation requires: (a) provocation that would arouse sudden, intense passion in a reasonable person; (b) the defendant actually was provoked; (c) insufficient time for a reasonable person to cool down; and (d) the defendant did not in fact cool down.</p>
+
+          <p>Watching an armed man fire a death ray in a store where your teenage son is present — and seeing an innocent bystander crushed — would provoke a sudden, intense emotional response in any reasonable parent. Jerry acted in the immediate aftermath, with no cooling time. He described his action as "a moment of pure instinct" — consistent with heat of passion rather than cold calculation.</p>
+
+          <p>The prosecution will counter with the therapist statement: "one of these days I'm going to kill that man." This suggests Jerry acted on preexisting malice rather than sudden passion. The defense will respond that the statement reflects general frustration, not a concrete plan, and that the actual trigger was the extreme provocation of the robbery — a situation Jerry could not have anticipated when he made that statement.</p>
+        </div>
+
+        <p class="irac-label">Conclusion</p>
+        <div class="answer-text">
+          <p>Jerry's strongest defense is defense of others, though its success depends on whether the jury finds Rick posed an imminent threat at the precise moment of the strike. If defense of others fails entirely, heat of passion provides a strong partial defense to reduce the charge from attempted murder to attempted voluntary manslaughter. The therapist statement is damaging but not dispositive — it cuts against premeditation arguments but does not necessarily negate the genuine provocation Jerry experienced in the moment. This is the closest call in the hypothetical and is the issue where thoughtful, two-sided analysis will earn the most points.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== BETH ==================== -->
+
+    <div class="issue-block">
+      <div class="issue-heading">IV. LIABILITY OF BETH SMITH</div>
+
+      <div class="sub-issue">
+        <h4>A. Attempted Murder</h4>
+
+        <p class="irac-label">Rule</p>
+        <div class="answer-text">
+          <p>Attempt requires: (1) specific intent to commit the target crime, and (2) a substantial step beyond mere preparation toward commission of that crime. Under the "substantial step" test (MPC approach), the act must be strongly corroborative of criminal purpose. Factual impossibility is not a defense to attempt.</p>
+        </div>
+
+        <p class="irac-label">Application</p>
+        <div class="answer-text">
+          <p>Beth adjusted Rick's IV to administer a "fatal overdose of pain medication." The word "fatal" in the factual setup indicates Beth intended to kill Rick. She took a substantial step — she actually altered the medical equipment to deliver the lethal dose. This goes well beyond preparation; it is the last act necessary to cause death. The fact that a nurse intervened within 30 seconds and "no harm was done" is irrelevant — attempt does not require completion of the crime or even that harm result.</p>
+
+          <p><strong>Intent Analysis:</strong> Beth stated "He's suffered enough. He wouldn't want to live like this" — suggesting she believed she was acting mercifully (a "mercy killing" motive). However, motive is distinct from intent. Beth's motive (compassion, mercy) does not negate her intent (to cause Rick's death). She purposefully acted to end his life. Intent to kill is clearly established.</p>
+
+          <div class="key-distinction">
+            <strong>Critical Distinction — Motive vs. Intent:</strong> A+ answers always distinguish these. Intent = the mental state of desiring or knowing a result will occur. Motive = the reason behind the intent. "I killed him to end his suffering" establishes both intent to kill (the mens rea) AND a compassionate motive. The motive doesn't negate the intent. Mercy killing IS murder — there is no common law defense of euthanasia.
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-issue">
+        <h4>B. Potential Defenses</h4>
+
+        <div class="answer-text">
+          <p><strong>(1) Abandonment/Renunciation:</strong> Beth did not voluntarily abandon her attempt. The nurse caught the change and reversed it — the attempt was thwarted by external intervention, not by Beth's voluntary change of heart. Under both common law and MPC, abandonment must be voluntary and complete. Involuntary abandonment (being caught) is no defense.</p>
+
+          <p><strong>(2) Insanity/Diminished Capacity:</strong> The facts mention Beth's lifelong struggle with Rick's "neglect and abandonment." A defense attorney might explore whether Beth was in a dissociative or emotionally overwhelmed state. However, the facts do not suggest Beth was unable to appreciate the nature or wrongfulness of her conduct. She articulated a coherent rationale ("He's suffered enough") and performed a medically precise act (adjusting an IV — consistent with her surgical training). This suggests full cognitive capacity, making insanity unavailable under any standard (M'Naghten, MPC, irresistible impulse).</p>
+
+          <p><strong>(3) No "Heat of Passion":</strong> Beth arrived at the hospital the "next day." Even if learning of Rick's condition constituted provocation, there was ample time for a reasonable person to cool down. Heat of passion does not apply.</p>
+        </div>
+
+        <p class="irac-label">Conclusion</p>
+        <div class="answer-text">
+          <p>Beth is liable for attempted murder (likely first-degree, given the deliberate and premeditated nature of her actions). No viable defense exists on these facts. Her sympathetic motive may influence sentencing but does not affect criminal liability.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== OVERALL CONCLUSIONS ==================== -->
+
+    <div class="conclusion-box">
+      <h4>Summary of Liability</h4>
+      <div class="answer-text">
+        <p><strong>Rick:</strong> Armed robbery; murder of Mr. Poopybutthole (depraved heart and felony murder); attempted murder of Birdperson; conspiracy; felony murder of Birdperson (via Pinkerton liability for Morty's act during flight from conspiracy). Voluntary intoxication defense fails for all charges except possibly attempted murder of Birdperson (specific intent), though even there it is weak on the facts.</p>
+
+        <p><strong>Morty:</strong> Armed robbery (accomplice); felony murder of Mr. Poopybutthole (accomplice/co-conspirator); felony murder of Birdperson (killing during flight from robbery); or involuntary manslaughter of Birdperson (unlawful-act doctrine as fallback). Duress defense is weak. Infancy does not apply (age 17, rebuttable presumption of capacity not rebutted).</p>
+
+        <p><strong>Jerry:</strong> Aggravated battery of Rick. Attempted murder charge is likely, but defense of others is a strong (though not airtight) defense given the active-shooter scenario. If defense of others fails, heat of passion provides a partial defense reducing to attempted voluntary manslaughter. The therapist statement is the prosecution's best evidence of premeditation but is not dispositive.</p>
+
+        <p><strong>Beth:</strong> Attempted first-degree murder. No viable defenses. Motive (mercy) does not negate intent. Abandonment fails because intervention was involuntary. The "next day" timing eliminates heat of passion.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCORING NOTES ==================== -->
+
+  <div class="scoring-notes">
+    <h3>What Makes This an A+ Answer — Study Notes</h3>
+
+    <ul>
+      <li><strong>Issue Spotting Completeness:</strong> Identifies armed robbery, multiple homicide theories, accomplice liability, conspiracy, attempt, and every viable defense — missing any major issue would cost significant points</li>
+      <li><strong>Two-Sided Analysis:</strong> Every issue argues prosecution AND defense positions, then reaches a reasoned conclusion. Never just states a rule and conclusion without considering the counterargument</li>
+      <li><strong>Distinguishes Homicide Grades:</strong> Explains WHY depraved heart (not just recklessness or negligence), WHY felony murder applies alongside it, and doesn't just conclusorily label things "murder"</li>
+      <li><strong>Causation Analysis:</strong> Explicitly addresses but-for and proximate cause for each death, applies the eggshell skull rule for Birdperson, and addresses the time delay for Mr. Poopybutthole</li>
+      <li><strong>Voluntary Intoxication Nuance:</strong> Correctly identifies that intoxication is relevant only to specific intent crimes and explains precisely which charges it could theoretically apply to versus which it cannot (depraved heart, felony murder)</li>
+      <li><strong>Motive vs. Intent:</strong> The Beth section explicitly distinguishes these concepts — one of the most commonly tested and missed distinctions on criminal law exams</li>
+      <li><strong>Natural and Probable Consequences:</strong> Correctly applies this doctrine to hold Morty liable for deaths he did not directly cause and did not specifically intend</li>
+      <li><strong>Res Gestae / Continuous Transaction:</strong> Identifies that the felony is still "in progress" during flight, extending felony murder liability to Morty's killing of Birdperson</li>
+      <li><strong>Defense of Others — Nuanced:</strong> Doesn't simply accept or reject the defense but identifies the specific factual tension (back of head, distracted shooter) and argues both sides</li>
+      <li><strong>Organization:</strong> Structured by defendant with clear sub-headings, making it easy for the grader to award points. IRAC structure is maintained throughout without being formulaic</li>
+    </ul>
+
+    <div class="exam-tip">
+      <strong>Exam Strategy Tip:</strong> Notice that the model answer spends the MOST time on the closest calls (Jerry's liability) and less time on clearer issues (Beth's attempt). Professors award points for depth of analysis on ambiguous facts, not for lengthy treatment of obvious conclusions. When you spot a close call, that's where you park and dig in. Also note: the answer reaches conclusions but hedges appropriately — "likely liable," "the strongest charge is," "this is the closest call." Professors want to see you acknowledge uncertainty on genuinely close questions rather than declaring outcomes with false confidence.
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

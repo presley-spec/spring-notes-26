@@ -629,10 +629,10 @@
             <div style="margin-top: 32px; margin-bottom: 16px;">
                 <h3 style="font-size: 16px; margin-bottom: 16px; color: #e4e6eb;">Select Course</h3>
                 <div class="tabs">
-                    <div class="tab active" onclick="setSelectedCourse('all')">All Courses</div>
-                    <div class="tab" onclick="setSelectedCourse('property')">Property</div>
-                    <div class="tab" onclick="setSelectedCourse('conlaw')">Con Law</div>
-                    <div class="tab" onclick="setSelectedCourse('crimlaw')">Criminal Law</div>
+                    <div class="tab active" onclick="setSelectedCourse('all', this)">All Courses</div>
+                    <div class="tab" onclick="setSelectedCourse('property', this)">Property</div>
+                    <div class="tab" onclick="setSelectedCourse('conlaw', this)">Con Law</div>
+                    <div class="tab" onclick="setSelectedCourse('crimlaw', this)">Criminal Law</div>
                 </div>
             </div>
 
@@ -1015,7 +1015,6 @@
                     time: 5,
                     title: "The Robbery Gone Wrong",
                     facts: "Three defendants agree to rob a jewelry store. During the robbery, a security guard draws his gun. Defendant A grabs a hostage. Defendant B shoots the guard. Defendant C was the lookout outside. The guard dies.",
-                    modelAnswer: `[ISSUE] First, whether all three are liable for the guard's murder under felony murder. Second, whether accomplice liability applies to all participants. Third, whether Defendant C, the lookout, is liable for the shooting.",
                     modelAnswer: `[ISSUE] First, whether all three are liable for the guard's murder under felony murder. Second, whether accomplice liability applies to all participants. Third, whether Defendant C, the lookout, is liable for the shooting.
 [RULE] Felony murder: death during a dangerous felony (robbery) makes all participants liable for murder. All participants in the robbery are parties to the felony. Accomplice liability requires aiding and abetting with knowledge and intent to facilitate. Liability extends to foreseeable crimes committed in furtherance of the conspiracy (Pinkerton). A lookout aids the robbery by providing security and escape assistance.
 [APPLICATION] A and B jointly committed robbery, A with hostage-taking, B with the shooting. C served as lookout—a clear aid to the robbery. The guard's death occurred during the robbery, a dangerous felony. Under felony murder, all three are liable. C's liability for the shooting depends on foreseeability: is it foreseeable that a guard might be armed and confronted during a robbery? Yes. C thus faces felony murder liability. All three face murder charges based on felony murder.
@@ -1081,12 +1080,12 @@ A and B robbed the bank—guilty of robbery. B shot the officer during the robbe
             showScaffolding: true
         };
 
-        function setSelectedCourse(course) {
+        function setSelectedCourse(course, el) {
             gameState.selectedCourse = course;
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            event.target.classList.add('active');
+            el.classList.add('active');
         }
 
         function startGame(difficulty, course) {

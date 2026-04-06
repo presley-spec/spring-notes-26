@@ -1181,6 +1181,14 @@
             btn.disabled = selectedFacts.size === 0;
         }
 
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
         function loadRound() {
             const courseData = gameData[currentCourse];
             if (currentRound >= courseData.length) {
@@ -1212,7 +1220,8 @@
             // Load facts
             const factsPool = document.getElementById('factsPool');
             factsPool.innerHTML = '';
-            round.facts.forEach(fact => {
+            const shuffledFacts = shuffle([...round.facts]);
+            shuffledFacts.forEach(fact => {
                 const chip = document.createElement('div');
                 chip.className = 'fact-chip';
                 chip.textContent = fact.text;

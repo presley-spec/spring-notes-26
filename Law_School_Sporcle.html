@@ -1232,15 +1232,27 @@ function renderMC(game, qIdx) {
   const body = document.getElementById('game-body');
   const letters = ['A','B','C','D','E'];
 
+  // Create array of options with their original indices
+  const optionsWithIndices = q.opts.map((o, i) => ({ text: o, origIdx: i }));
+
+  // Shuffle options
+  const shuffledOptions = shuffle([...optionsWithIndices]);
+
+  // Store the mapping from new position to original index
+  state.optionMap = {};
+  shuffledOptions.forEach((opt, newIdx) => {
+    state.optionMap[newIdx] = opt.origIdx;
+  });
+
   body.innerHTML = `
     <div class="mc-question">
       <div class="q-label">Question ${qIdx+1} of ${game.questions.length}</div>
       <div class="q-text">${q.q}</div>
       <div class="mc-options">
-        ${q.opts.map((o,i) => `
+        ${shuffledOptions.map((o,i) => `
           <div class="mc-opt" data-idx="${i}" onclick="answerMC(${i})">
             <div class="opt-letter">${letters[i]}</div>
-            <div>${o}</div>
+            <div>${o.text}</div>
           </div>`).join('')}
       </div>
       <div class="mc-explanation" id="mc-explain">${q.explain}</div>
@@ -1254,12 +1266,17 @@ function answerMC(idx) {
   const opts = document.querySelectorAll('.mc-opt');
   opts.forEach(o => o.classList.add('disabled'));
 
-  if (idx === q.correct) {
+  // Map the clicked position to original index
+  const origIdx = state.optionMap[idx];
+  // Find which position the correct answer is at
+  const correctPos = Object.keys(state.optionMap).find(pos => state.optionMap[pos] === q.correct);
+
+  if (origIdx === q.correct) {
     state.score++;
     opts[idx].classList.add('correct');
   } else {
     opts[idx].classList.add('wrong');
-    opts[q.correct].classList.add('correct');
+    opts[correctPos].classList.add('correct');
   }
   updateStats();
   document.getElementById('mc-explain').classList.add('show');

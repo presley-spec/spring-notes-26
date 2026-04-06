@@ -5066,8 +5066,32 @@ const QuestionModal = ({ question, bubble, onAnswer, onDismiss, diffSetting }) =
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [answered, setAnswered] = useState(false);
+  const [shuffledOptions, setShuffledOptions] = useState([]);
 
   const timeLimit = question.difficulty <= 2 ? 30 : question.difficulty === 3 ? 20 : 15;
+
+  // Fisher-Yates shuffle function
+  const shuffle = (arr) => {
+    const shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Initialize shuffled options on mount or when question changes
+  useEffect(() => {
+    const optionsWithCorrectness = question.options.map((option, idx) => ({
+      text: option,
+      isCorrect: idx === question.correctAnswer
+    }));
+    setShuffledOptions(shuffle(optionsWithCorrectness));
+    setSelectedAnswer(null);
+    setShowResult(false);
+    setAnswered(false);
+    setTimeLeft(null);
+  }, [question]);
 
   useEffect(() => {
     if (timeLeft === null) {
@@ -5093,7 +5117,7 @@ const QuestionModal = ({ question, bubble, onAnswer, onDismiss, diffSetting }) =
 
   const handleSubmit = () => {
     if (selectedAnswer === null || answered) return;
-    const isCorrect = selectedAnswer === question.correctAnswer;
+    const isCorrect = shuffledOptions[selectedAnswer]?.isCorrect || false;
     setShowResult(true);
     setAnswered(true);
     onAnswer(isCorrect);
@@ -5163,15 +5187,15 @@ const QuestionModal = ({ question, bubble, onAnswer, onDismiss, diffSetting }) =
 
         {/* Options */}
         <div style={{ marginBottom: '20px' }}>
-          {question.options.map((option, idx) => {
+          {shuffledOptions.map((option, idx) => {
             let bgColor = '#374151';
             let borderColor = '#555';
 
             if (showResult) {
-              if (idx === question.correctAnswer) {
+              if (option.isCorrect) {
                 bgColor = '#10b981';
                 borderColor = '#059669';
-              } else if (idx === selectedAnswer && selectedAnswer !== question.correctAnswer) {
+              } else if (idx === selectedAnswer && !option.isCorrect) {
                 bgColor = '#dc2626';
                 borderColor = '#b91c1c';
               }
@@ -5200,7 +5224,7 @@ const QuestionModal = ({ question, bubble, onAnswer, onDismiss, diffSetting }) =
                   transition: 'all 0.2s'
                 }}
               >
-                {String.fromCharCode(65 + idx)}. {option}
+                {String.fromCharCode(65 + idx)}. {option.text}
               </button>
             );
           })}
@@ -5209,17 +5233,17 @@ const QuestionModal = ({ question, bubble, onAnswer, onDismiss, diffSetting }) =
         {/* Result */}
         {showResult && (
           <div style={{
-            backgroundColor: selectedAnswer === question.correctAnswer ? '#064e3b' : '#7c2d12',
-            border: `2px solid ${selectedAnswer === question.correctAnswer ? '#10b981' : '#ea580c'}`,
+            backgroundColor: shuffledOptions[selectedAnswer]?.isCorrect ? '#064e3b' : '#7c2d12',
+            border: `2px solid ${shuffledOptions[selectedAnswer]?.isCorrect ? '#10b981' : '#ea580c'}`,
             borderRadius: '4px',
             padding: '12px',
             marginBottom: '16px'
           }}>
             <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-              {selectedAnswer === question.correctAnswer ? '✓ CORRECT!' : '✗ INCORRECT'}
+              {shuffledOptions[selectedAnswer]?.isCorrect ? '✓ CORRECT!' : '✗ INCORRECT'}
             </div>
             <div style={{ fontSize: '13px', marginBottom: '8px', color: '#d1d5db' }}>
-              {selectedAnswer === question.correctAnswer ? (
+              {shuffledOptions[selectedAnswer]?.isCorrect ? (
                 <span style={{ color: '#86efac' }}>+{bubble.rpValue} RP earned</span>
               ) : (
                 <span style={{ color: '#fca5a5' }}>No RP earned. Fascism grows slightly in {COUNTRIES.find(c => c.id === bubble.countryId)?.name}.</span>
@@ -5994,9 +6018,32 @@ const StudyModeScreen = ({ onBack }) => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [selected, setSelected] = useState(null);
   const [answered, setAnswered] = useState(new Set());
+  const [shuffledOptions, setShuffledOptions] = useState([]);
 
   const q = QUESTION_BANK[currentIndex];
-  const correct = answered.has(currentIndex) ? selected === q.correctAnswer : null;
+
+  // Fisher-Yates shuffle function
+  const shuffle = (arr) => {
+    const shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Initialize shuffled options when question changes
+  useEffect(() => {
+    const optionsWithCorrectness = q.options.map((option, idx) => ({
+      text: option,
+      isCorrect: idx === q.correctAnswer
+    }));
+    setShuffledOptions(shuffle(optionsWithCorrectness));
+    setShowAnswer(false);
+    setSelected(null);
+  }, [currentIndex, q]);
+
+  const correct = answered.has(currentIndex) ? shuffledOptions[selected]?.isCorrect || false : null;
 
   const handleAnswer = (idx) => {
     setSelected(idx);
@@ -6078,7 +6125,7 @@ const StudyModeScreen = ({ onBack }) => {
         <h3 style={{ marginBottom: '20px', fontSize: '18px' }}>{q.question}</h3>
 
         <div style={{ marginBottom: '24px' }}>
-          {q.options.map((opt, idx) => (
+          {shuffledOptions.map((opt, idx) => (
             <button
               key={idx}
               onClick={() => handleAnswer(idx)}
@@ -6089,12 +6136,12 @@ const StudyModeScreen = ({ onBack }) => {
                 padding: '12px',
                 marginBottom: '8px',
                 backgroundColor:
-                  showAnswer && idx === q.correctAnswer ? '#10b981' :
-                  showAnswer && idx === selected && selected !== q.correctAnswer ? '#dc2626' :
+                  showAnswer && opt.isCorrect ? '#10b981' :
+                  showAnswer && idx === selected && !opt.isCorrect ? '#dc2626' :
                   selected === idx && !showAnswer ? '#4b5563' :
                   '#374151',
-                border: showAnswer && idx === q.correctAnswer ? '2px solid #059669' :
-                  showAnswer && idx === selected && selected !== q.correctAnswer ? '2px solid #b91c1c' :
+                border: showAnswer && opt.isCorrect ? '2px solid #059669' :
+                  showAnswer && idx === selected && !opt.isCorrect ? '2px solid #b91c1c' :
                   selected === idx && !showAnswer ? '2px solid #fbbf24' :
                   '1px solid #555',
                 borderRadius: '4px',
@@ -6105,7 +6152,7 @@ const StudyModeScreen = ({ onBack }) => {
                 transition: 'all 0.2s'
               }}
             >
-              {String.fromCharCode(65 + idx)}. {opt}
+              {String.fromCharCode(65 + idx)}. {opt.text}
             </button>
           ))}
         </div>

@@ -905,7 +905,7 @@ Peter screams: "I CHASED THAT TURKEY FOR FOUR HOURS!" Homer screams (muffled fro
 // ═══════════════════════════════════════════════════
 let G = {
   screen:'title', mode:null, qi:0, score:0, streak:0, best:0,
-  answered:false, sel:-1, results:[], topics:{}
+  answered:false, sel:-1, results:[], topics:{}, shuffledOptions:[]
 };
 
 const MODES = {
@@ -916,6 +916,14 @@ const MODES = {
 
 const $ = id => document.getElementById(id);
 const L = ['A','B','C','D'];
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 function render(){
   const a = $('app');
@@ -953,14 +961,21 @@ function gameHTML(){
   const mInfo = MODES[m];
   let roleClass = `role-${m}`;
 
-  let optsH = d.opts.map((o,i)=>{
-    let c='opt';
-    if(G.answered){
-      c+=' dis';
-      if(i===d.correct) c+=' correct';
-      else if(i===G.sel&&i!==d.correct) c+=' wrong';
+  // Create shuffled options with isCorrect flag
+  const optionsData = d.opts.map((text, index) => ({
+    text,
+    isCorrect: index === d.correct
+  }));
+  G.shuffledOptions = shuffle([...optionsData]);
+
+  let optsH = G.shuffledOptions.map((opt, i) => {
+    let c = 'opt';
+    if (G.answered) {
+      c += ' dis';
+      if (opt.isCorrect) c += ' correct';
+      else if (i === G.sel && !opt.isCorrect) c += ' wrong';
     }
-    return `<button class="${c}" data-i="${i}"><span class="letter">${L[i]}</span>${o}</button>`;
+    return `<button class="${c}" data-i="${i}"><span class="letter">${L[i]}</span>${opt.text}</button>`;
   }).join('');
 
   let fbH='';
@@ -1076,7 +1091,7 @@ function answer(i){
   if(G.answered)return;
   G.answered=true;G.sel=i;
   const d=S[G.qi][G.mode];
-  const ok=i===d.correct;
+  const ok=G.shuffledOptions[i].isCorrect;
   if(ok){G.score++;G.streak++;if(G.streak>G.best)G.best=G.streak}else{G.streak=0}
   G.results.push({ok,topic:S[G.qi].topic});
   const t=S[G.qi].topic;

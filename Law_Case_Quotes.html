@@ -667,6 +667,14 @@
             document.getElementById('guessInput').focus();
         }
 
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
         function handleInputChange(event) {
             const input = event.target.value.toLowerCase();
             const dropdown = document.getElementById('autocompleteDropdown');
@@ -685,7 +693,9 @@
                 return;
             }
 
-            dropdown.innerHTML = matches.map(c =>
+            const shuffledMatches = shuffle([...matches]);
+
+            dropdown.innerHTML = shuffledMatches.map(c =>
                 `<div class="autocomplete-item" onclick="selectAutocompleteSuggestion('${c.name}')">${c.name}</div>`
             ).join('');
             dropdown.classList.add('active');

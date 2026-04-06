@@ -649,11 +649,30 @@ function Game() {
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
   const [showExplanation, setShowExplanation] = useState(false);
   const [phase, setPhase] = useState('story'); // story, briefing, arguments, quiz, results, promotion
+  const [shuffledChoices, setShuffledChoices] = useState([]);
 
   const safeCaseIdx = Math.min(caseIdx, CASES.length - 1);
   const currentCase = CASES[safeCaseIdx];
   const currentRank = CAREER.findIndex((c, i) => i === CAREER.length - 1 || wins < CAREER[i + 1].requiredWins);
   const career = CAREER[currentRank] || CAREER[0];
+
+  // Fisher-Yates shuffle function
+  const shuffle = (arr) => {
+    const result = [...arr];
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  };
+
+  // Shuffle choices when question changes
+  useEffect(() => {
+    if (currentCase && currentCase.questions[questionIdx]) {
+      const shuffled = shuffle(currentCase.questions[questionIdx].choices);
+      setShuffledChoices(shuffled);
+    }
+  }, [questionIdx, currentCase]);
 
   const startCase = useCallback(() => {
     setQuestionIdx(0);
@@ -665,15 +684,15 @@ function Game() {
     setScreen('case');
   }, []);
 
-  const handleAnswer = (choiceIdx) => {
+  const handleAnswer = (shuffledIdx) => {
     if (selectedAnswer !== null) return;
-    setSelectedAnswer(choiceIdx);
+    setSelectedAnswer(shuffledIdx);
     setShowExplanation(true);
-    const q = currentCase.questions[questionIdx];
-    if (q.choices[choiceIdx].correct) {
+    const selectedChoice = shuffledChoices[shuffledIdx];
+    if (selectedChoice.correct) {
       setCorrectCount(c => c + 1);
     }
-    setAnsweredQuestions(prev => [...prev, { questionIdx, choiceIdx, correct: q.choices[choiceIdx].correct }]);
+    setAnsweredQuestions(prev => [...prev, { questionIdx, choiceIdx: shuffledIdx, correct: selectedChoice.correct }]);
   };
 
   const nextQuestion = () => {
@@ -853,7 +872,7 @@ function Game() {
               <p style={{ fontSize: 16, lineHeight: 1.7, color: '#e0e8f0', fontWeight: 500, marginBottom: 20 }}>{currentCase.questions[questionIdx].question}</p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {currentCase.questions[questionIdx].choices.map((choice, i) => {
+                {shuffledChoices.map((choice, i) => {
                   let bg = 'rgba(255,232,31,0.05)';
                   let borderColor = 'rgba(255,232,31,0.15)';
                   let textColor = '#bcc8d4';
@@ -899,12 +918,12 @@ function Game() {
 
             {/* Explanation */}
             {showExplanation && selectedAnswer !== null && (
-              <Panel style={{ animation: 'fadeIn 0.4s ease', borderLeft: `3px solid ${currentCase.questions[questionIdx].choices[selectedAnswer].correct ? '#4caf50' : '#f44336'}` }}>
-                <div style={{ fontSize: 12, color: currentCase.questions[questionIdx].choices[selectedAnswer].correct ? '#4caf50' : '#f44336', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>
-                  {currentCase.questions[questionIdx].choices[selectedAnswer].correct ? '✓ Correct!' : '✗ Incorrect'}
+              <Panel style={{ animation: 'fadeIn 0.4s ease', borderLeft: `3px solid ${shuffledChoices[selectedAnswer].correct ? '#4caf50' : '#f44336'}` }}>
+                <div style={{ fontSize: 12, color: shuffledChoices[selectedAnswer].correct ? '#4caf50' : '#f44336', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>
+                  {shuffledChoices[selectedAnswer].correct ? '✓ Correct!' : '✗ Incorrect'}
                 </div>
                 <p style={{ fontSize: 14, lineHeight: 1.7, color: '#8899aa' }}>
-                  {currentCase.questions[questionIdx].choices[selectedAnswer].explanation}
+                  {shuffledChoices[selectedAnswer].explanation}
                 </p>
                 <Btn primary onClick={nextQuestion} style={{ marginTop: 16 }}>
                   {questionIdx < currentCase.questions.length - 1 ? 'Next Question' : 'View Case Results'}

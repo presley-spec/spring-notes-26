@@ -1158,6 +1158,15 @@
             document.getElementById('rank-bar').style.width = progress + '%';
         }
 
+        // ===== SHUFFLE FUNCTION =====
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
         // ===== AUTOCOMPLETE =====
         function updateAutocomplete() {
             const input = document.getElementById('issue-input').value.trim().toLowerCase();
@@ -1185,7 +1194,9 @@
                 return;
             }
 
-            list.innerHTML = suggestions.map((issue, i) => `
+            const shuffledSuggestions = shuffle([...suggestions]);
+
+            list.innerHTML = shuffledSuggestions.map((issue, i) => `
                 <div class="autocomplete-item" data-index="${i}">${issue.name}</div>
             `).join('');
 
@@ -1193,7 +1204,7 @@
 
             document.querySelectorAll('.autocomplete-item').forEach(item => {
                 item.addEventListener('click', () => {
-                    document.getElementById('issue-input').value = suggestions[parseInt(item.dataset.index)].name;
+                    document.getElementById('issue-input').value = shuffledSuggestions[parseInt(item.dataset.index)].name;
                     list.classList.remove('show');
                 });
             });

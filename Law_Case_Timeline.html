@@ -343,6 +343,89 @@
             color: #c0c0c0;
         }
 
+        .case-review {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .case-review h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 4px;
+            color: #667eea;
+        }
+
+        .case-review .course-tag {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+
+        .course-tag.conlaw { background: rgba(9, 132, 227, 0.15); color: #0984e3; }
+        .course-tag.crimlaw { background: rgba(155, 89, 182, 0.15); color: #9b59b6; }
+        .course-tag.property { background: rgba(225, 112, 85, 0.15); color: #e17055; }
+
+        .case-review-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .case-review-item:last-child {
+            border-bottom: none;
+        }
+
+        .case-review-number {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            background: rgba(102, 126, 234, 0.15);
+            color: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .case-review-content {
+            flex: 1;
+        }
+
+        .case-review-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #e0e0e0;
+            margin-bottom: 2px;
+        }
+
+        .case-review-year {
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .case-review-holding {
+            font-size: 13px;
+            color: #999;
+            line-height: 1.5;
+        }
+
+        .case-review-status {
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
         .results-buttons {
             display: flex;
             gap: 12px;
@@ -545,6 +628,12 @@
                     <p id="storyText"></p>
                 </div>
 
+                <div class="case-review" id="caseReview">
+                    <h3>Correct Timeline</h3>
+                    <div class="course-tag" id="courseTag"></div>
+                    <div id="caseReviewList"></div>
+                </div>
+
                 <div class="results-buttons">
                     <button class="primary-button" id="retryButton">Try Another Timeline</button>
                     <button class="secondary-button" id="homeButton">Return to Menu</button>
@@ -558,6 +647,7 @@
         const timelines = {
             1: {
                 title: "Commerce Clause Evolution",
+                course: "Constitutional Law",
                 cases: [
                     { name: "Gibbons v. Ogden", year: 1824, holding: "Commerce power is broad — includes navigation and intercourse among states" },
                     { name: "E.C. Knight", year: 1895, holding: "Manufacturing is local, not interstate commerce" },
@@ -571,6 +661,7 @@
             },
             2: {
                 title: "Equal Protection Journey",
+                course: "Constitutional Law",
                 cases: [
                     { name: "Plessy v. Ferguson", year: 1896, holding: "Separate but equal satisfies equal protection" },
                     { name: "Korematsu v. United States", year: 1944, holding: "Racial classification upheld under strict scrutiny (wartime)" },
@@ -583,6 +674,7 @@
             },
             3: {
                 title: "Due Process & Privacy Rights",
+                course: "Constitutional Law",
                 cases: [
                     { name: "Lochner v. New York", year: 1905, holding: "Economic liberty is a fundamental right — struck down labor law" },
                     { name: "West Coast Hotel v. Parrish", year: 1937, holding: "Overruled Lochner — economic regulation gets rational basis" },
@@ -595,6 +687,7 @@
             },
             4: {
                 title: "Separation of Powers",
+                course: "Constitutional Law",
                 cases: [
                     { name: "Youngstown Sheet & Tube v. Sawyer", year: 1952, holding: "President can't seize steel mills without Congressional authorization" },
                     { name: "United States v. Nixon", year: 1974, holding: "Executive privilege exists but isn't absolute — must yield to criminal process" },
@@ -606,6 +699,7 @@
             },
             5: {
                 title: "First Amendment Speech",
+                course: "Constitutional Law",
                 cases: [
                     { name: "Schenck v. United States", year: 1919, holding: "Clear and present danger test" },
                     { name: "Brandenburg v. Ohio", year: 1969, holding: "Speech protected unless directed to inciting imminent lawless action" },
@@ -618,6 +712,7 @@
             },
             6: {
                 title: "Judicial Review & Federal Power",
+                course: "Constitutional Law",
                 cases: [
                     { name: "Marbury v. Madison", year: 1803, holding: "It is the province of the judiciary to say what the law is" },
                     { name: "McCulloch v. Maryland", year: 1819, holding: "Implied powers + states can't tax federal institutions" },
@@ -629,6 +724,7 @@
             },
             7: {
                 title: "Death Penalty",
+                course: "Criminal Law",
                 cases: [
                     { name: "Furman v. Georgia", year: 1972, holding: "Death penalty as applied is cruel and unusual — arbitrary" },
                     { name: "Gregg v. Georgia", year: 1976, holding: "Death penalty constitutional with guided discretion" },
@@ -641,6 +737,7 @@
             },
             8: {
                 title: "Miranda & Interrogation Rights",
+                course: "Criminal Law",
                 cases: [
                     { name: "Escobedo v. Illinois", year: 1964, holding: "Right to counsel during police interrogation" },
                     { name: "Miranda v. Arizona", year: 1966, holding: "Must be informed of rights before custodial interrogation" },
@@ -652,6 +749,7 @@
             },
             9: {
                 title: "Search & Seizure (4th Amendment)",
+                course: "Criminal Law",
                 cases: [
                     { name: "Weeks v. United States", year: 1914, holding: "Exclusionary rule applies in federal courts" },
                     { name: "Mapp v. Ohio", year: 1961, holding: "Exclusionary rule incorporated against states" },
@@ -663,6 +761,7 @@
             },
             10: {
                 title: "Right to Counsel",
+                course: "Criminal Law",
                 cases: [
                     { name: "Powell v. Alabama", year: 1932, holding: "Right to counsel in capital cases — Scottsboro Boys" },
                     { name: "Gideon v. Wainwright", year: 1963, holding: "Right to counsel in all felony cases" },
@@ -674,6 +773,7 @@
             },
             11: {
                 title: "Mens Rea Development",
+                course: "Criminal Law",
                 cases: [
                     { name: "Regina v. Cunningham", year: 1957, holding: "Recklessness requires subjective awareness of risk" },
                     { name: "MPC Publication", year: 1962, holding: "Four-level hierarchy: purposely, knowingly, recklessly, negligently" },
@@ -685,6 +785,7 @@
             },
             12: {
                 title: "Takings Clause",
+                course: "Property",
                 cases: [
                     { name: "Pennsylvania Coal v. Mahon", year: 1922, holding: "Regulation that goes 'too far' is a taking" },
                     { name: "Penn Central v. NYC", year: 1978, holding: "Three-factor balancing test for regulatory takings" },
@@ -696,6 +797,7 @@
             },
             13: {
                 title: "Fair Housing & Discrimination",
+                course: "Property",
                 cases: [
                     { name: "Shelley v. Kraemer", year: 1948, holding: "Judicial enforcement of racial covenants is state action" },
                     { name: "Fair Housing Act", year: 1968, holding: "Federal law prohibiting housing discrimination" },
@@ -707,6 +809,7 @@
             },
             14: {
                 title: "Landlord-Tenant Evolution",
+                course: "Property",
                 cases: [
                     { name: "Traditional Common Law", year: 1800, holding: "Caveat emptor — tenant takes premises as-is" },
                     { name: "Reste Realty v. Cooper", year: 1969, holding: "Constructive eviction doesn't require total eviction" },
@@ -718,6 +821,7 @@
             },
             15: {
                 title: "Adverse Possession",
+                course: "Property",
                 cases: [
                     { name: "Traditional Common Law", year: 1800, holding: "Adverse possessor acquires title after statutory period" },
                     { name: "Marengo Cave v. Ross", year: 1937, holding: "Underground possession not 'open and notorious'" },
@@ -877,6 +981,29 @@
             document.getElementById('scoreLabel').textContent = label;
 
             document.getElementById('storyText').textContent = timeline.story;
+
+            // Build case review with correct order, descriptions, and course
+            const courseMap = { 'Constitutional Law': 'conlaw', 'Criminal Law': 'crimlaw', 'Property': 'property' };
+            const courseTag = document.getElementById('courseTag');
+            courseTag.textContent = timeline.course;
+            courseTag.className = 'course-tag ' + (courseMap[timeline.course] || '');
+
+            let reviewHTML = '';
+            timeline.cases.forEach((c, i) => {
+                const userPlaced = currentCases[i];
+                const wasCorrect = userPlaced.name === c.name;
+                reviewHTML += `
+                    <div class="case-review-item">
+                        <div class="case-review-number">${i + 1}</div>
+                        <div class="case-review-content">
+                            <div class="case-review-name">${c.name}</div>
+                            <div class="case-review-year">${c.year}</div>
+                            <div class="case-review-holding">${c.holding}</div>
+                        </div>
+                        <div class="case-review-status">${wasCorrect ? '✅' : '❌'}</div>
+                    </div>`;
+            });
+            document.getElementById('caseReviewList').innerHTML = reviewHTML;
 
             renderCases();
 

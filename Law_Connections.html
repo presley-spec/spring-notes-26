@@ -368,6 +368,71 @@
                 font-size: 12px;
             }
         }
+
+        .puzzle-summary {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+        }
+
+        .puzzle-summary h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #e0e0e0;
+            text-align: center;
+        }
+
+        .summary-group {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .summary-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-group.yellow { background: rgba(249, 223, 109, 0.12); border: 1px solid rgba(249, 223, 109, 0.25); }
+        .summary-group.green { background: rgba(160, 195, 90, 0.12); border: 1px solid rgba(160, 195, 90, 0.25); }
+        .summary-group.blue { background: rgba(176, 196, 239, 0.12); border: 1px solid rgba(176, 196, 239, 0.25); }
+        .summary-group.purple { background: rgba(186, 129, 197, 0.12); border: 1px solid rgba(186, 129, 197, 0.25); }
+
+        .summary-category {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .summary-group.yellow .summary-category { color: #f9df6d; }
+        .summary-group.green .summary-category { color: #a0c35a; }
+        .summary-group.blue .summary-category { color: #b0c4ef; }
+        .summary-group.purple .summary-category { color: #ba81c5; }
+
+        .summary-items {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .btn-give-up {
+            display: block;
+            margin: 12px auto 0;
+            padding: 10px 24px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-give-up:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -396,6 +461,8 @@
                 <button class="btn-submit" id="btnSubmit" disabled>Submit</button>
             </div>
 
+            <button class="btn-give-up" id="btnGiveUp">Give Up</button>
+            <div id="puzzleSummary"></div>
             <button class="btn-help" id="btnHelp">How to Play</button>
             <button class="btn-next" id="btnNext">Next Puzzle</button>
         </div>
@@ -743,6 +810,9 @@
                 disableAllTiles();
                 document.getElementById('btnSubmit').disabled = true;
                 document.getElementById('btnDeselect').disabled = true;
+                document.getElementById('btnGiveUp').style.display = 'none';
+                revealAllGroups();
+                showPuzzleSummary();
             } else {
                 updateMessage(`Wrong! ${lives} lives remaining.`, 'error');
                 clearSelection();
@@ -774,8 +844,44 @@
                     document.getElementById('btnNext').classList.add('show');
                     document.getElementById('btnSubmit').disabled = true;
                     document.getElementById('btnDeselect').disabled = true;
+                    document.getElementById('btnGiveUp').style.display = 'none';
+                    showPuzzleSummary();
                 }, 500);
             }
+        }
+
+        function revealAllGroups() {
+            const puzzle = PUZZLES[currentPuzzle];
+            puzzle.groups.forEach(group => {
+                if (!solvedGroups.includes(group)) {
+                    solvedGroups.push(group);
+                    const tiles = document.querySelectorAll('.tile');
+                    tiles.forEach(tile => {
+                        if (group.items.includes(tile.dataset.text) && !tile.classList.contains('solved')) {
+                            tile.classList.add('solved', group.difficulty, 'tile-locked');
+                            tile.innerHTML = `${tile.dataset.text}<div class="category-label">${group.category}</div>`;
+                            tile.style.opacity = '1';
+                        }
+                    });
+                }
+            });
+        }
+
+        function showPuzzleSummary() {
+            const puzzle = PUZZLES[currentPuzzle];
+            let html = '<div class="puzzle-summary"><h3>Group Explanations</h3>';
+            const order = ['yellow', 'green', 'blue', 'purple'];
+            order.forEach(diff => {
+                const group = puzzle.groups.find(g => g.difficulty === diff);
+                if (group) {
+                    html += `<div class="summary-group ${group.difficulty}">
+                        <div class="summary-category">${group.category}</div>
+                        <div class="summary-items">${group.items.join(' • ')}</div>
+                    </div>`;
+                }
+            });
+            html += '</div>';
+            document.getElementById('puzzleSummary').innerHTML = html;
         }
 
         function clearSelection() {
@@ -798,6 +904,8 @@
                 currentPuzzle++;
                 lives = 4;
                 document.getElementById('btnNext').classList.remove('show');
+                document.getElementById('puzzleSummary').innerHTML = '';
+                document.getElementById('btnGiveUp').style.display = 'block';
                 initPuzzle();
             }
         }
@@ -806,6 +914,17 @@
         document.getElementById('btnSubmit').addEventListener('click', checkGuess);
         document.getElementById('btnDeselect').addEventListener('click', clearSelection);
         document.getElementById('btnNext').addEventListener('click', nextPuzzle);
+
+        document.getElementById('btnGiveUp').addEventListener('click', () => {
+            updateMessage('Revealed!', 'error');
+            disableAllTiles();
+            document.getElementById('btnSubmit').disabled = true;
+            document.getElementById('btnDeselect').disabled = true;
+            document.getElementById('btnGiveUp').style.display = 'none';
+            revealAllGroups();
+            showPuzzleSummary();
+            document.getElementById('btnNext').classList.add('show');
+        });
 
         document.getElementById('btnHelp').addEventListener('click', () => {
             document.getElementById('howToPlayModal').classList.add('active');

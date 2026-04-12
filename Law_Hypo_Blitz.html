@@ -676,9 +676,89 @@
                 explanation: "Glucksberg's restrictive test for new fundamental rights requires showing the right is 'deeply rooted in history and tradition' OR 'implicit in ordered liberty.' This very strict test means most claims for new rights fail."
             },
 
-            // PROPERTY - Chapters 5-6
+            // CON LAW - Standing and Justiciability Hypos
             {
                 id: 16,
+                course: "conlaw",
+                chapter: "7-10 Standing",
+                difficulty: "hard",
+                question: "A plaintiff sues the EPA for failing to regulate a pollutant that is harming her farm. She can prove pollution damage but cannot prove the EPA's inaction (rather than the factory itself) caused it. Her standing claim FAILS because:",
+                choices: [
+                    { letter: "A", text: "She has no injury-in-fact", correct: false },
+                    { letter: "B", text: "Her injury is not traceable to the defendant (EPA) - the causation element fails", correct: true },
+                    { letter: "C", text: "She is not a citizen", correct: false },
+                    { letter: "D", text: "Environmental claims are never justiciable", correct: false }
+                ],
+                explanation: "While she has injury-in-fact (farm damage) and redressability (EPA regulation could help), the causation prong fails because the injury is more directly traceable to the factory, not the EPA's inaction. Standing requires all THREE elements."
+            },
+
+            // CON LAW - Separation of Powers Hypos
+            {
+                id: 17,
+                course: "conlaw",
+                chapter: "7-10 Separation of Powers",
+                difficulty: "medium",
+                question: "The President, without congressional authorization and against Congress's express wishes, seizes private steel mills during a labor dispute. Under Youngstown's framework, presidential power is:",
+                choices: [
+                    { letter: "A", text: "At its highest because the President is Commander-in-Chief", correct: false },
+                    { letter: "B", text: "At its lowest ebb (Category 3) because the President acts against Congress's will", correct: true },
+                    { letter: "C", text: "In the twilight zone because Congress hasn't spoken", correct: false },
+                    { letter: "D", text: "Unlimited during emergencies", correct: false }
+                ],
+                explanation: "This is the actual Youngstown facts. Jackson's Category 3: when the President acts against congressional will, power is at its 'lowest ebb.' The President can only prevail if Congress lacks constitutional authority over the subject matter."
+            },
+
+            // CON LAW - Dormant Commerce Clause Hypos
+            {
+                id: 18,
+                course: "conlaw",
+                chapter: "7-10 Commerce Clause",
+                difficulty: "medium",
+                question: "State X passes a law banning the import of out-of-state milk to 'protect local dairy farmers.' Under dormant Commerce Clause analysis, this law is:",
+                choices: [
+                    { letter: "A", text: "Valid because states can protect local industries", correct: false },
+                    { letter: "B", text: "Subject to strict scrutiny as facially discriminatory against interstate commerce and almost certainly unconstitutional", correct: true },
+                    { letter: "C", text: "Subject to rational basis review", correct: false },
+                    { letter: "D", text: "Valid because milk is a health matter", correct: false }
+                ],
+                explanation: "Banning out-of-state milk explicitly discriminates against interstate commerce. Under dormant Commerce Clause, discriminatory laws face strict scrutiny and are almost always struck down. Compare Philadelphia v. New Jersey (waste import ban struck down)."
+            },
+
+            // CON LAW - Anti-commandeering Hypos
+            {
+                id: 19,
+                course: "conlaw",
+                chapter: "7-10 Separation of Powers",
+                difficulty: "medium",
+                question: "Congress passes a law requiring state police departments to conduct federal background checks on gun purchasers. Under the anti-commandeering doctrine, this law is:",
+                choices: [
+                    { letter: "A", text: "Constitutional because Congress has Commerce Clause power", correct: false },
+                    { letter: "B", text: "Unconstitutional because Congress cannot commandeer state officers to enforce federal law", correct: true },
+                    { letter: "C", text: "Valid because gun control is a federal matter", correct: false },
+                    { letter: "D", text: "Only valid if states opt in", correct: false }
+                ],
+                explanation: "Under Printz v. United States, Congress cannot directly compel state officers to administer federal regulatory programs. Congress can incentivize through conditional spending or create its own enforcement apparatus, but cannot commandeer state personnel."
+            },
+
+            // CON LAW - Mootness Hypos
+            {
+                id: 20,
+                course: "conlaw",
+                chapter: "7-10 Justiciability",
+                difficulty: "medium",
+                question: "A case challenges a state abortion ban. While the case is pending, the plaintiff is no longer pregnant. The state argues the case is moot. The court should:",
+                choices: [
+                    { letter: "A", text: "Dismiss because the controversy has ended", correct: false },
+                    { letter: "B", text: "Continue because this is 'capable of repetition yet evading review'", correct: true },
+                    { letter: "C", text: "Convert to an advisory opinion", correct: false },
+                    { letter: "D", text: "Transfer to state court", correct: false }
+                ],
+                explanation: "Pregnancy is the classic example of an issue 'capable of repetition yet evading review' - it's inherently short-duration and would always moot before litigation concludes. The exception to mootness applies."
+            },
+
+            // PROPERTY - Chapters 5-6
+            {
+                id: 26,
                 course: "property",
                 chapter: "5-6 Future Interests",
                 difficulty: "hard",
@@ -692,7 +772,7 @@
                 explanation: "RAP requires interests vest within lives in being + 21 years. After A dies, B could have a child who wouldn't reach 30 within 21 years after A or B's death. The interest could vest too remotely, violating RAP."
             },
             {
-                id: 17,
+                id: 22,
                 course: "property",
                 chapter: "5-6 Landlord-Tenant",
                 difficulty: "hard",
@@ -706,7 +786,7 @@
                 explanation: "Constructive eviction requires: (1) landlord's act/failure - failure to address infestation; (2) substantial interference - cockroaches are health hazard; (3) notice - written notice given; (4) tenant vacated within reasonable time. All elements are met."
             },
             {
-                id: 18,
+                id: 23,
                 course: "property",
                 chapter: "5-6 Landlord-Tenant",
                 difficulty: "hard",
@@ -720,7 +800,7 @@
                 explanation: "Assignment = transfer of tenant's ENTIRE remaining interest. Sublease = transfer of LESS than entire interest. Since Tom transferred all 3 years remaining, this is an assignment. Jerry is now in privity of estate with the landlord."
             },
             {
-                id: 19,
+                id: 24,
                 course: "property",
                 chapter: "5-6 Real Covenants",
                 difficulty: "hard",
@@ -734,7 +814,7 @@
                 explanation: "Under Nahrstedt v. Lakeside Village, recorded HOA restrictions are presumed valid and enforceable unless they are wholly arbitrary, violate public policy, or impose burdens that far outweigh benefits."
             },
             {
-                id: 20,
+                id: 25,
                 course: "property",
                 chapter: "5-6 Future Interests",
                 difficulty: "hard",
@@ -746,6 +826,158 @@
                     { letter: "D", text: "Condition subsequent is more valuable", correct: false }
                 ],
                 explanation: "Fee simple determinable ('so long as') automatically terminates when the condition occurs - the estate reverts by operation of law. Fee simple subject to condition subsequent ('but if...grantor may re-enter') requires the grantor to affirmatively exercise the right of re-entry."
+            },
+
+            // CRIMINAL LAW - ATTEMPT HYPOS
+            {
+                id: 51,
+                course: "criminal",
+                chapter: "11-15 Attempt",
+                difficulty: "medium",
+                question: "Tom plans to poison his wife's coffee but accidentally grabs sugar instead of arsenic. The wife drinks the coffee unharmed. Under the doctrine of factual impossibility, Tom is:",
+                choices: [
+                    { letter: "A", text: "Not guilty because the crime was impossible", correct: false },
+                    { letter: "B", text: "Guilty of attempted murder - factual impossibility is NOT a defense", correct: true },
+                    { letter: "C", text: "Guilty of assault", correct: false },
+                    { letter: "D", text: "Guilty of reckless endangerment", correct: false }
+                ],
+                explanation: "Factual impossibility (grabbing wrong substance) is NOT a defense to attempt. Tom had specific intent to kill and took a substantial step. That the substance was harmless is an unknown factual circumstance that doesn't negate liability."
+            },
+
+            // CRIMINAL LAW - COMPLICITY HYPOS
+            {
+                id: 52,
+                course: "criminal",
+                chapter: "11-15 Complicity",
+                difficulty: "medium",
+                question: "Bob supplies specialized lock-picking tools to Carl, knowing Carl will use them for burglary. Under Regina v. Bainbridge, Bob is:",
+                choices: [
+                    { letter: "A", text: "Not liable because he didn't enter the building", correct: false },
+                    { letter: "B", text: "An accomplice because supplying specialized crime tools with knowledge equals complicity", correct: true },
+                    { letter: "C", text: "Only liable if he was present during the burglary", correct: false },
+                    { letter: "D", text: "Liable only under strict liability", correct: false }
+                ],
+                explanation: "Under Bainbridge, a supplier of specialized crime tools who knows their intended criminal use is an accomplice. Unlike United States v. Falcone (where goods had lawful uses), lock-picking tools supplied with knowledge of burglary purpose creates complicity."
+            },
+
+            // CRIMINAL LAW - CONSPIRACY HYPOS
+            {
+                id: 53,
+                course: "criminal",
+                chapter: "11-15 Conspiracy",
+                difficulty: "hard",
+                question: "In a conspiracy prosecution, the government proves that Dave agreed with undercover agent Officer Smith to rob a bank. Under the bilateral requirement (Gebardi), the conspiracy charge:",
+                choices: [
+                    { letter: "A", text: "Succeeds because Dave agreed to commit a crime", correct: false },
+                    { letter: "B", text: "May fail because Officer Smith never genuinely agreed to commit the crime", correct: true },
+                    { letter: "C", text: "Succeeds because any two people can conspire", correct: false },
+                    { letter: "D", text: "Fails because police cannot participate in conspiracies", correct: false }
+                ],
+                explanation: "Under the bilateral requirement, conspiracy needs two genuinely agreeing parties. Since Officer Smith was pretending, there may be no true 'meeting of the minds.' Some jurisdictions (using unilateral approach) would still find conspiracy based on Dave's belief alone."
+            },
+
+            // CRIMINAL LAW - THEFT HYPOS
+            {
+                id: 54,
+                course: "criminal",
+                chapter: "11-15 Theft",
+                difficulty: "easy",
+                question: "Grace works as a hotel front desk clerk. She regularly pockets cash from the register. This is BEST classified as:",
+                choices: [
+                    { letter: "A", text: "Larceny", correct: false },
+                    { letter: "B", text: "Embezzlement - she had lawful access and fraudulently converted the funds", correct: true },
+                    { letter: "C", text: "Robbery", correct: false },
+                    { letter: "D", text: "False pretenses", correct: false }
+                ],
+                explanation: "Grace had lawful possession of the cash through her employment. When she converted it to personal use, that's embezzlement (lawful possession + fraudulent conversion), not larceny (which requires trespassory taking)."
+            },
+
+            // CRIMINAL LAW - CONSPIRACY WITHDRAWAL HYPO
+            {
+                id: 55,
+                course: "criminal",
+                chapter: "11-15 Conspiracy",
+                difficulty: "hard",
+                question: "During conspiracy withdrawal, Eve tells all co-conspirators she's 'done' and takes no further action. Two weeks later, co-conspirator Frank commits a robbery that was part of the original conspiracy plan. Eve is:",
+                choices: [
+                    { letter: "A", text: "Completely free from all liability", correct: false },
+                    { letter: "B", text: "Not liable for Frank's robbery (occurred after withdrawal) but still liable for conspiracy itself and any crimes before withdrawal", correct: true },
+                    { letter: "C", text: "Liable for everything because withdrawal is impossible", correct: false },
+                    { letter: "D", text: "Liable only if she told police", correct: false }
+                ],
+                explanation: "Withdrawal cuts off liability for FUTURE crimes of co-conspirators but does NOT erase liability for the conspiracy itself or crimes already committed in furtherance. Eve's affirmative notice satisfies withdrawal requirements, so she's not liable for Frank's post-withdrawal robbery."
+            },
+
+            // PROPERTY LAW HYPOTHETICALS
+            {
+                id: 56,
+                course: "property",
+                chapter: "Acquisition of Property",
+                difficulty: "easy",
+                question: "Hunter A is chasing a wild fox across open land. Hunter B, seeing the chase, kills the fox just before A can reach it. Under Pierson v. Post, the fox belongs to:",
+                choices: [
+                    { letter: "A", text: "Hunter A because he was in hot pursuit", correct: false },
+                    { letter: "B", text: "Hunter B because he achieved actual capture/kill first", correct: true },
+                    { letter: "C", text: "The landowner because the fox was on his property", correct: false },
+                    { letter: "D", text: "Neither - wild animals cannot be owned", correct: false }
+                ],
+                explanation: "Under Pierson v. Post's bright-line rule, mere pursuit does not create property rights. Hunter B achieved mortal wounding/capture first and therefore has superior claim. The rule favors certainty over rewarding effort."
+            },
+            {
+                id: 57,
+                course: "property",
+                chapter: "Recording Statutes",
+                difficulty: "medium",
+                question: "Seller sells Blackacre to Buyer A on Monday (A does not record). On Wednesday, Seller sells the same property to Buyer B, who has no knowledge of the prior sale. B records immediately. In a RACE-NOTICE jurisdiction, who prevails?",
+                choices: [
+                    { letter: "A", text: "Buyer A because she purchased first", correct: false },
+                    { letter: "B", text: "Buyer B because she was a BFP without notice who recorded first", correct: true },
+                    { letter: "C", text: "Whoever paid more", correct: false },
+                    { letter: "D", text: "Neither - the sale is void", correct: false }
+                ],
+                explanation: "In a race-notice jurisdiction, a subsequent bona fide purchaser (BFP) who (1) takes without notice of the prior interest AND (2) records first prevails. B had no actual, constructive, or inquiry notice of A's purchase and recorded first."
+            },
+            {
+                id: 58,
+                course: "property",
+                chapter: "Concurrent Tenancies",
+                difficulty: "medium",
+                question: "O conveys Blackacre 'to A and B as joint tenants with right of survivorship.' A secretly sells her interest to C without telling B. The effect is:",
+                choices: [
+                    { letter: "A", text: "C and B are now joint tenants", correct: false },
+                    { letter: "B", text: "The joint tenancy is severed - C and B hold as tenants in common", correct: true },
+                    { letter: "C", text: "The sale is void because B didn't consent", correct: false },
+                    { letter: "D", text: "A retains her interest despite the sale", correct: false }
+                ],
+                explanation: "A's conveyance to C breaks the unity of title, severing the joint tenancy. C and B now hold as tenants in common (no right of survivorship). A joint tenant can unilaterally sever without the other tenant's knowledge or consent."
+            },
+            {
+                id: 59,
+                course: "property",
+                chapter: "Servitudes",
+                difficulty: "hard",
+                question: "A developer sells 50 lots in a subdivision. Lots 1-48 have deeds with a restriction: 'residential use only.' Lots 49-50 have no such restriction in their deeds. Under Sanborn v. McLean, lots 49-50:",
+                choices: [
+                    { letter: "A", text: "Have no restrictions because their deeds are silent", correct: false },
+                    { letter: "B", text: "May be bound by implied reciprocal servitudes from the common development scheme", correct: true },
+                    { letter: "C", text: "Can be used for any purpose", correct: false },
+                    { letter: "D", text: "Are exempt because they were sold last", correct: false }
+                ],
+                explanation: "Under Sanborn v. McLean, when a developer creates a common scheme with restrictions on most lots, implied reciprocal servitudes bind lots whose deeds omit the restriction. The buyers of lots 49-50 had inquiry notice of the neighborhood's residential character."
+            },
+            {
+                id: 60,
+                course: "property",
+                chapter: "Life Estates & Waste",
+                difficulty: "medium",
+                question: "Life tenant L decides to demolish a 200-year-old barn on the property to build a modern garage. Remainderman R objects. L argues the garage increases property value. This is:",
+                choices: [
+                    { letter: "A", text: "Permissible because it increases value", correct: false },
+                    { letter: "B", text: "Ameliorative waste - changing the property's character, even if value increases, requires remainderman's consent", correct: true },
+                    { letter: "C", text: "Affirmative waste only", correct: false },
+                    { letter: "D", text: "Not waste because L has full ownership rights", correct: false }
+                ],
+                explanation: "Demolishing a historic barn to build a garage is ameliorative waste - it changes the character of the property even though it may increase value. Life tenants owe a duty to remaindermen not to fundamentally alter the property. R can seek an injunction."
             }
         ];
 

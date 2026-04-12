@@ -1114,9 +1114,229 @@
                 explanation: 'The vested rights doctrine holds that once a person\'s rights are fully vested (e.g., by a completed conveyance or satisfied condition), the government cannot retroactively impair them. This doctrine underlies both the Contracts Clause and ex post facto protections. However, the government can always regulate future conduct and prospectively modify future rights.'
             },
 
-            // PROPERTY LAW - ESTATES AND FUTURE INTERESTS (6 questions)
+            // CONSTITUTIONAL LAW - JUSTICIABILITY (4 questions)
             {
                 id: 50,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What are the three requirements for Article III standing?',
+                options: [
+                    'Injury-in-fact, causation (traceable to defendant), and redressability (favorable decision would help)',
+                    'Citizenship, residency, and taxpayer status',
+                    'Filing fee paid, attorney retained, complaint filed',
+                    'Mootness, ripeness, and political question'
+                ],
+                correct: 0,
+                explanation: 'Standing requires: (1) concrete, particularized injury-in-fact; (2) injury fairly traceable to defendant\'s conduct; (3) favorable court decision would likely remedy the injury. Without all three, no federal court jurisdiction.'
+            },
+            {
+                id: 51,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What is the political question doctrine under Baker v. Carr?',
+                options: [
+                    'Courts decline jurisdiction when there\'s a textual commitment to another branch or no judicially manageable standards',
+                    'Courts cannot hear any case involving politics',
+                    'All election cases are non-justiciable',
+                    'Only Congress can decide constitutional questions'
+                ],
+                correct: 0,
+                explanation: 'Baker v. Carr\'s six-factor test identifies political questions courts won\'t decide: textual commitment to another branch, lack of judicially manageable standards, need for non-judicial policy determination, etc. It\'s narrow - most cases ARE justiciable.'
+            },
+            {
+                id: 52,
+                course: 'conlaw',
+                difficulty: 'easy',
+                question: 'Why can federal courts NOT issue advisory opinions?',
+                options: [
+                    'Article III requires a concrete \'case or controversy\' with adverse parties',
+                    'Congress has prohibited them by statute',
+                    'Only state courts can issue advisory opinions',
+                    'The President must request them first'
+                ],
+                correct: 0,
+                explanation: 'Article III limits federal courts to actual \'cases and controversies\' with real, adverse parties. Advisory opinions on abstract questions violate this requirement because there\'s no concrete dispute to resolve.'
+            },
+            {
+                id: 53,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'When is a case considered moot and what is the major exception?',
+                options: [
+                    'When the live controversy has ended; exception: \'capable of repetition yet evading review\'',
+                    'When the plaintiff dies; no exceptions exist',
+                    'When the defendant concedes; exception: government cases',
+                    'After 5 years; exception: constitutional cases'
+                ],
+                correct: 0,
+                explanation: 'A case is moot when relief can no longer affect the situation. The key exception is issues \'capable of repetition yet evading review\' - inherently short-duration controversies (like pregnancy) that would always end before litigation concludes.'
+            },
+
+            // CONSTITUTIONAL LAW - SEPARATION OF POWERS (3 questions)
+            {
+                id: 54,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'Under the Youngstown Steel framework, when is presidential power at its HIGHEST?',
+                options: [
+                    'When the President acts with express or implied congressional authorization (Category 1)',
+                    'When Congress is in recess',
+                    'During wartime',
+                    'When the Supreme Court approves'
+                ],
+                correct: 0,
+                explanation: 'Justice Jackson\'s Youngstown concurrence: Category 1 (highest power) = President acts WITH congressional authorization. Category 2 (twilight zone) = Congress silent. Category 3 (lowest ebb) = President acts AGAINST Congress\'s will.'
+            },
+            {
+                id: 55,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'Why did INS v. Chadha strike down the legislative veto?',
+                options: [
+                    'It violated bicameralism and presentment - Congress cannot act by one-house resolution without the other house and President',
+                    'It was too expensive',
+                    'The President has absolute veto power',
+                    'Only courts can review executive action'
+                ],
+                correct: 0,
+                explanation: 'INS v. Chadha held that the legislative veto violated Article I\'s requirements of bicameralism (passage by both houses) and presentment (submission to the President). Congress cannot short-circuit the lawmaking process.'
+            },
+            {
+                id: 56,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What is the anti-commandeering doctrine?',
+                options: [
+                    'Congress cannot compel state legislatures to enact federal regulatory programs or state officers to enforce federal law',
+                    'The President cannot fire cabinet members',
+                    'States cannot command federal agencies',
+                    'Courts cannot order Congress to pass laws'
+                ],
+                correct: 0,
+                explanation: 'The anti-commandeering doctrine (Printz v. United States, New York v. United States) prohibits Congress from directly commanding state governments to implement federal programs. Congress can incentivize through spending conditions but cannot commandeer.'
+            },
+
+            // CONSTITUTIONAL LAW - CONSTITUTIONAL INTERPRETATION (2 questions)
+            {
+                id: 57,
+                course: 'conlaw',
+                difficulty: 'easy',
+                question: 'What is the difference between originalism and living constitutionalism?',
+                options: [
+                    'Originalism looks to original public meaning at ratification; living constitutionalism says meaning evolves with society',
+                    'Originalism is liberal; living constitutionalism is conservative',
+                    'Originalism uses dictionaries; living constitutionalism uses polls',
+                    'They are the same methodology'
+                ],
+                correct: 0,
+                explanation: 'Originalism fixes meaning at ratification (constrains judicial discretion but may not address modern problems). Living constitutionalism allows meaning to evolve (adapts to new circumstances but critics say it enables judicial lawmaking).'
+            },
+            {
+                id: 58,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What is Marshall\'s distinction between \'Constitution of Settlement\' and \'Constitution of Conversation\'?',
+                options: [
+                    'Settlement = fixed rules (e.g., 4-year presidential term); Conversation = evolving provisions requiring ongoing interpretation (e.g., due process)',
+                    'Settlement = federal; Conversation = state',
+                    'Settlement = written; Conversation = oral',
+                    'They are different names for the same thing'
+                ],
+                correct: 0,
+                explanation: 'Some constitutional provisions have fixed, settled meanings (presidential term, age requirements). Others - like \'due process,\' \'equal protection,\' \'regulate commerce\' - are open-textured provisions requiring ongoing interpretive conversation.'
+            },
+
+            // CONSTITUTIONAL LAW - DORMANT COMMERCE CLAUSE (2 questions)
+            {
+                id: 59,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'Under the dormant Commerce Clause, what happens to state laws that DISCRIMINATE against interstate commerce?',
+                options: [
+                    'They face strict scrutiny and are almost always struck down',
+                    'They are automatically valid because states have police power',
+                    'They receive rational basis review',
+                    'They require congressional approval before taking effect'
+                ],
+                correct: 0,
+                explanation: 'Discriminatory state laws (favoring in-state over out-of-state commerce) face strict scrutiny under the dormant Commerce Clause and are rarely upheld. Non-discriminatory laws are evaluated under the Pike balancing test (local benefit vs. burden on commerce).'
+            },
+            {
+                id: 60,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'Under Pike v. Bruce Church, how are NON-discriminatory state laws evaluated under the dormant Commerce Clause?',
+                options: [
+                    'Balancing test: local benefit must outweigh the burden on interstate commerce',
+                    'Strict scrutiny applies',
+                    'They are automatically valid',
+                    'Congress must approve them'
+                ],
+                correct: 0,
+                explanation: 'For non-discriminatory state regulations, the Pike test weighs local benefits against burdens on interstate commerce. If the burden clearly exceeds the local benefit, the law is invalid even though it\'s facially neutral.'
+            },
+
+            // CONSTITUTIONAL LAW - MISSING CASES (3 questions)
+            {
+                id: 61,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What did Trump v. Anderson (2024) hold about Section 3 of the 14th Amendment?',
+                options: [
+                    'Only Congress (not states) can enforce Section 3 to disqualify federal candidates',
+                    'States can unilaterally remove candidates from ballots',
+                    'Section 3 is no longer enforceable',
+                    'The President can enforce Section 3 by executive order'
+                ],
+                correct: 0,
+                explanation: 'Trump v. Anderson held that Section 5 enforcement power belongs exclusively to Congress. States cannot unilaterally apply Section 3\'s insurrection disqualification to remove federal candidates from the ballot.'
+            },
+            {
+                id: 62,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What did Fletcher v. Peck (1810) establish about vested rights?',
+                options: [
+                    'Once property rights are fully vested, the government cannot retroactively take them away - first case striking down a state law',
+                    'Vested rights can be revoked at any time',
+                    'Only federal rights can vest',
+                    'Vesting requires 7 years of possession'
+                ],
+                correct: 0,
+                explanation: 'Fletcher v. Peck was the FIRST case striking down a state law as unconstitutional. It held that Georgia could not rescind its land grant because the purchasers\' rights had vested, protecting them under the Contracts Clause and natural law principles.'
+            },
+            {
+                id: 63,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What did United States v. Clary hold about crack/powder cocaine sentencing disparities?',
+                options: [
+                    'Disparate racial impact alone does not violate Equal Protection without proof of discriminatory intent',
+                    'The sentencing disparity was unconstitutional',
+                    'Crack and powder cocaine must be sentenced identically',
+                    'Congress cannot regulate drug sentencing'
+                ],
+                correct: 0,
+                explanation: 'Clary applied Washington v. Davis\'s intent requirement - even though crack sentencing disproportionately affected Black communities, rational basis review applied because no discriminatory intent was proven. Demonstrates the limits of the impact-only approach.'
+            },
+            {
+                id: 64,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What is the Flast v. Cohen exception to the general rule against taxpayer standing?',
+                options: [
+                    'Taxpayers CAN challenge government expenditures under the Taxing and Spending Clause when Congress exceeds a specific constitutional limitation',
+                    'All taxpayers always have standing',
+                    'Taxpayers never have standing',
+                    'Only applies to state taxes'
+                ],
+                correct: 0,
+                explanation: 'Generally, taxpayers lack standing to challenge how tax dollars are spent. Flast created a narrow exception: taxpayers can challenge expenditures under the Taxing and Spending Clause when Congress allegedly violates a specific constitutional limitation (like the Establishment Clause).'
+            },
+
+            // PROPERTY LAW - ESTATES AND FUTURE INTERESTS (6 questions)
+            {
+                id: 65,
                 course: 'property',
                 difficulty: 'medium',
                 question: 'What are the four unities required for a joint tenancy?',
@@ -1130,7 +1350,7 @@
                 explanation: 'Joint tenancy requires four unities: (1) Time—all interests acquired at the same time, (2) Title—all interests acquired by the same deed or instrument, (3) Interest—all interests must be the same size/duration, and (4) Possession—all joint tenants must have an equal right to possess the whole property. If any unity is destroyed (except by agreement), the joint tenancy is severed.'
             },
             {
-                id: 51,
+                id: 66,
                 course: 'property',
                 difficulty: 'hard',
                 question: 'What is the Rule Against Perpetuities?',
@@ -1144,7 +1364,7 @@
                 explanation: 'The Rule Against Perpetuities (RAP) is: "No interest in property shall be valid unless it must vest, if at all, not later than twenty-one years after some life in being at the time of the creation of the interest." This means the vesting must be certain (if it vests at all) within the perpetuities period. Violations are common with contingent remainders and executory interests.'
             },
             {
-                id: 52,
+                id: 67,
                 course: 'property',
                 difficulty: 'medium',
                 question: 'What is a fee simple determinable?',
@@ -1158,7 +1378,7 @@
                 explanation: 'A fee simple determinable is created by words like "so long as," "while," or "during." It automatically terminates upon the happening of the stated condition, with the estate reverting to the grantor (or their heirs). Contrast with fee simple subject to condition subsequent, which requires the grantor to affirmatively exercise a right of re-entry. Determinable estates are favored interpretively when ambiguity exists.'
             },
             {
-                id: 53,
+                id: 68,
                 course: 'property',
                 difficulty: 'medium',
                 question: 'What is a fee simple subject to condition subsequent?',
@@ -1172,7 +1392,7 @@
                 explanation: 'Fee simple subject to condition subsequent is created by words like "but if," "provided that," or "on condition that." The estate does NOT automatically terminate; the grantor (or heirs) must affirmatively exercise a right of re-entry or power of termination to end the estate. This contrasts with fee simple determinable, which is automatic. Courts prefer conditional limitations over conditions subsequent.'
             },
             {
-                id: 54,
+                id: 69,
                 course: 'property',
                 difficulty: 'hard',
                 question: 'What is a contingent remainder?',
@@ -1186,7 +1406,7 @@
                 explanation: 'A contingent remainder is a future interest subject to a condition precedent—it may never vest. Example: "To A for life, then to B if B graduates law school." If B never graduates, the remainder never vests. If the condition is satisfied before A\'s death, it becomes a vested remainder. Contingent remainders are destroyed if they don\'t vest by the time the prior estate terminates (destructibility doctrine).'
             },
             {
-                id: 55,
+                id: 70,
                 course: 'property',
                 difficulty: 'hard',
                 question: 'What is an executory interest?',
@@ -1202,7 +1422,7 @@
 
             // PROPERTY LAW - LANDLORD-TENANT (5 questions)
             {
-                id: 56,
+                id: 71,
                 course: 'property',
                 difficulty: 'medium',
                 question: 'What are the elements of constructive eviction?',
@@ -1216,7 +1436,7 @@
                 explanation: 'Constructive eviction requires: (1) substantial interference with the tenant\'s use and enjoyment caused by the landlord\'s act or failure to act, (2) notice to the landlord, (3) the tenant vacates within a reasonable time, and (4) the interference must be material (not trivial). The tenant must actually leave to claim constructive eviction; continued occupancy waives the remedy.'
             },
             {
-                id: 57,
+                id: 72,
                 course: 'property',
                 difficulty: 'medium',
                 question: 'What is the implied warranty of habitability?',
@@ -1230,7 +1450,7 @@
                 explanation: 'The implied warranty of habitability (established in Javins v. First National Realty Corp.) is a non-waivable duty requiring landlords to maintain premises in a condition fit for human occupation. It includes working plumbing, heat, electricity, sanitation, and absence of major defects. The warranty cannot be disclaimed by lease language, and breach justifies rent withholding, repair-and-deduct, damages, or termination.'
             },
             {
-                id: 58,
+                id: 73,
                 course: 'property',
                 difficulty: 'medium',
                 question: 'What is the difference between assignment and sublease?',
@@ -1244,7 +1464,7 @@
                 explanation: 'An assignment transfers the entire remaining lease interest to the assignee. A sublease reserves some part of the interest (time or space) in the original tenant. If T leases to T2 for 1 year of a 3-year lease, it\'s a sublease. If T transfers the full remaining term, it\'s an assignment. The distinction matters for liability: assignees are in privity; sublessees are not.'
             },
             {
-                id: 59,
+                id: 74,
                 course: 'property',
                 difficulty: 'hard',
                 question: 'What remedies do tenants have for breach of implied warranty of habitability?',
@@ -1258,7 +1478,7 @@
                 explanation: 'Tenant remedies for habitability breach include: (1) withholding rent (deposit with court in some jurisdictions), (2) repair and deduct from rent, (3) damages for diminished use/enjoyment, and (4) terminating the lease and vacating (constructive eviction). The tenant cannot simply abandon without paying, but can exercise these remedies without breach of lease.'
             },
             {
-                id: 60,
+                id: 75,
                 course: 'property',
                 difficulty: 'medium',
                 question: 'What is retaliatory eviction?',
@@ -1274,7 +1494,7 @@
 
             // PROPERTY LAW - FAIR HOUSING (3 questions)
             {
-                id: 61,
+                id: 76,
                 course: 'property',
                 difficulty: 'easy',
                 question: 'What are the protected classes under the Fair Housing Act?',
@@ -1288,7 +1508,7 @@
                 explanation: 'The Fair Housing Act (42 U.S.C. § 3601 et seq.) protects seven classes: (1) race, (2) color, (3) religion, (4) sex, (5) national origin, (6) familial status (families with children), and (7) disability. Many states and local jurisdictions add additional protections like sexual orientation, gender identity, and source of income. Sexual harassment and disparate impact discrimination are also covered.'
             },
             {
-                id: 62,
+                id: 77,
                 course: 'property',
                 difficulty: 'hard',
                 question: 'What did Texas Department of Housing and Community Affairs v. Inclusive Communities Project establish?',
@@ -1302,7 +1522,7 @@
                 explanation: 'Texas Dept. v. Inclusive Communities (2015) held that disparate impact claims are actionable under the FHA. A facially neutral policy or practice that has a discriminatory effect violates the FHA, even without discriminatory intent. However, the defendant can establish a defense by showing the policy is necessary to achieve a substantial, legitimate, nondiscriminatory interest and there is no less discriminatory alternative.'
             },
             {
-                id: 63,
+                id: 78,
                 course: 'property',
                 difficulty: 'medium',
                 question: 'What is the difference between discriminatory treatment and disparate impact under the Fair Housing Act?',
@@ -1314,6 +1534,462 @@
                 ],
                 correct: 1,
                 explanation: 'Discriminatory treatment (disparate treatment) is intentional discrimination based on a protected class. Disparate impact is a neutral policy or practice that has a discriminatory effect, regardless of intent. Both are illegal under the FHA. Disparate treatment is proven through intent; disparate impact through statistical evidence of effect. Disparate impact is harder to defend against because intent is irrelevant.'
+            },
+
+            // CRIMINAL LAW - ATTEMPT GAPS
+            {
+                id: 94,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is the "penal lottery" problem identified by David Lewis regarding attempt?',
+                options: [
+                    'Identical conduct receives different punishment based on luck of whether the crime succeeded',
+                    'Judges randomly select sentences',
+                    'Defendants are chosen at random for prosecution',
+                    'Plea bargains are like gambling'
+                ],
+                correct: 0,
+                explanation: 'The "penal lottery" highlights the philosophical problem that two people who engage in identical dangerous conduct may receive vastly different punishments depending on the fortuity of whether their crime succeeded.'
+            },
+            {
+                id: 95,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'Under People v. Bland, how does transferred intent apply to attempt?',
+                options: [
+                    'If you attempt to kill person A but hit person B, you can be charged with attempted murder of person B',
+                    'Intent cannot transfer in attempt cases',
+                    'Only applies to completed crimes',
+                    'Transfers only between family members'
+                ],
+                correct: 0,
+                explanation: 'People v. Bland established that transferred intent is available for attempted crimes. If D shoots at A intending to kill A but hits B, D can be charged with attempted murder of B.'
+            },
+            {
+                id: 96,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'How does the MPC grade attempt crimes?',
+                options: [
+                    'Same grade as the completed crime, except capital/first-degree felony attempts are second-degree felonies',
+                    'Always one grade lower than the completed crime',
+                    'Always as a misdemeanor',
+                    'The same as conspiracy'
+                ],
+                correct: 0,
+                explanation: 'MPC § 5.05 grades attempt the same as the completed crime, with one exception: attempted capital crimes or first-degree felonies are graded as second-degree felonies.'
+            },
+
+            // CRIMINAL LAW - COMPLICITY GAPS
+            {
+                id: 97,
+                course: 'criminal',
+                difficulty: 'easy',
+                question: 'What distinguishes an accomplice from an accessory after the fact?',
+                options: [
+                    'An accomplice aids before or during the crime; an accessory aids only after the crime is completed',
+                    'There is no legal difference',
+                    'An accessory is always more culpable',
+                    'Only accessories can be charged with felonies'
+                ],
+                correct: 0,
+                explanation: 'Accomplice liability attaches to those who aid before or during the crime. Accessory after the fact is a separate, less serious offense for those who aid only after the crime is completed (e.g., helping someone flee).'
+            },
+            {
+                id: 98,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'Under Wilson v. People, can someone who encourages a crime for the PURPOSE of getting the criminal caught be an accomplice?',
+                options: [
+                    'Yes - intentional encouragement of the crime creates accomplice liability even if the person wanted the criminal caught',
+                    'No - wanting the person caught negates criminal intent',
+                    'Only if they are a police officer',
+                    'Only for misdemeanors'
+                ],
+                correct: 0,
+                explanation: 'Wilson v. People held that a person who encourages a crime can be an accomplice even if their ulterior motive was to get the criminal arrested. The intent to encourage the crime itself is sufficient.'
+            },
+            {
+                id: 99,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is the "natural and probable consequences" doctrine in complicity?',
+                options: [
+                    'An accomplice is liable for any crime that is a natural and probable consequence of the aided crime',
+                    'Accomplices are only liable for crimes they specifically intended',
+                    'It applies only to murder charges',
+                    'It requires a written agreement'
+                ],
+                correct: 0,
+                explanation: 'The natural and probable consequences doctrine holds an accomplice liable for crimes beyond the agreed-upon crime if they were foreseeable. Many modern courts (including California after Beeman) are rejecting this broad doctrine in favor of requiring specific intent.'
+            },
+
+            // CRIMINAL LAW - CONSPIRACY GAPS
+            {
+                id: 100,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'When does the statute of limitations begin running on a conspiracy?',
+                options: [
+                    'From the termination of the conspiracy, not from the initial agreement',
+                    'From the date of the initial agreement',
+                    'From the date of the first overt act',
+                    'From the date the target crime is committed'
+                ],
+                correct: 0,
+                explanation: 'The statute of limitations runs from the termination of the conspiracy (when all objectives are achieved or defeated), not from the agreement date. A continuing conspiracy keeps the statute running.'
+            },
+            {
+                id: 101,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'Under Gebardi v. United States, what is the bilateral requirement for conspiracy?',
+                options: [
+                    'At least two people must genuinely agree - you cannot conspire with someone who only pretends to agree',
+                    'Both parties must be over 18',
+                    'Both parties must be citizens',
+                    'Both parties must commit overt acts'
+                ],
+                correct: 0,
+                explanation: 'The bilateral requirement means conspiracy needs two genuine co-conspirators. Under Gebardi, a one-sided "agreement" (where one party is feigning) may not satisfy the conspiracy requirement in some jurisdictions.'
+            },
+            {
+                id: 102,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is the difference between a "wheel" and "chain" conspiracy?',
+                options: [
+                    'Wheel: hub deals with separate spokes independently; Chain: sequential parties each passing to the next',
+                    'Wheel involves more than 5 people; Chain involves exactly 2',
+                    'Wheel is federal; Chain is state',
+                    'There is no meaningful difference'
+                ],
+                correct: 0,
+                explanation: 'In a wheel conspiracy, a central figure (hub) deals with separate parties (spokes) who may not know each other. In a chain conspiracy, parties operate sequentially (supplier → manufacturer → distributor). The distinction matters for determining scope of liability.'
+            },
+
+            // CRIMINAL LAW - THEFT GAPS
+            {
+                id: 103,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is the key difference between larceny by trick and false pretenses?',
+                options: [
+                    'Larceny by trick obtains possession through fraud; false pretenses obtains title through fraud',
+                    'Larceny by trick requires violence; false pretenses does not',
+                    'They are identical crimes',
+                    'False pretenses applies only to real property'
+                ],
+                correct: 0,
+                explanation: 'Larceny by trick involves obtaining POSSESSION through misrepresentation (victim intends to transfer only possession). False pretenses involves obtaining TITLE/OWNERSHIP through fraud (victim intends to transfer full ownership). Modern theft statutes consolidate both.'
+            },
+            {
+                id: 104,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What did Congress do after McNally v. United States narrowed honest services fraud?',
+                options: [
+                    'Enacted 18 U.S.C. § 1346 to restore prosecution of bribes and kickbacks as honest services fraud',
+                    'Passed a constitutional amendment',
+                    'Abolished the mail fraud statute',
+                    'Created a new federal court to handle fraud cases'
+                ],
+                correct: 0,
+                explanation: 'After McNally (1987) limited mail fraud to money/property schemes, Congress enacted § 1346 (1988) to restore "honest services" fraud. Skilling v. United States (2010) later limited this to bribes and kickbacks to avoid vagueness concerns.'
+            },
+            {
+                id: 105,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'Can a spouse be convicted of burglarizing the marital home under Turner v. Com.?',
+                options: [
+                    'No - the right of habitation negates the "dwelling of another" element',
+                    'Yes - any person can burglarize any building',
+                    'Only if they have moved out',
+                    'Only in community property states'
+                ],
+                correct: 0,
+                explanation: 'Turner v. Com. held that a spouse cannot burglarize a jointly-held dwelling because the right of habitation negates the "of another" element required for burglary.'
+            },
+
+            // CRIMINAL LAW - PERJURY GAPS
+            {
+                id: 106,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What is the "two-witness rule" in perjury?',
+                options: [
+                    'Some jurisdictions require corroboration of perjury beyond a single witness\'s testimony',
+                    'Exactly two witnesses must testify that the defendant lied',
+                    'The defendant must have lied at least twice',
+                    'Two judges must agree perjury occurred'
+                ],
+                correct: 0,
+                explanation: 'Some jurisdictions require corroboration of perjury beyond one witness\'s word. The federal system does not mandate a two-witness rule but does require some corroborating evidence beyond a single contradicting witness.'
+            },
+            {
+                id: 108,
+                course: 'criminal',
+                difficulty: 'easy',
+                question: 'What is subornation of perjury?',
+                options: [
+                    'Persuading or inducing another person to commit perjury',
+                    'Committing perjury yourself',
+                    'Refusing to testify under oath',
+                    'Filing a false police report'
+                ],
+                correct: 0,
+                explanation: 'Subornation of perjury is the crime of persuading or inducing another person to give false testimony under oath. The suborner must know the testimony will be false and intend to cause perjury.'
+            },
+
+            // CHAPTERS 1-10 SECONDARY GAPS
+            {
+                id: 109,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What are the five legal duties that can create criminal liability for an omission (failure to act)?',
+                options: [
+                    'Statutory duty, contractual duty, special relationship, creation of peril, voluntary assumption of care',
+                    'Moral duty, religious duty, social duty, legal duty, ethical duty',
+                    'Only statutory duties create liability',
+                    'There are no duties to act in criminal law'
+                ],
+                correct: 0,
+                explanation: 'Criminal liability for omission requires a legal duty: (1) statute, (2) contract, (3) special relationship (parent/child, spouse), (4) creating the peril, or (5) voluntarily assuming care then abandoning it.'
+            },
+
+            // PROPERTY LAW - ACQUISITION GAPS
+            {
+                id: 110,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'In Pierson v. Post, what rule did the court establish for acquiring property rights in wild animals?',
+                options: [
+                    'Mere pursuit is insufficient - must achieve actual capture or mortal wounding that deprives the animal of liberty',
+                    'First person to see the animal owns it',
+                    'The landowner always owns animals on their property',
+                    'A hunting license creates property rights'
+                ],
+                correct: 0,
+                explanation: 'Pierson v. Post established a bright-line RULE: pursuit alone does not create property rights. The hunter must achieve actual occupancy (capture) or mortal wounding. This promotes certainty over Livingston\'s dissent favoring a "reasonable prospect" STANDARD.'
+            },
+            {
+                id: 111,
+                course: 'property',
+                difficulty: 'hard',
+                question: 'In Popov v. Hayashi, what novel property concept did the court create for the contested baseball?',
+                options: [
+                    'Pre-possessory interest - Popov had an interest from his act of catching even though he didn\'t achieve full possession',
+                    'Joint tenancy over the baseball',
+                    'The baseball belonged to the team',
+                    'Finders keepers applies to all sporting events'
+                ],
+                correct: 0,
+                explanation: 'Popov v. Hayashi created "pre-possessory interest" - when someone is in the act of achieving possession and is interrupted by wrongful conduct, they have a legally protected interest. The court ordered the baseball sold and proceeds split - an equitable STANDARD rather than a bright-line RULE.'
+            },
+            {
+                id: 112,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'Under Elliff v. Texon, what limits the Rule of Capture for oil and gas extraction?',
+                options: [
+                    'The duty of ordinary care - you can capture migrating resources but cannot engage in negligent or wasteful extraction',
+                    'There are no limits on the rule of capture',
+                    'You can only drill on your own property',
+                    'A permit is always required'
+                ],
+                correct: 0,
+                explanation: 'Elliff v. Texon applied the rule of capture (landowners can extract migrating resources) but imposed a negligence limitation: you cannot waste resources through negligent drilling practices that damage your neighbor\'s ability to extract.'
+            },
+            {
+                id: 113,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What did State v. Shack establish about the limits of the right to exclude?',
+                options: [
+                    'Public policy can override the right to exclude when access is needed to provide essential services to vulnerable people',
+                    'The right to exclude is absolute',
+                    'Government agents can always enter private property',
+                    'Trespass is never criminal'
+                ],
+                correct: 0,
+                explanation: 'State v. Shack held that a farmer could not exclude government-funded legal aid and health workers from entering his property to assist migrant workers. Public policy limits on the right to exclude apply when access serves essential human needs.'
+            },
+            {
+                id: 114,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What did Fontainebleau Hotel Corp establish about light and air rights?',
+                options: [
+                    'American law rejects the English "ancient lights" doctrine - no right to receive light over a neighbor\'s property',
+                    'Property owners have a right to unobstructed sunlight',
+                    'Only commercial properties can block light',
+                    'Light rights must be recorded'
+                ],
+                correct: 0,
+                explanation: 'American law rejected the English "ancient lights" doctrine. Under Fontainebleau, you have no right to light/air across your neighbor\'s property. But compare Prah v. Maretti, where some courts have recognized solar access claims under nuisance theory.'
+            },
+            {
+                id: 115,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'Under Jacobs v. Steenberg Homes, why did the court award $100,000 in punitive damages for intentional trespass even though actual damages were only $1?',
+                options: [
+                    'Intentional trespass undermines the legal right to exclude, and the legal system must protect that right through meaningful deterrence',
+                    'All trespass cases receive $100,000',
+                    'The company caused property damage',
+                    'Criminal penalties were unavailable'
+                ],
+                correct: 0,
+                explanation: 'Jacobs awarded substantial punitive damages because intentional trespass (Steenberg moved a mobile home across Jacobs\' land despite explicit refusal) undermines the fundamental right to exclude. Nominal damages alone would make the right meaningless.'
+            },
+
+            // PROPERTY LAW - RECORDING STATUTES
+            {
+                id: 116,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What are the three types of recording statutes?',
+                options: [
+                    'Race (first to record wins), Notice (BFP without notice wins), Race-Notice (BFP who records first wins)',
+                    'Federal, State, and Local',
+                    'Written, Oral, and Digital',
+                    'Simple, Complex, and Hybrid'
+                ],
+                correct: 0,
+                explanation: 'Race statutes: first to record wins regardless of knowledge. Notice statutes: subsequent bona fide purchaser without notice prevails even without recording. Race-Notice (most common): subsequent BFP who records first prevails.'
+            },
+            {
+                id: 117,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What are the three types of notice in recording statute analysis?',
+                options: [
+                    'Actual notice (direct knowledge), Constructive notice (recorded in chain of title), Inquiry notice (facts that would prompt investigation)',
+                    'Written, verbal, and implied',
+                    'First, second, and third party',
+                    'Legal, equitable, and statutory'
+                ],
+                correct: 0,
+                explanation: 'Actual notice = buyer directly knows of prior interest. Constructive notice = prior interest is recorded and appears in buyer\'s chain of title search. Inquiry notice = facts visible on the property or in documents would prompt a reasonable buyer to investigate further.'
+            },
+
+            // PROPERTY LAW - CONCURRENT TENANCIES
+            {
+                id: 118,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What are the four unities required to create a joint tenancy?',
+                options: [
+                    'Time (same time), Title (same instrument), Interest (equal shares), Possession (equal right to possess whole)',
+                    'Love, commitment, cohabitation, financial support',
+                    'Offer, acceptance, consideration, capacity',
+                    'Recording, delivery, acceptance, consideration'
+                ],
+                correct: 0,
+                explanation: 'Joint tenancy requires all four unities: Time (interests created simultaneously), Title (same deed/will), Interest (identical fractional shares), and Possession (each has right to possess the whole). Breaking any unity severs the joint tenancy.'
+            },
+            {
+                id: 119,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'How is a joint tenancy severed?',
+                options: [
+                    'Any unilateral conveyance by one joint tenant destroys the unity of title and converts it to a tenancy in common',
+                    'Both parties must agree to severance',
+                    'Only death can end a joint tenancy',
+                    'Filing a document with the county clerk'
+                ],
+                correct: 0,
+                explanation: 'A joint tenant can unilaterally sever by conveying their interest - this breaks the unity of title, converting the joint tenancy into a tenancy in common. The right of survivorship is destroyed. A secret conveyance is effective even without the other tenant\'s knowledge.'
+            },
+            {
+                id: 120,
+                course: 'property',
+                difficulty: 'easy',
+                question: 'What distinguishes a tenancy in common from a joint tenancy?',
+                options: [
+                    'Tenancy in common has NO right of survivorship - each tenant\'s share passes to their estate at death',
+                    'There is no meaningful difference',
+                    'Tenancy in common requires marriage',
+                    'Joint tenancy allows unequal shares'
+                ],
+                correct: 0,
+                explanation: 'The key difference: joint tenancy has the right of survivorship (survivor takes all), while tenancy in common does NOT - each tenant\'s share passes through their estate. Modern law presumes tenancy in common unless joint tenancy is expressly created.'
+            },
+
+            // PROPERTY LAW - SERVITUDES
+            {
+                id: 121,
+                course: 'property',
+                difficulty: 'hard',
+                question: 'What distinguishes a real covenant from an equitable servitude?',
+                options: [
+                    'Real covenants require horizontal and vertical privity; equitable servitudes require only notice (no privity)',
+                    'Real covenants are written; equitable servitudes are oral',
+                    'They are identical',
+                    'Real covenants apply to land; equitable servitudes apply to buildings'
+                ],
+                correct: 0,
+                explanation: 'Real covenants require: writing, intent, touch and concern, horizontal AND vertical privity, and notice. Equitable servitudes require: writing, intent, touch and concern, and notice - but NO privity. Equitable servitudes thus enforce covenants that fail the privity requirement.'
+            },
+            {
+                id: 122,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What did Shelley v. Kraemer (1948) hold about racially restrictive covenants?',
+                options: [
+                    'Judicial enforcement of racially restrictive covenants constitutes state action violating the 14th Amendment',
+                    'Racially restrictive covenants are automatically void',
+                    'Private covenants can never discriminate',
+                    'Only federal courts can enforce covenants'
+                ],
+                correct: 0,
+                explanation: 'Shelley v. Kraemer held that while private racial covenants themselves may exist, JUDICIAL ENFORCEMENT of them constitutes state action subject to the 14th Amendment\'s Equal Protection Clause. Courts cannot enforce discriminatory covenants.'
+            },
+            {
+                id: 123,
+                course: 'property',
+                difficulty: 'hard',
+                question: 'Under Sanborn v. McLean, what are implied reciprocal servitudes?',
+                options: [
+                    'When a developer sells lots from a common scheme with restrictions, restrictions can be implied on lots whose deeds don\'t expressly include them',
+                    'All neighbors automatically share easements',
+                    'Only written servitudes are enforceable',
+                    'Servitudes expire after 20 years'
+                ],
+                correct: 0,
+                explanation: 'Sanborn established that when a subdivider develops a residential neighborhood with a common building scheme and includes restrictions in most deeds, those restrictions can be implied on lots whose deeds omit them - creating "implied reciprocal servitudes."'
+            },
+
+            // PROPERTY LAW - ESTATES
+            {
+                id: 124,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What are the three forms of waste a life tenant must avoid?',
+                options: [
+                    'Affirmative (actively damaging), Permissive (failing to maintain), and Ameliorative (changing character even if value increases)',
+                    'Physical, financial, and emotional',
+                    'Major, minor, and incidental',
+                    'Structural, cosmetic, and environmental'
+                ],
+                correct: 0,
+                explanation: 'Life tenants owe duties to remaindermen: (1) Affirmative waste = actively damaging the property; (2) Permissive waste = failing to make necessary repairs; (3) Ameliorative waste = changing the property\'s character (even if the change increases value).'
+            },
+            {
+                id: 125,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What is a life estate "pur autre vie"?',
+                options: [
+                    'A life estate measured by ANOTHER person\'s life, not the tenant\'s own',
+                    'A life estate that lasts exactly 21 years',
+                    'A life estate shared by two people',
+                    'A life estate with no remainderman'
+                ],
+                correct: 0,
+                explanation: '"Pur autre vie" means "for the life of another." If O conveys "to A for the life of B," A holds a life estate pur autre vie - it lasts as long as B lives, regardless of when A dies. If A dies before B, A\'s estate passes to A\'s heirs for B\'s remaining lifetime.'
             }
         ];
 

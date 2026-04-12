@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Doctrine Defender - Final Exam Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #242836;
+            --border: #2e3347;
+            --text: #e8eaf0;
+            --text-dim: #8b8fa3;
+            --accent: #6c5ce7;
+            --accent-light: #a29bfe;
+            --green: #00b894;
+            --green-bg: rgba(0,184,148,0.12);
+            --red: #ff6b6b;
+            --red-bg: rgba(255,107,107,0.12);
+            --orange: #fdcb6e;
+            --orange-bg: rgba(253,203,110,0.12);
+            --blue: #74b9ff;
+            --property: #e17055;
+            --conlaw: #0984e3;
+            --criminal: #6c5ce7;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--accent-light), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        .course-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+
+        .course-tab {
+            padding: 8px 20px;
+            border-radius: 24px;
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--text-dim);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .course-tab:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .course-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .course-tab[data-course="property"].active {
+            background: var(--property);
+            border-color: var(--property);
+        }
+
+        .course-tab[data-course="conlaw"].active {
+            background: var(--conlaw);
+            border-color: var(--conlaw);
+        }
+
+        .course-tab[data-course="criminal"].active {
+            background: var(--criminal);
+            border-color: var(--criminal);
+        }
+
+        .home-screen {
+            display: block;
+        }
+
+        .home-screen.hidden {
+            display: none;
+        }
+
+        .game-screen {
+            display: none;
+        }
+
+        .game-screen.active {
+            display: block;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-light);
+        }
+
+        .question-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .option:hover {
+            border-color: var(--accent);
+            background: rgba(108, 92, 231, 0.08);
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background: rgba(108, 92, 231, 0.12);
+        }
+
+        .option.correct {
+            border-color: var(--green);
+            background: var(--green-bg);
+            color: var(--green);
+        }
+
+        .option.incorrect {
+            border-color: var(--red);
+            background: var(--red-bg);
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(108, 92, 231, 0.08);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        .explanation strong {
+            color: var(--accent-light);
+        }
+
+        .action-button {
+            background: var(--accent);
+            border: none;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 20px;
+        }
+
+        .action-button:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .action-button:disabled {
+            background: var(--text-dim);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--surface2);
+            border-radius: 3px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            transition: width 0.3s ease;
+        }
+
+        .results-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .results-screen.active {
+            display: block;
+        }
+
+        .score-large {
+            font-size: 64px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+        }
+
+        .results-label {
+            font-size: 18px;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 2px;
+        }
+
+        .difficulty-easy {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--green);
+        }
+
+        .difficulty-medium {
+            background: rgba(253, 203, 110, 0.2);
+            color: var(--orange);
+        }
+
+        .difficulty-hard {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--red);
+        }
+
+        .back-button {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Law Doctrine Defender</h1>
+            <p>Master the doctrines. Ace the final exam.</p>
+        </div>
+
+        <!-- HOME SCREEN -->
+        <div class="home-screen" id="homeScreen">
+            <div class="course-tabs" id="courseFilters">
+                <button class="course-tab active" data-course="all">All Courses</button>
+                <button class="course-tab" data-course="criminal">Criminal Law</button>
+                <button class="course-tab" data-course="conlaw">Constitutional Law</button>
+                <button class="course-tab" data-course="property">Property Law</button>
+            </div>
+
+            <div id="difficultySelection">
+                <div style="text-align: center; margin: 40px 0;">
+                    <p style="color: var(--text-dim); margin-bottom: 20px;">Select a difficulty to begin:</p>
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <button class="action-button" onclick="startQuiz('easy')" style="background: var(--green);">Easy</button>
+                        <button class="action-button" onclick="startQuiz('medium')" style="background: var(--orange);">Medium</button>
+                        <button class="action-button" onclick="startQuiz('hard')" style="background: var(--red);">Hard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div class="game-screen" id="gameScreen">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-label">Question</div>
+                    <div class="stat-value"><span id="currentQuestion">1</span>/<span id="totalQuestions">10</span></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Correct</div>
+                    <div class="stat-value" style="color: var(--green);" id="correctCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Score</div>
+                    <div class="stat-value" id="currentScore">0%</div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="explanation" id="explanation"></div>
+                <button class="action-button" id="nextButton" onclick="nextQuestion()" style="display: none;">Next Question</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="results-screen" id="resultsScreen">
+            <h2>Quiz Complete!</h2>
+            <div class="score-large" id="finalScore">0/0</div>
+            <div class="results-label">You got it right</div>
+            <div id="resultMessage" style="color: var(--text-dim); margin: 20px 0; font-size: 16px;"></div>
+            <button class="action-button" onclick="backToHome()" style="margin-top: 24px;">Back to Home</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // CRIMINAL LAW - ATTEMPT (6 questions)
+            {
+                id: 1,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is the MPC substantial step test for criminal attempt?',
+                options: [
+                    'A voluntary and intentional act that begins the commission of a crime',
+                    'A strong corroborative of the intent to commit the target crime',
+                    'An overt act that shows preparation is complete and no further preparation is needed',
+                    'Any preparatory act beyond forming a criminal intent'
+                ],
+                correct: 1,
+                explanation: 'The MPC substantial step test requires an act that is strongly corroborative of criminal intent—going beyond mere preparation. It must be the type of conduct that presents a substantial risk that the crime will be committed if the defendant\'s intent is to commit it. Key case: United States v. Straffen.'
+            },
+            {
+                id: 2,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'How does State v. Lyerla limit attempt liability?',
+                options: [
+                    'Attempt is limited to felonies only, not misdemeanors',
+                    'Cannot attempt crimes where the mens rea is merely recklessness or negligence',
+                    'Attempt requires two separate substantial steps, not just one',
+                    'Attempt liability only applies when the defendant completes half the criminal act'
+                ],
+                correct: 1,
+                explanation: 'Lyerla establishes that attempt liability is limited to specific-intent or purposeful crimes. You cannot attempt a crime where the required mens rea is recklessness or negligence alone. This reflects the policy that attempt law focuses on dangerous dispositions revealed by purposeful conduct, not mere risk-taking.'
+            },
+            {
+                id: 3,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is factual impossibility in criminal attempt?',
+                options: [
+                    'An affirmative defense that completely exonerates the defendant',
+                    'The impossibility of completing the crime due to facts unknown to the defendant',
+                    'A legal defense when the defendant mistakenly believed the conduct was criminal',
+                    'The defendant\'s inability to form the specific intent required for the crime'
+                ],
+                correct: 1,
+                explanation: 'Factual impossibility is NOT a defense. Example: D reaches into an empty pocket intending to steal, believing there is money inside. D can be convicted of attempted larceny because D had the requisite intent and took a substantial step. The law focuses on D\'s intent, not the actual state of facts.'
+            },
+            {
+                id: 4,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is legal impossibility in criminal attempt?',
+                options: [
+                    'The defendant\'s conduct cannot succeed because of legal barriers or definitions',
+                    'The defendant lacks the legal capacity to commit the crime',
+                    'The crime is not defined in the relevant jurisdiction\'s penal code',
+                    'The defendant miscalculates the legal consequences of their conduct'
+                ],
+                correct: 0,
+                explanation: 'Legal impossibility IS a defense to attempt. It occurs when the defendant\'s intended conduct, if successful, would not constitute a crime. Example: D receives stolen property believing it to be stolen, but it was actually lawfully obtained. D cannot attempt to receive stolen property if the property is not actually stolen, as this would not be the crime charged.'
+            },
+            {
+                id: 5,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What is the abandonment/renunciation defense under the MPC?',
+                options: [
+                    'Any decision by the defendant not to complete the crime',
+                    'Complete and voluntary renunciation of the intent to commit the crime, made before the crime is completed',
+                    'Abandonment motivated by fear of detection or arrest',
+                    'Withdrawal from a conspiracy that prevents the crime from occurring'
+                ],
+                correct: 1,
+                explanation: 'Under MPC § 5.01(4), the defendant can escape attempt liability by complete and voluntary renunciation. The renunciation must be genuine—not motivated by fear of detection or changed circumstances. The defendant must also perform acts that accomplish the complete and voluntary renunciation, demonstrating a true change of purpose.'
+            },
+            {
+                id: 6,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What did People v. Rizzo hold about attempt liability?',
+                options: [
+                    'Preparation alone can be sufficient for attempt if the defendant shows clear intent',
+                    'Preparation is insufficient; the defendant must reach dangerous proximity to completing the crime',
+                    'Any conduct beyond mere thought is sufficient for criminal attempt',
+                    'The defendant must have committed at least 50% of the target crime'
+                ],
+                correct: 1,
+                explanation: 'Rizzo established the "dangerous proximity" test. The court held that D\'s conduct, even though detailed planning and preparation occurred, was only in the preparatory stage. There was no dangerous proximity to actual commission. The crime must be in progress or imminent; remote preparatory acts are insufficient.'
+            },
+
+            // CRIMINAL LAW - COMPLICITY (5 questions)
+            {
+                id: 7,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is the People v. Beeman standard for accomplice liability?',
+                options: [
+                    'The accomplice must provide some form of aid or assistance to the principal',
+                    'The accomplice must intend to aid the principal AND know the principal\'s criminal purpose',
+                    'The accomplice must have knowledge of the crime before it is committed',
+                    'The accomplice must be present at the scene of the crime'
+                ],
+                correct: 1,
+                explanation: 'Beeman requires dual intent: (1) the intent to aid the principal, and (2) knowledge of the principal\'s criminal purpose. Merely providing assistance is not enough—the accomplice must intend to facilitate the crime and know the specific crime being committed. This heightened standard protects innocent bystanders who provide general aid.'
+            },
+            {
+                id: 8,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What is the Pinkerton doctrine in conspiracy law?',
+                options: [
+                    'Co-conspirators are each liable only for crimes they personally commit during the conspiracy',
+                    'Co-conspirators are jointly and severally liable for any crime committed by any co-conspirator in furtherance of the conspiracy, whether foreseeable or not',
+                    'Co-conspirators are liable only for foreseeable crimes committed by fellow conspirators during the conspiracy',
+                    'Co-conspirators can only be prosecuted if they actively participated in committing the target crime'
+                ],
+                correct: 2,
+                explanation: 'Under Pinkerton (U.S. Supreme Court case), co-conspirators are liable for foreseeable crimes committed by fellow conspirators in furtherance of the conspiracy. This creates liability beyond the agreed-upon objective for crimes that are a natural and probable consequence of the conspiracy. This doctrine has been criticized and narrowed in many jurisdictions.'
+            },
+            {
+                id: 9,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'How does accomplice liability differ from accessory after the fact liability?',
+                options: [
+                    'Accomplice liability requires presence at the crime; accessory liability does not',
+                    'Accomplice aids before or during the crime; accessory aids after the crime is complete',
+                    'Accomplices share principal liability; accessories have no liability for the underlying crime',
+                    'Accessory liability carries harsher penalties than accomplice liability'
+                ],
+                correct: 1,
+                explanation: 'Accomplices aid in the commission of the crime itself (before or during). Accessories after the fact provide aid after the crime is complete (harboring, concealing, etc.). Accessories have not aided the commission of the crime and are guilty of a separate, usually lesser offense.'
+            },
+            {
+                id: 10,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What is the natural and probable consequences doctrine?',
+                options: [
+                    'Accomplices are liable only for crimes they directly aided or abetted',
+                    'Accomplices are liable for all foreseeable crimes of the principal, even if unintended by the accomplice',
+                    'Accomplices are liable for crimes they could have prevented',
+                    'Accomplices must have intended all natural consequences of their aid'
+                ],
+                correct: 1,
+                explanation: 'Under this doctrine, accomplices are liable for foreseeable crimes of the principal that are natural and probable consequences of the crime aided, even if the accomplice didn\'t intend those crimes. However, this doctrine is being rejected by modern courts and the Beeman standard (requiring knowledge and intent) is increasingly preferred.'
+            },
+            {
+                id: 11,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What does United States v. Falcone establish about supplier liability?',
+                options: [
+                    'Suppliers of materials are automatically accomplices if the materials are used in a crime',
+                    'Mere knowledge of illegal use is insufficient; the supplier must have specific intent to facilitate the crime',
+                    'Suppliers have an affirmative duty to prevent their products from being used in crimes',
+                    'Suppliers cannot be charged with accomplice liability, only the user can be charged'
+                ],
+                correct: 1,
+                explanation: 'Falcone holds that mere knowledge that materials will be used illegally is not enough for accomplice liability. The supplier must have specific intent to facilitate the crime. Selling a gun to someone, knowing they might use it to commit robbery, does not make the seller an accomplice without proof of intent to aid the crime.'
+            },
+
+            // CRIMINAL LAW - CONSPIRACY (5 questions)
+            {
+                id: 12,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What are the elements of conspiracy?',
+                options: [
+                    'Agreement + intent to agree + overt act only',
+                    'Agreement + intent to agree + intent to commit the target crime + overt act (in most jurisdictions)',
+                    'Agreement + actual commission of the target crime',
+                    'Multiple parties + shared criminal purpose + one completed crime'
+                ],
+                correct: 1,
+                explanation: 'Common law and most modern formulations require: (1) agreement between two or more persons, (2) the intent to agree, (3) the intent to commit the target crime, and (4) an overt act in furtherance (in most jurisdictions). The MPC is similar. Some jurisdictions don\'t require an overt act if the agreement is for an inherently dangerous crime.'
+            },
+            {
+                id: 13,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What is a wheel conspiracy structure?',
+                options: [
+                    'A linear arrangement where each conspirator deals with the next in sequence',
+                    'A conspiracy with one central conspirator (hub) dealing with separate conspirators (spokes)',
+                    'A conspiracy among equal partners with no clear leader or hierarchy',
+                    'A temporary conspiracy formed to commit a single specific crime'
+                ],
+                correct: 1,
+                explanation: 'In a wheel conspiracy, there is a central hub (the main conspirator) who deals with separate spokes (other conspirators). The spokes may not know each other. For a single conspiracy to exist, the hub must typically know of or connect with the other spokes, creating mutual knowledge of the conspiracy\'s scope.'
+            },
+            {
+                id: 14,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What is a chain conspiracy structure?',
+                options: [
+                    'A conspiracy where each conspirator knows all other conspirators',
+                    'A sequential arrangement where each conspirator in turn deals with the next, all as part of a single conspiracy objective',
+                    'A conspiracy that includes criminal acts occurring at different times',
+                    'A conspiracy involving multiple crimes committed in succession'
+                ],
+                correct: 1,
+                explanation: 'In a chain conspiracy, each party deals in turn with the next (e.g., manufacturer → distributor → wholesaler → retailer). All are considered part of a single conspiracy because each knows their role serves a common objective, even if they don\'t all know each other. Contrast with wheel conspiracies.'
+            },
+            {
+                id: 15,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'How does withdrawal from a conspiracy work?',
+                options: [
+                    'A conspirator is automatically relieved of liability by announcing their withdrawal at any time',
+                    'Affirmative action is required to withdraw, plus notice to co-conspirators; withdrawer is still liable for prior acts',
+                    'Withdrawal completely relieves the withdrawing conspirator of all liability, past and future',
+                    'Withdrawal only works if it prevents the target crime from being committed'
+                ],
+                correct: 1,
+                explanation: 'Withdrawal requires affirmative action (not just silence) and notice to co-conspirators (or public acts inconsistent with participation). The withdrawing member remains liable for crimes committed before withdrawal and prior conspirators\' acts. Future crimes are the withdrawer\'s responsibility only if they\'re part of prior plans or foreseeable.'
+            },
+            {
+                id: 16,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What did Jacobson v. United States hold about entrapment?',
+                options: [
+                    'Government agents cannot testify as witnesses in entrapment cases',
+                    'The government cannot manufacture a crime in someone predisposed to commit it',
+                    'The government cannot manufacture a crime where none would exist without government inducement',
+                    'Entrapment is only a defense if the defendant was completely innocent of any criminal history'
+                ],
+                correct: 2,
+                explanation: 'Jacobson established that a key element of entrapment is whether the government created a crime that would not otherwise exist. Even if a defendant has prior criminal history, entrapment may apply if the government\'s inducement created the specific crime. The focus is on whether the defendant was ready and willing, not on prior bad acts.'
+            },
+
+            // CRIMINAL LAW - THEFT (6 questions)
+            {
+                id: 17,
+                course: 'criminal',
+                difficulty: 'easy',
+                question: 'What are the elements of common law larceny?',
+                options: [
+                    'Intentional taking + carrying away of personal property with intent to permanently deprive',
+                    'Trespassory taking + carrying away + personal property + intent to permanently deprive',
+                    'Unauthorized possession + intent to use the property as one\'s own',
+                    'Taking property + knowing it is not lawfully yours'
+                ],
+                correct: 1,
+                explanation: 'Larceny requires: (1) a trespassory taking (without consent), (2) carrying away (asportation), (3) of personal property (not real property), and (4) with intent to permanently deprive the owner of the property. The "trespassory" element distinguishes larceny from other crimes and protects those who lawfully possess property.'
+            },
+            {
+                id: 18,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'How does embezzlement differ from larceny?',
+                options: [
+                    'Embezzlement requires physical taking; larceny does not',
+                    'Embezzlement starts with lawful possession then converts property; larceny starts with unlawful taking',
+                    'Embezzlement is less serious than larceny',
+                    'Embezzlement requires the defendant to use the property personally; larceny does not'
+                ],
+                correct: 1,
+                explanation: 'Embezzlement occurs when someone lawfully possesses property (e.g., as an employee, trustee, or bailee) and then converts it to their own use. Larceny requires a trespassory taking. Embezzlement was created because larceny\'s "trespassory" element didn\'t capture wrongdoing by people with lawful possession.'
+            },
+            {
+                id: 19,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is larceny by trick, and how does it differ from false pretenses?',
+                options: [
+                    'Larceny by trick and false pretenses are the same offense',
+                    'Larceny by trick obtains possession through fraud; false pretenses obtains title through fraud',
+                    'False pretenses requires written statements; larceny by trick does not',
+                    'Larceny by trick is less serious than false pretenses'
+                ],
+                correct: 1,
+                explanation: 'In larceny by trick, the defendant obtains possession (but not title) through fraud or misrepresentation. Example: renting a car under false pretenses and selling it. In false pretenses, the defendant obtains title (ownership) through fraud. Example: selling fake diamonds and pocketing the cash. Larceny by trick is treated as larceny; false pretenses is a separate offense.'
+            },
+            {
+                id: 20,
+                course: 'criminal',
+                difficulty: 'easy',
+                question: 'What are the elements of robbery?',
+                options: [
+                    'Taking property by force without intent to return it',
+                    'Larceny + force or threat of immediate harm during the taking',
+                    'Any theft committed with a weapon',
+                    'Force + property + permanent deprivation'
+                ],
+                correct: 1,
+                explanation: 'Robbery is larceny (all elements) accomplished through force, threat of immediate harm, or intimidation. The force/threat must occur before or during the taking; theft followed by force is not robbery. Robbery is treated as a violent felony due to the risk of harm to the victim. The defendant need not be armed, but using force against the person is critical.'
+            },
+            {
+                id: 21,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What is honest services fraud after the Skilling v. United States decision?',
+                options: [
+                    'Any fraud involving dishonesty in business dealings',
+                    'Fraud schemes involving bribes and kickbacks to public or private officials',
+                    'Fraud based on violations of fiduciary duties to employers',
+                    'All schemes involving deception that deprive someone of honest services'
+                ],
+                correct: 1,
+                explanation: 'Skilling significantly narrowed the honest services fraud statute (18 U.S.C. § 1346). The Court held that honest services fraud under federal law now covers only: (1) bribes, and (2) kickbacks. Schemes involving breach of fiduciary duty without an accompanying bribe or kickback do not qualify. This limits federal prosecutors\' ability to use mail/wire fraud for general business fraud.'
+            },
+            {
+                id: 22,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What are the elements of burglary?',
+                options: [
+                    'Breaking and entering any building with criminal purpose',
+                    'Breaking + entering + dwelling + of another + with intent to commit a felony inside',
+                    'Entering a building without permission + intent to steal',
+                    'Breaking through a barrier + entering + intent to commit any crime'
+                ],
+                correct: 1,
+                explanation: 'Common law burglary requires: (1) breaking (creating or enlarging an opening), (2) entering (any part of the body must cross the threshold), (3) of a dwelling (residence, though modern statutes expand this), (4) of another person, and (5) with intent to commit a felony inside. Some modern statutes eliminate "dwelling" or "breaking" elements. The intent must exist at entry, not after.'
+            },
+
+            // CRIMINAL LAW - PERJURY (5 questions)
+            {
+                id: 23,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What are the elements of perjury?',
+                options: [
+                    'False statement + under oath + any proceeding',
+                    'False statement + under oath + official proceeding + knowledge of falsity + materiality + willfulness',
+                    'Lying to government officials + intent to deceive',
+                    'Making a false statement in front of any witness'
+                ],
+                correct: 1,
+                explanation: 'Perjury requires: (1) a false statement, (2) made under oath or penalty of perjury, (3) in an official proceeding (court, grand jury, deposition under oath), (4) knowledge that the statement is false, (5) materiality (the false statement could affect the outcome), and (6) willfulness (intent to testify falsely). Not all false statements are perjury.'
+            },
+            {
+                id: 24,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'What is the ambiguity defense in perjury cases?',
+                options: [
+                    'The defendant misunderstood the question but answered truthfully to their interpretation',
+                    'A fundamentally ambiguous question posed to the witness prevents perjury prosecution because the defendant\'s answer cannot be determined to be false',
+                    'The defendant was uncertain about the answer',
+                    'The prosecutor failed to clarify ambiguous terms in the question'
+                ],
+                correct: 1,
+                explanation: 'United States v. Farmer established that if the question is fundamentally ambiguous, the witness cannot be convicted of perjury, even if the answer is technically false. The rationale is that a witness cannot knowingly testify falsely to an ambiguous question since they might reasonably interpret it as true. The question must be clear and unambiguous.'
+            },
+            {
+                id: 25,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is 18 U.S.C. § 1001 and how does it differ from perjury?',
+                options: [
+                    'It prohibits lying to federal agents and is broader than perjury; does not require an oath',
+                    'It creates the crime of making false statements to federal officials',
+                    'It applies only to lying in court proceedings',
+                    'It requires all the elements of perjury plus specific intent to obstruct justice'
+                ],
+                correct: 0,
+                explanation: '18 U.S.C. § 1001 is the federal false statements statute. It prohibits making false statements to federal officials or agencies. Unlike perjury, it does not require an oath, official proceeding, or materiality (though the false statement must be material). It also doesn\'t require knowledge of falsity in some formulations. This is a key distinction from perjury and is often used in federal prosecutions.'
+            },
+            {
+                id: 26,
+                course: 'criminal',
+                difficulty: 'hard',
+                question: 'How does Brogan v. United States relate to perjury and false statements?',
+                options: [
+                    'Lying to agents without oath may be perjury if the statements are material',
+                    'Lying to agents without oath is not perjury but may be a violation of § 1001',
+                    'Lying to federal agents is automatically perjury',
+                    'Brogan established that § 1001 requires an oath like perjury does'
+                ],
+                correct: 1,
+                explanation: 'Brogan clarified the relationship between perjury and § 1001. Lying to agents without an oath cannot be perjury (which requires oath). However, it can be a violation of § 1001, the federal false statements statute. This distinction is important because § 1001 does not require oath, official proceeding, or materiality, making it a broader tool than perjury.'
+            },
+            {
+                id: 27,
+                course: 'criminal',
+                difficulty: 'medium',
+                question: 'What is subornation of perjury?',
+                options: [
+                    'Testifying falsely on behalf of someone else',
+                    'Persuading, inducing, or procuring another person to commit perjury',
+                    'Failing to correct testimony you know is false',
+                    'Asking a witness questions designed to elicit false testimony'
+                ],
+                correct: 1,
+                explanation: 'Subornation of perjury is the crime of inducing, persuading, procuring, or causing another person to commit perjury. The suborner must intend to procure the perjury and know that the testimony will be false. It\'s a separate crime from perjury and focuses on the inducement to commit perjury rather than the false statement itself.'
+            },
+
+            // CONSTITUTIONAL LAW - RECONSTRUCTION (5 questions)
+            {
+                id: 28,
+                course: 'conlaw',
+                difficulty: 'easy',
+                question: 'What did Dred Scott v. Sandford hold?',
+                options: [
+                    'Enslaved persons who had been to free states were entitled to freedom',
+                    'Black people were not citizens and had no rights; the Missouri Compromise was unconstitutional',
+                    'States could not ban slavery within their borders',
+                    'The federal government had the power to regulate slavery in the territories'
+                ],
+                correct: 1,
+                explanation: 'Dred Scott (1857) held that Black people, whether enslaved or free, were not citizens under the Constitution. Chief Justice Taney ruled that the Missouri Compromise was unconstitutional because Congress could not prohibit slavery in federal territories. This decision was overturned by the 13th Amendment (1865) and the 14th Amendment (1868).'
+            },
+            {
+                id: 29,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What did the Slaughterhouse Cases hold?',
+                options: [
+                    'States could regulate meat processing if it was for public health',
+                    'The 14th Amendment Privileges or Immunities Clause was narrowed to protect only national rights',
+                    'The Commerce Clause prevented states from interfering with interstate trade',
+                    'The 14th Amendment created a federal right to work in any occupation'
+                ],
+                correct: 1,
+                explanation: 'Slaughterhouse Cases (1873) narrowed the Privileges or Immunities Clause of the 14th Amendment. The Court held it protected only rights that stem from national citizenship (e.g., right to interstate travel), not traditional state-law property and liberty rights. This narrow reading limited the 14th Amendment\'s power to protect individual rights against state action.'
+            },
+            {
+                id: 30,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What is the state action doctrine, as established in United States v. Cruikshank?',
+                options: [
+                    'States have broad power to regulate individual conduct',
+                    'The 14th Amendment constrains only state action, not private conduct by individuals',
+                    'Private citizens must comply with constitutional provisions',
+                    'States cannot delegate their constitutional duties to private entities'
+                ],
+                correct: 1,
+                explanation: 'Cruikshank (1876) established the state action doctrine: the 14th Amendment restricts state governments\' power to discriminate, not private actors\' conduct. Private discrimination and violence do not violate the 14th Amendment unless the state is somehow involved. This limits federal power to address purely private discrimination.'
+            },
+            {
+                id: 31,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What did the Civil Rights Cases (1883) hold?',
+                options: [
+                    'Congress could prohibit private discrimination under the 13th Amendment',
+                    'Congress could not use the 14th Amendment to prohibit private discrimination; the 14th restricts states only',
+                    'Private businesses could not deny service based on race',
+                    'The federal government could enforce voting rights in all states'
+                ],
+                correct: 1,
+                explanation: 'The Civil Rights Cases (1883) struck down the Civil Rights Act of 1875, which prohibited private discrimination by innkeepers, transportation companies, and theaters. The Court held that the 14th Amendment (and thus Congress\'s enforcement power) applies only to state action. Congress cannot prohibit purely private discrimination under the 14th Amendment. This remained law until the Commerce Clause was used to reach private discrimination.'
+            },
+            {
+                id: 32,
+                course: 'conlaw',
+                difficulty: 'easy',
+                question: 'What are the three Reconstruction Amendments?',
+                options: [
+                    '10th, 13th, and 14th Amendments',
+                    '13th (slavery), 14th (citizenship/EP/DP), and 15th (voting rights) Amendments',
+                    '13th, 15th, and 19th Amendments',
+                    '14th, 15th, and 16th Amendments'
+                ],
+                correct: 1,
+                explanation: 'The three Reconstruction Amendments are: (1) 13th Amendment (1865) abolishing slavery, (2) 14th Amendment (1868) establishing citizenship, equal protection, and due process, and (3) 15th Amendment (1870) prohibiting race-based voting restrictions. These were the constitutional framework for Reconstruction and fundamentally changed the federal-state relationship.'
+            },
+
+            // CONSTITUTIONAL LAW - EQUAL PROTECTION (6 questions)
+            {
+                id: 33,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What does Washington v. Davis establish about equal protection claims?',
+                options: [
+                    'Disparate impact alone is sufficient to prove discrimination',
+                    'Must show discriminatory intent, not just disparate impact, for 14th Amendment violation',
+                    'Racial classifications are never permitted under equal protection',
+                    'Any neutral policy that affects minorities equally is constitutional'
+                ],
+                correct: 1,
+                explanation: 'Washington v. Davis (1976) established that equal protection requires proof of discriminatory intent (or purpose), not merely disparate impact. A facially neutral law or policy that has a racially disparate impact does not violate the 14th Amendment unless the law was enacted or applied with a discriminatory purpose. Intent is the linchpin of 14th Amendment doctrine.'
+            },
+            {
+                id: 34,
+                course: 'conlaw',
+                difficulty: 'easy',
+                question: 'What did Brown v. Board of Education hold?',
+                options: [
+                    'States could maintain separate but equal schools if they invested equally in both',
+                    'Separate educational facilities are inherently unequal and violate equal protection',
+                    'Schools must be integrated regardless of residential patterns',
+                    'Federal courts cannot order school desegregation because education is a local matter'
+                ],
+                correct: 1,
+                explanation: 'Brown (1954) overruled Plessy\'s "separate but equal" doctrine, holding that separate educational facilities are inherently unequal and violate the Equal Protection Clause. The Court found that segregation causes psychological harm and denies minority children equal protection. Brown is one of the most important civil rights cases and required federal intervention in state education.'
+            },
+            {
+                id: 35,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What level of scrutiny applies to gender-based classifications?',
+                options: [
+                    'Rational basis review',
+                    'Intermediate scrutiny: important governmental objective + substantially related means',
+                    'Strict scrutiny',
+                    'Minimal scrutiny with flexibility for changing social norms'
+                ],
+                correct: 1,
+                explanation: 'Craig v. Boren (1976) established that gender classifications receive intermediate scrutiny. The government must show that the classification serves an important governmental interest and is substantially related to achieving that interest. This is more stringent than rational basis but less demanding than strict scrutiny. Quasi-suspect classifications like gender and illegitimacy receive this level.'
+            },
+            {
+                id: 36,
+                course: 'conlaw',
+                difficulty: 'easy',
+                question: 'What did Loving v. Virginia hold?',
+                options: [
+                    'States could restrict interracial marriage if laws applied equally to both races',
+                    'Miscegenation laws violate equal protection and due process; race is a suspect classification',
+                    'Federal law could not regulate marriage because it\'s a state matter',
+                    'Interracial couples had no constitutional right to marry'
+                ],
+                correct: 1,
+                explanation: 'Loving (1967) struck down Virginia\'s ban on interracial marriage, holding it violated both equal protection and due process. The Court recognized that race is a suspect classification requiring strict scrutiny and that marriage is a fundamental right. Loving treated antimiscegenation laws as pure racial discrimination and struck them down nationwide.'
+            },
+            {
+                id: 37,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What is the intent requirement for equal protection violations, as illustrated in Arlington Heights v. Metropolitan Housing Development Corp.?',
+                options: [
+                    'Impact alone proves discrimination, regardless of intent',
+                    'Discriminatory purpose behind a facially neutral law must be shown; courts examine historical context, impact, procedural steps',
+                    'Intent is irrelevant if the effect is discriminatory',
+                    'Cities cannot use zoning laws that have racial effects'
+                ],
+                correct: 1,
+                explanation: 'Arlington Heights (1977) established the framework for proving discriminatory intent behind facially neutral laws. Courts examine: (1) historical context and sequence of events, (2) departures from normal procedures, (3) legislative history, (4) disparate impact, and (5) legitimate nondiscriminatory reasons given. The challenger must prove intent; mere disparate impact is insufficient.'
+            },
+            {
+                id: 38,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What did Korematsu v. United States hold, and why is it criticized?',
+                options: [
+                    'Internment of Japanese Americans based on race was constitutional under normal strict scrutiny',
+                    'Racial classifications receive strict scrutiny, but during wartime the government\'s military judgment is nearly conclusive; internment violated strict scrutiny in name only',
+                    'Internment was unconstitutional even during wartime',
+                    'Racial classifications during wartime need only rational basis review'
+                ],
+                correct: 1,
+                explanation: 'Korematsu (1944) upheld Japanese American internment, claiming to apply strict scrutiny but essentially deferring to military judgment during wartime. The Court held that national security could justify racial classifications. Korematsu is now widely criticized as a cautionary tale: even strict scrutiny can be meaningless if courts defer to executive wartime claims. The decision is rarely cited approvingly.'
+            },
+
+            // CONSTITUTIONAL LAW - ECONOMIC EQUALITY (3 questions)
+            {
+                id: 39,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What did San Antonio Independent School District v. Rodriguez hold?',
+                options: [
+                    'School funding based on property taxes violates equal protection',
+                    'Wealth is not a suspect classification; education is not a fundamental right; wealth-based classifications receive rational basis review',
+                    'States must provide equal funding for all public schools',
+                    'Federal courts can mandate equitable school funding based on property wealth'
+                ],
+                correct: 1,
+                explanation: 'Rodriguez (1973) held that wealth-based classifications do not trigger strict scrutiny and education is not a fundamental right under the Constitution. The Court deferred to state legislatures on school funding. This prevents most federal constitutional challenges to education inequality based on wealth. Challenges must be based on state constitutions or voting rights, not the 14th Amendment.'
+            },
+            {
+                id: 40,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What did Harper v. Virginia Board of Elections hold?',
+                options: [
+                    'Poll taxes were a valid way to ensure voter qualification',
+                    'Poll taxes are unconstitutional; cannot condition exercise of fundamental right to vote on wealth',
+                    'States could require poll taxes if they served important governmental interests',
+                    'Federal courts cannot prohibit states from collecting poll taxes'
+                ],
+                correct: 1,
+                explanation: 'Harper (1966) held that poll taxes violate equal protection because they condition a fundamental right (voting) on wealth. The Court recognized that wealth + fundamental right = strict scrutiny, even though wealth alone is not a suspect classification. Poll taxes in federal elections were also banned by the 24th Amendment (1964). Harper is a rare case where wealth matters in heightened scrutiny.'
+            },
+            {
+                id: 41,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What is the framework for constitutional protection when wealth and fundamental rights intersect?',
+                options: [
+                    'Wealth-based restrictions on fundamental rights require strict scrutiny',
+                    'Rational basis review applies because wealth is not a suspect class',
+                    'Courts balance the burden on the fundamental right against the state\'s interest',
+                    'States have plenary power to regulate conduct based on wealth'
+                ],
+                correct: 0,
+                explanation: 'When wealth restrictions implicate fundamental rights (as in Harper with voting), strict scrutiny applies. This is a special framework distinct from both suspect classification doctrine (race) and fundamental rights doctrine applied independently. The state must show that the wealth-based restriction is narrowly tailored to serve a compelling interest. This standard is rarely satisfied.'
+            },
+
+            // CONSTITUTIONAL LAW - SUBSTANTIVE DUE PROCESS (5 questions)
+            {
+                id: 42,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What ended the Lochner era of substantive due process?',
+                options: [
+                    'The 16th Amendment',
+                    'West Coast Hotel v. Parrish, which allowed rational basis review for economic regulation',
+                    'A constitutional amendment removing economic rights from protection',
+                    'The passage of the Social Security Act'
+                ],
+                correct: 1,
+                explanation: 'West Coast Hotel (1937) effectively ended the Lochner era. The Court upheld a minimum wage law using rational basis review, deference to the legislature, and the presumption of constitutionality. The Court recognized that economic regulation need only rationally relate to a legitimate state interest, not serve a compelling interest. This marked a decisive shift in substantive due process.'
+            },
+            {
+                id: 43,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What is the Glucksberg test for recognizing new fundamental rights under substantive due process?',
+                options: [
+                    'The right must be explicitly mentioned in the Constitution',
+                    'The right must be deeply rooted in the nation\'s history and tradition, OR implicit in the concept of ordered liberty',
+                    'The right must be supported by a majority of states',
+                    'Any right related to personal autonomy qualifies as fundamental'
+                ],
+                correct: 1,
+                explanation: 'Washington v. Glucksberg (1997) established the test for recognizing new fundamental rights: the asserted right must be deeply rooted in the nation\'s history and tradition, or implicit in the concept of ordered liberty. This is a very restrictive standard that makes it difficult to establish new fundamental rights. The Court suggested due process protects longstanding, settled rights, not novel ones.'
+            },
+            {
+                id: 44,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What did Dobbs v. Jackson Women\'s Health Organization do?',
+                options: [
+                    'Reaffirmed the right to abortion under substantive due process',
+                    'Overruled Roe v. Wade and held there is no federal constitutional right to abortion',
+                    'Imposed stricter regulations on abortion but preserved the right',
+                    'Required states to provide abortion services'
+                ],
+                correct: 1,
+                explanation: 'Dobbs (2022) overruled Roe v. Wade and Planned Parenthood v. Casey, holding that there is no federal constitutional right to abortion. The Court returned abortion regulation to the states. Dobbs rejected the trimester framework and viability standard, finding abortion is not deeply rooted in history and tradition (failing Glucksberg test). This is a major recent change in substantive due process.'
+            },
+            {
+                id: 45,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What did Obergefell v. Hodges hold?',
+                options: [
+                    'States could define marriage however they wished',
+                    'There is a constitutional right to same-sex marriage under due process and equal protection',
+                    'Same-sex couples could marry but states could refuse to recognize such marriages',
+                    'Marriage is a matter of contract, not constitutional protection'
+                ],
+                correct: 1,
+                explanation: 'Obergefell (2015) held that the Due Process Clause protects a fundamental right to marry (including same-sex marriage) and the Equal Protection Clause prohibits states from discriminating by excluding same-sex couples. The decision grounded the right in history, tradition, and liberty, and extended established marriage protections to same-sex couples nationwide.'
+            },
+            {
+                id: 46,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What did Lawrence v. Texas hold about substantive due process?',
+                options: [
+                    'States could criminalize private consensual sexual conduct',
+                    'Cannot criminalize consensual private sexual conduct between adults; overruled Bowers v. Hardwick',
+                    'Sodomy laws are constitutional if applied equally to all',
+                    'Privacy does not extend to sexual conduct in the home'
+                ],
+                correct: 1,
+                explanation: 'Lawrence (2003) protected liberty in private consensual sexual conduct and overruled Bowers v. Hardwick (1986). The Court held that the government cannot criminalize consensual sexual conduct between adults, rooting this in the liberty component of the Due Process Clause. Lawrence emphasized dignity and autonomy, signaling the Court\'s modern approach to unenumerated rights.'
+            },
+
+            // CONSTITUTIONAL LAW - NATURAL LAW / CONTRACTS CLAUSE (3 questions)
+            {
+                id: 47,
+                course: 'conlaw',
+                difficulty: 'medium',
+                question: 'What did Fletcher v. Peck hold?',
+                options: [
+                    'States have plenary power to rescind land grants at any time',
+                    'Vested rights are protected; Georgia could not retroactively rescind a land grant once vested in third parties',
+                    'Federal courts cannot review state land transactions',
+                    'States can rescind fraudulently obtained contracts whenever discovered'
+                ],
+                correct: 1,
+                explanation: 'Fletcher v. Peck (1810) held that once property rights vest in an innocent third party, the state cannot retroactively rescind the grant, even if obtained by fraud. The decision applied the Contracts Clause to protect vested property rights. It established that the state cannot use its sovereign power to take back property once lawfully conveyed, limiting ex post facto interference with contract rights.'
+            },
+            {
+                id: 48,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What is the Contracts Clause and what does it prohibit?',
+                options: [
+                    'States cannot make any changes to existing contracts',
+                    'No state shall pass any law impairing the obligation of contracts',
+                    'The federal government controls all interstate contracts',
+                    'States must enforce all contracts regardless of illegality'
+                ],
+                correct: 1,
+                explanation: 'Article I, Section 10 of the Constitution contains the Contracts Clause: "No State shall ... pass any Law impairing the Obligation of Contracts." This prohibits states from retroactively modifying contract obligations in ways that impair the creditor\'s rights. However, the Clause allows reasonable, prospective regulations and doesn\'t prevent states from protecting legitimate interests like emergency relief.'
+            },
+            {
+                id: 49,
+                course: 'conlaw',
+                difficulty: 'hard',
+                question: 'What is the vested rights doctrine?',
+                options: [
+                    'All property rights are permanent and unchangeable',
+                    'Once rights are fully vested in an individual, the government cannot retroactively take them away',
+                    'Government can always change the law affecting future rights',
+                    'Vested rights only apply to landed property'
+                ],
+                correct: 1,
+                explanation: 'The vested rights doctrine holds that once a person\'s rights are fully vested (e.g., by a completed conveyance or satisfied condition), the government cannot retroactively impair them. This doctrine underlies both the Contracts Clause and ex post facto protections. However, the government can always regulate future conduct and prospectively modify future rights.'
+            },
+
+            // PROPERTY LAW - ESTATES AND FUTURE INTERESTS (6 questions)
+            {
+                id: 50,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What are the four unities required for a joint tenancy?',
+                options: [
+                    'Unity of time, title, interest, and purpose',
+                    'Unity of time, title, interest, and possession',
+                    'Unity of deed, purpose, intent, and ownership',
+                    'Unity of ownership, control, benefit, and use'
+                ],
+                correct: 1,
+                explanation: 'Joint tenancy requires four unities: (1) Time—all interests acquired at the same time, (2) Title—all interests acquired by the same deed or instrument, (3) Interest—all interests must be the same size/duration, and (4) Possession—all joint tenants must have an equal right to possess the whole property. If any unity is destroyed (except by agreement), the joint tenancy is severed.'
+            },
+            {
+                id: 51,
+                course: 'property',
+                difficulty: 'hard',
+                question: 'What is the Rule Against Perpetuities?',
+                options: [
+                    'No interest in property can last forever',
+                    'No interest is valid unless it must vest, if at all, no later than lives in being plus 21 years',
+                    'Estates must vest within the grantor\'s lifetime',
+                    'Property cannot be tied up in trusts for more than 100 years'
+                ],
+                correct: 1,
+                explanation: 'The Rule Against Perpetuities (RAP) is: "No interest in property shall be valid unless it must vest, if at all, not later than twenty-one years after some life in being at the time of the creation of the interest." This means the vesting must be certain (if it vests at all) within the perpetuities period. Violations are common with contingent remainders and executory interests.'
+            },
+            {
+                id: 52,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What is a fee simple determinable?',
+                options: [
+                    'An estate that can be terminated if a condition is met',
+                    'An estate that automatically terminates on the happening of a condition, with a reversion to grantor',
+                    'An estate terminable at the grantor\'s will',
+                    'An estate granted "until" a condition is met'
+                ],
+                correct: 1,
+                explanation: 'A fee simple determinable is created by words like "so long as," "while," or "during." It automatically terminates upon the happening of the stated condition, with the estate reverting to the grantor (or their heirs). Contrast with fee simple subject to condition subsequent, which requires the grantor to affirmatively exercise a right of re-entry. Determinable estates are favored interpretively when ambiguity exists.'
+            },
+            {
+                id: 53,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What is a fee simple subject to condition subsequent?',
+                options: [
+                    'An estate that automatically ends if a condition occurs',
+                    'An estate that continues after a condition is met unless the grantor exercises the right of re-entry',
+                    'An estate granted to a third party contingently',
+                    'An estate limited by a time period'
+                ],
+                correct: 1,
+                explanation: 'Fee simple subject to condition subsequent is created by words like "but if," "provided that," or "on condition that." The estate does NOT automatically terminate; the grantor (or heirs) must affirmatively exercise a right of re-entry or power of termination to end the estate. This contrasts with fee simple determinable, which is automatic. Courts prefer conditional limitations over conditions subsequent.'
+            },
+            {
+                id: 54,
+                course: 'property',
+                difficulty: 'hard',
+                question: 'What is a contingent remainder?',
+                options: [
+                    'A remainder subject to a condition precedent that may never occur',
+                    'A remainder held by more than one person',
+                    'A remainder that vests upon the termination of the prior estate',
+                    'A remainder that the grantor retains'
+                ],
+                correct: 0,
+                explanation: 'A contingent remainder is a future interest subject to a condition precedent—it may never vest. Example: "To A for life, then to B if B graduates law school." If B never graduates, the remainder never vests. If the condition is satisfied before A\'s death, it becomes a vested remainder. Contingent remainders are destroyed if they don\'t vest by the time the prior estate terminates (destructibility doctrine).'
+            },
+            {
+                id: 55,
+                course: 'property',
+                difficulty: 'hard',
+                question: 'What is an executory interest?',
+                options: [
+                    'A future interest that automatically vests in the grantor',
+                    'A future interest that cuts short a prior estate granted to someone other than the grantor',
+                    'A remainder held contingently',
+                    'A reversion to the original grantor'
+                ],
+                correct: 1,
+                explanation: 'An executory interest is a future interest in a third party that cuts short a prior estate granted to someone other than the original grantor. It can be springing (following a gap) or shifting (cutting short another estate). Example: "To A for life, then to B if B becomes a lawyer" (remainder), but "To A, but if A divorces, then to B" (shifting executory interest). Executory interests are not subject to the destructibility doctrine.'
+            },
+
+            // PROPERTY LAW - LANDLORD-TENANT (5 questions)
+            {
+                id: 56,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What are the elements of constructive eviction?',
+                options: [
+                    'Any breach of the lease by the landlord',
+                    'Landlord\'s act or omission causing substantial interference with use/enjoyment, notice, and tenant\'s vacation of premises',
+                    'Tenant\'s failure to pay rent for three months',
+                    'Landlord\'s entry onto the property without permission'
+                ],
+                correct: 1,
+                explanation: 'Constructive eviction requires: (1) substantial interference with the tenant\'s use and enjoyment caused by the landlord\'s act or failure to act, (2) notice to the landlord, (3) the tenant vacates within a reasonable time, and (4) the interference must be material (not trivial). The tenant must actually leave to claim constructive eviction; continued occupancy waives the remedy.'
+            },
+            {
+                id: 57,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What is the implied warranty of habitability?',
+                options: [
+                    'A warranty that can be waived by agreement in the lease',
+                    'A non-waivable duty requiring landlords to maintain premises in habitable condition fit for human occupation',
+                    'A warranty only in furnished apartments',
+                    'A warranty that the lease can be renewed annually'
+                ],
+                correct: 1,
+                explanation: 'The implied warranty of habitability (established in Javins v. First National Realty Corp.) is a non-waivable duty requiring landlords to maintain premises in a condition fit for human occupation. It includes working plumbing, heat, electricity, sanitation, and absence of major defects. The warranty cannot be disclaimed by lease language, and breach justifies rent withholding, repair-and-deduct, damages, or termination.'
+            },
+            {
+                id: 58,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What is the difference between assignment and sublease?',
+                options: [
+                    'Assignment transfers some interest; sublease transfers all interest',
+                    'Assignment transfers all remaining interest to the assignee; sublease retains some interest in the original tenant',
+                    'Sublease requires landlord consent; assignment does not',
+                    'Assignment is temporary; sublease is permanent'
+                ],
+                correct: 1,
+                explanation: 'An assignment transfers the entire remaining lease interest to the assignee. A sublease reserves some part of the interest (time or space) in the original tenant. If T leases to T2 for 1 year of a 3-year lease, it\'s a sublease. If T transfers the full remaining term, it\'s an assignment. The distinction matters for liability: assignees are in privity; sublessees are not.'
+            },
+            {
+                id: 59,
+                course: 'property',
+                difficulty: 'hard',
+                question: 'What remedies do tenants have for breach of implied warranty of habitability?',
+                options: [
+                    'Only an action for damages',
+                    'Withhold rent, repair and deduct costs, claim damages, or terminate the lease',
+                    'Must continue paying rent and sue for damages only',
+                    'Can only terminate the lease without liability'
+                ],
+                correct: 1,
+                explanation: 'Tenant remedies for habitability breach include: (1) withholding rent (deposit with court in some jurisdictions), (2) repair and deduct from rent, (3) damages for diminished use/enjoyment, and (4) terminating the lease and vacating (constructive eviction). The tenant cannot simply abandon without paying, but can exercise these remedies without breach of lease.'
+            },
+            {
+                id: 60,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What is retaliatory eviction?',
+                options: [
+                    'Eviction based on any legal ground the landlord chooses',
+                    'Landlord cannot evict tenant for exercising legal rights like complaining to housing authorities or exercising lease rights',
+                    'Tenant retaliation against the landlord for raising rent',
+                    'Eviction without notice'
+                ],
+                correct: 1,
+                explanation: 'Retaliatory eviction doctrine prohibits landlords from evicting tenants in retaliation for the tenant\'s exercise of legal rights, such as: reporting housing code violations, requesting repairs, joining a tenant\'s union, or complaining to housing authorities. If eviction occurs within a statutory period (e.g., 6 months) after protected conduct, it\'s presumed retaliatory and the eviction is invalid.'
+            },
+
+            // PROPERTY LAW - FAIR HOUSING (3 questions)
+            {
+                id: 61,
+                course: 'property',
+                difficulty: 'easy',
+                question: 'What are the protected classes under the Fair Housing Act?',
+                options: [
+                    'Only race and color',
+                    'Race, color, religion, sex, national origin, familial status, and disability',
+                    'Race, sex, and age',
+                    'Race, religion, and national origin only'
+                ],
+                correct: 1,
+                explanation: 'The Fair Housing Act (42 U.S.C. § 3601 et seq.) protects seven classes: (1) race, (2) color, (3) religion, (4) sex, (5) national origin, (6) familial status (families with children), and (7) disability. Many states and local jurisdictions add additional protections like sexual orientation, gender identity, and source of income. Sexual harassment and disparate impact discrimination are also covered.'
+            },
+            {
+                id: 62,
+                course: 'property',
+                difficulty: 'hard',
+                question: 'What did Texas Department of Housing and Community Affairs v. Inclusive Communities Project establish?',
+                options: [
+                    'Only intentional discrimination violates the Fair Housing Act',
+                    'Disparate impact claims are cognizable under the Fair Housing Act',
+                    'Zoning laws are exempt from Fair Housing Act requirements',
+                    'HUD has no authority to investigate housing discrimination'
+                ],
+                correct: 1,
+                explanation: 'Texas Dept. v. Inclusive Communities (2015) held that disparate impact claims are actionable under the FHA. A facially neutral policy or practice that has a discriminatory effect violates the FHA, even without discriminatory intent. However, the defendant can establish a defense by showing the policy is necessary to achieve a substantial, legitimate, nondiscriminatory interest and there is no less discriminatory alternative.'
+            },
+            {
+                id: 63,
+                course: 'property',
+                difficulty: 'medium',
+                question: 'What is the difference between discriminatory treatment and disparate impact under the Fair Housing Act?',
+                options: [
+                    'They are the same thing',
+                    'Treatment = intentional discrimination; Impact = neutral policy with discriminatory effect',
+                    'Impact claims require proof of intent; treatment claims do not',
+                    'Only treatment claims are covered by the FHA'
+                ],
+                correct: 1,
+                explanation: 'Discriminatory treatment (disparate treatment) is intentional discrimination based on a protected class. Disparate impact is a neutral policy or practice that has a discriminatory effect, regardless of intent. Both are illegal under the FHA. Disparate treatment is proven through intent; disparate impact through statistical evidence of effect. Disparate impact is harder to defend against because intent is irrelevant.'
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedCourse = 'all';
+        let selectedDifficulty = 'medium';
+        let filteredQuestions = [];
+        let answered = false;
+
+        function filterQuestions() {
+            let filtered = questions;
+            if (selectedCourse !== 'all') {
+                filtered = filtered.filter(q => q.course === selectedCourse);
+            }
+            return filtered;
+        }
+
+        function startQuiz(difficulty) {
+            selectedDifficulty = difficulty;
+            filteredQuestions = filterQuestions().filter(q => q.difficulty === difficulty);
+
+            if (filteredQuestions.length === 0) {
+                alert('No questions available for this selection.');
+                return;
+            }
+
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+
+            document.getElementById('homeScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.add('active');
+            document.getElementById('totalQuestions').textContent = filteredQuestions.length;
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= filteredQuestions.length) {
+                endQuiz();
+                return;
+            }
+
+            const q = filteredQuestions[currentQuestionIndex];
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('questionText').textContent = q.question;
+            document.getElementById('explanation').classList.remove('show');
+            document.getElementById('explanation').innerHTML = '';
+            document.getElementById('nextButton').style.display = 'none';
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option';
+                button.textContent = option;
+                button.onclick = () => selectOption(index);
+                optionsContainer.appendChild(button);
+            });
+
+            updateProgressBar();
+        }
+
+        function selectOption(index) {
+            if (answered) return;
+
+            answered = true;
+            const q = filteredQuestions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            const isCorrect = index === q.correct;
+
+            if (isCorrect) {
+                score++;
+            }
+
+            options.forEach((opt, idx) => {
+                opt.classList.add('disabled');
+                if (idx === q.correct) {
+                    opt.classList.add('correct');
+                } else if (idx === index && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            document.getElementById('correctCount').textContent = score;
+            document.getElementById('currentScore').textContent = Math.round((score / (currentQuestionIndex + 1)) * 100) + '%';
+
+            document.getElementById('explanation').innerHTML = '<strong>Explanation:</strong> ' + q.explanation;
+            document.getElementById('explanation').classList.add('show');
+            document.getElementById('nextButton').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            answered = false;
+            loadQuestion();
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex) / filteredQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function endQuiz() {
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('resultsScreen').classList.add('active');
+
+            const percentage = Math.round((score / filteredQuestions.length) * 100);
+            document.getElementById('finalScore').textContent = `${score}/${filteredQuestions.length}`;
+
+            let message = '';
+            if (percentage === 100) {
+                message = 'Perfect score! You\'ve mastered this material!';
+            } else if (percentage >= 90) {
+                message = 'Excellent work! You\'re well-prepared for the exam.';
+            } else if (percentage >= 80) {
+                message = 'Great job! You understand most of the doctrines.';
+            } else if (percentage >= 70) {
+                message = 'Good effort. Review the material you missed.';
+            } else if (percentage >= 60) {
+                message = 'You\'re on the right track. Study harder.';
+            } else {
+                message = 'Keep studying. You\'ll get there!';
+            }
+
+            document.getElementById('resultMessage').textContent = `${percentage}% Correct - ${message}`;
+        }
+
+        function backToHome() {
+            document.getElementById('resultsScreen').classList.remove('active');
+            document.getElementById('homeScreen').classList.remove('hidden');
+        }
+
+        // Course filter setup
+        document.querySelectorAll('.course-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                selectedCourse = this.dataset.course;
+            });
+        });
+    </script>
+</body>
+</html>

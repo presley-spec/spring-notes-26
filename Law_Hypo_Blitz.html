@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Hypo Blitz - Multiple Choice Study Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0b12 0%, #0f1119 100%);
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(15, 17, 25, 0.95);
+            border-radius: 16px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #d4af37;
+            letter-spacing: 0.5px;
+        }
+
+        .score-badge {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid #d4af37;
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #d4af37;
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 1.4rem;
+            display: block;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.7rem 1.3rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: transparent;
+            color: #a0a0a0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+            color: #d4af37;
+        }
+
+        .tab-btn:hover {
+            border-color: #d4af37;
+            color: #d4af37;
+        }
+
+        .progress-info {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37, #e6c547);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0.02) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .question-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .meta-course {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+        }
+
+        .meta-difficulty {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .meta-difficulty.hard {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+
+        .meta-difficulty.medium {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .choice {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #d0d0d0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .choice:hover {
+            background: rgba(212, 175, 55, 0.08);
+            border-color: #d4af37;
+        }
+
+        .choice.selected {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: #d4af37;
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+        .choice.correct {
+            background: rgba(76, 175, 80, 0.15);
+            border-color: #4caf50;
+            color: #4caf50;
+        }
+
+        .choice.incorrect {
+            background: rgba(244, 67, 54, 0.15);
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .choice-label {
+            font-weight: 700;
+            display: inline-block;
+            width: 1.8rem;
+            margin-right: 0.5rem;
+        }
+
+        .choice-mark {
+            margin-left: 0.5rem;
+            font-weight: 600;
+        }
+
+        .explanation-box {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-title {
+            font-weight: 700;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .explanation-text {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .buttons-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.95rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 120px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #d4af37 0%, #e6c547 100%);
+            color: #1a1a1a;
+            flex: 2;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-next {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1.5px solid #d4af37;
+            color: #d4af37;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: rgba(212, 175, 55, 0.25);
+        }
+
+        .btn-skip {
+            background: rgba(100, 100, 100, 0.2);
+            border: 1px solid #666;
+            color: #a0a0a0;
+            flex: 1;
+        }
+
+        .btn-skip:hover:not(:disabled) {
+            background: rgba(100, 100, 100, 0.3);
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .game-over-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: #d4af37;
+            margin-bottom: 1.5rem;
+        }
+
+        .final-score {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #d4af37;
+            margin: 1.5rem 0;
+        }
+
+        .score-breakdown {
+            background: rgba(212, 175, 55, 0.08);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .restart-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #d4af37 0%, #e6c547 100%);
+            border: none;
+            border-radius: 10px;
+            color: #1a1a1a;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .question-text {
+                font-size: 0.95rem;
+            }
+
+            .choice {
+                padding: 0.85rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HYPO BLITZ</h1>
+            <div class="score-badge">
+                <span class="score-value" id="score">0</span>
+                <div>Points</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-course="all">ALL</button>
+            <button class="tab-btn" data-course="criminal">CRIMINAL LAW</button>
+            <button class="tab-btn" data-course="conlaw">CON LAW</button>
+            <button class="tab-btn" data-course="property">PROPERTY</button>
+        </div>
+
+        <div class="progress-info">
+            <div><span id="qNum">1</span> of <span id="totalQ">20</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div id="gameArea">
+            <div class="question-card">
+                <div class="question-meta">
+                    <span class="meta-tag meta-course" id="courseTag">CRIMINAL LAW</span>
+                    <span class="meta-tag meta-difficulty" id="diffTag">HARD</span>
+                </div>
+
+                <div class="question-text" id="questionText">
+                    Loading question...
+                </div>
+
+                <div class="choices" id="choicesContainer"></div>
+
+                <div class="explanation-box" id="explanationBox">
+                    <div class="explanation-title">Explanation:</div>
+                    <div class="explanation-text" id="explanationText"></div>
+                </div>
+
+                <div class="buttons-group">
+                    <button class="btn btn-submit" id="submitBtn">Submit Answer</button>
+                    <button class="btn btn-skip" id="skipBtn">Skip</button>
+                </div>
+
+                <div class="buttons-group" id="nextButtonGroup" style="display: none;">
+                    <button class="btn btn-next" id="nextBtn">Next Question</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="gameOverScreen" style="display: none;">
+            <div class="game-over">
+                <div class="game-over-title">GAME OVER</div>
+                <div class="final-score" id="finalScore">0</div>
+                <div class="score-breakdown" id="scoreBreakdown"></div>
+                <button class="restart-btn" id="restartBtn">Restart Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // CRIMINAL LAW - ATTEMPT
+            {
+                id: 1,
+                course: "criminal",
+                chapter: "11-15 Attempt",
+                difficulty: "hard",
+                question: "Dave drives to a bank with a mask and gun but drives away when he sees police. Under MPC's substantial step test, Dave is MOST LIKELY guilty of:",
+                choices: [
+                    { letter: "A", text: "No crime - mere preparation", correct: false },
+                    { letter: "B", text: "Attempted robbery - substantial step strongly corroborative of intent", correct: true },
+                    { letter: "C", text: "Conspiracy to commit robbery", correct: false },
+                    { letter: "D", text: "Criminal possession only", correct: false }
+                ],
+                explanation: "Driving to the location with tools of the crime (mask, gun) and approaching the target constitutes a substantial step strongly corroborative of criminal intent under MPC § 5.01. The defendant's conduct shows both the intent to commit robbery and a substantial step toward that commission."
+            },
+            {
+                id: 2,
+                course: "criminal",
+                chapter: "11-15 Attempt",
+                difficulty: "hard",
+                question: "Sarah fires a gun at what she believes is her sleeping husband in bed, but he had already died of a heart attack an hour earlier. Under the doctrine of factual impossibility:",
+                choices: [
+                    { letter: "A", text: "Sarah has a complete defense - you can't kill a dead person", correct: false },
+                    { letter: "B", text: "Sarah is guilty of attempted murder - factual impossibility is NOT a defense", correct: true },
+                    { letter: "C", text: "Sarah is guilty of murder since she fired the gun", correct: false },
+                    { letter: "D", text: "The case should be dismissed as moot", correct: false }
+                ],
+                explanation: "Under People v. Dlugash, factual impossibility is not a defense to attempt. Sarah had specific intent to kill and took a substantial step. That the target was already dead is an unknown factual circumstance and does not negate the attempt crime."
+            },
+            {
+                id: 3,
+                course: "criminal",
+                chapter: "11-15 Attempt",
+                difficulty: "hard",
+                question: "Under State v. Lyerla, why can't a defendant be convicted of attempted second-degree murder where second-degree murder requires recklessness?",
+                choices: [
+                    { letter: "A", text: "Recklessness is too low a mens rea for any crime", correct: false },
+                    { letter: "B", text: "You cannot intentionally attempt to achieve a reckless result - it's logically impossible", correct: true },
+                    { letter: "C", text: "Second-degree murder is not a real crime", correct: false },
+                    { letter: "D", text: "Attempt always requires premeditation", correct: false }
+                ],
+                explanation: "Attempt requires SPECIFIC INTENT to commit the target crime. Recklessness (conscious disregard of risk) is incompatible with intent (purpose to achieve result). One cannot 'intentionally' be 'reckless' - these mental states are logically contradictory."
+            },
+
+            // CRIMINAL LAW - COMPLICITY
+            {
+                id: 4,
+                course: "criminal",
+                chapter: "11-15 Complicity",
+                difficulty: "hard",
+                question: "Tom tells his friend Jerry where a wealthy homeowner keeps a spare key, knowing Jerry plans to burglarize the home. Under People v. Beeman, Tom is an accomplice IF:",
+                choices: [
+                    { letter: "A", text: "He merely knew about Jerry's plan", correct: false },
+                    { letter: "B", text: "He knew about the plan AND intended to facilitate the burglary", correct: true },
+                    { letter: "C", text: "He was present during the burglary", correct: false },
+                    { letter: "D", text: "He received any of the stolen goods afterward", correct: false }
+                ],
+                explanation: "Under Beeman, an accomplice must act 'with knowledge of the criminal purpose AND intent to commit, encourage, or facilitate the offense.' Mere knowledge is insufficient - there must be a shared intent to facilitate the crime."
+            },
+            {
+                id: 5,
+                course: "criminal",
+                chapter: "11-15 Complicity",
+                difficulty: "hard",
+                question: "Alice agrees to drive Bob to a store for what Bob says is a 'quick grab.' Inside, Bob kills the store clerk. Under Pinkerton doctrine, Alice is liable for the murder IF:",
+                choices: [
+                    { letter: "A", text: "She knew Bob had violent tendencies", correct: false },
+                    { letter: "B", text: "The murder was a reasonably foreseeable consequence of the agreed-upon robbery", correct: true },
+                    { letter: "C", text: "She was Bob's best friend", correct: false },
+                    { letter: "D", text: "She drove him away afterward", correct: false }
+                ],
+                explanation: "Under Pinkerton, co-conspirators are liable for crimes committed in furtherance of the conspiracy IF the crime was a reasonably foreseeable consequence. Murder during a robbery may be foreseeable depending on the circumstances and nature of the conspiracy."
+            },
+
+            // CRIMINAL LAW - CONSPIRACY
+            {
+                id: 6,
+                course: "criminal",
+                chapter: "11-15 Conspiracy",
+                difficulty: "hard",
+                question: "In a drug distribution network, supplier S sells to dealers D1, D2, and D3, who each sell independently. This structure is BEST described as:",
+                choices: [
+                    { letter: "A", text: "A chain conspiracy", correct: false },
+                    { letter: "B", text: "A wheel conspiracy with S as the hub", correct: true },
+                    { letter: "C", text: "Three separate conspiracies only between S and each dealer", correct: false },
+                    { letter: "D", text: "A single unified conspiracy among all participants", correct: false }
+                ],
+                explanation: "This is a wheel conspiracy - S is the 'hub' dealing with separate 'spokes' (D1, D2, D3). Whether it constitutes a single conspiracy depends on whether the spokes share a common interest with each other and with the hub."
+            },
+            {
+                id: 7,
+                course: "criminal",
+                chapter: "11-15 Conspiracy",
+                difficulty: "hard",
+                question: "After participating in a conspiracy for 3 months, Eve decides to leave. She tells her co-conspirators she's done. Under conspiracy law, Eve:",
+                choices: [
+                    { letter: "A", text: "Is free from all liability", correct: false },
+                    { letter: "B", text: "Has withdrawn but remains liable for crimes already committed in furtherance", correct: true },
+                    { letter: "C", text: "Cannot withdraw once she has joined", correct: false },
+                    { letter: "D", text: "Must report the conspiracy to police to withdraw", correct: false }
+                ],
+                explanation: "Withdrawal requires affirmative action plus notice to co-conspirators. However, withdrawal only cuts off liability for FUTURE crimes - the conspirator remains liable for crimes already committed in furtherance before withdrawal."
+            },
+
+            // CRIMINAL LAW - THEFT
+            {
+                id: 8,
+                course: "criminal",
+                chapter: "11-15 Theft",
+                difficulty: "hard",
+                question: "A bank teller handles customer deposits daily as part of her job. She begins taking small amounts. This is BEST classified as:",
+                choices: [
+                    { letter: "A", text: "Larceny - she took property not belonging to her", correct: false },
+                    { letter: "B", text: "Embezzlement - she had lawful possession and fraudulently converted it", correct: true },
+                    { letter: "C", text: "Robbery - she took money from the bank", correct: false },
+                    { letter: "D", text: "False pretenses - she deceived the bank", correct: false }
+                ],
+                explanation: "Embezzlement requires lawful possession followed by fraudulent conversion. The teller had authorized access to funds (lawful possession) and then misappropriated them. This distinguishes embezzlement from larceny (which requires trespassory taking)."
+            },
+            {
+                id: 9,
+                course: "criminal",
+                chapter: "11-15 Theft",
+                difficulty: "hard",
+                question: "A guest at a party asks to borrow the host's expensive watch 'to wear tonight' but secretly plans to keep it. This is:",
+                choices: [
+                    { letter: "A", text: "Embezzlement", correct: false },
+                    { letter: "B", text: "Larceny by trick - obtained possession through fraudulent misrepresentation", correct: true },
+                    { letter: "C", text: "False pretenses - obtained title through fraud", correct: false },
+                    { letter: "D", text: "Robbery", correct: false }
+                ],
+                explanation: "Larceny by trick occurs when possession (not title) is obtained through fraud. The guest obtained possession of the watch through a false promise to return it. False pretenses requires obtaining TITLE (ownership rights), not just possession."
+            },
+
+            // CRIMINAL LAW - PERJURY
+            {
+                id: 10,
+                course: "criminal",
+                chapter: "11-15 Perjury",
+                difficulty: "hard",
+                question: "During a grand jury proceeding, a witness is asked 'Did you participate in the meeting?' The witness says 'No' because she was on speakerphone and didn't consider that 'participating.' Under United States v. Farmer:",
+                choices: [
+                    { letter: "A", text: "She is guilty of perjury because she was on the call", correct: false },
+                    { letter: "B", text: "She may have a valid ambiguity defense since 'participate' could mean in-person attendance", correct: true },
+                    { letter: "C", text: "She is automatically guilty since the statement was under oath", correct: false },
+                    { letter: "D", text: "Ambiguity is never a defense to perjury", correct: false }
+                ],
+                explanation: "Under Farmer, if a question is 'fundamentally ambiguous' and the witness reasonably interpreted it one way, that's not perjury. 'Participate in the meeting' could reasonably mean physical attendance versus any involvement."
+            },
+
+            // CON LAW - Units 7-10
+            {
+                id: 11,
+                course: "conlaw",
+                chapter: "7-10 State Action",
+                difficulty: "hard",
+                question: "A private restaurant refuses to serve customers based on race. Under current constitutional law, the customers' BEST legal argument is:",
+                choices: [
+                    { letter: "A", text: "14th Amendment Equal Protection Clause directly", correct: false },
+                    { letter: "B", text: "Civil Rights Act of 1964 enacted under Commerce Clause power", correct: true },
+                    { letter: "C", text: "13th Amendment prohibition on slavery", correct: false },
+                    { letter: "D", text: "Privileges or Immunities Clause of 14th Amendment", correct: false }
+                ],
+                explanation: "Under the Civil Rights Cases and Cruikshank, the 14th Amendment only constrains STATE action, not private parties. However, Congress used Commerce Clause power to pass the Civil Rights Act, which DOES reach private discrimination (Heart of Atlanta Motel)."
+            },
+            {
+                id: 12,
+                course: "conlaw",
+                chapter: "7-10 Equal Protection",
+                difficulty: "hard",
+                question: "A state passes a law with racially neutral language, but data shows it disproportionately affects minorities. Under Washington v. Davis, to prove an Equal Protection violation the plaintiff must show:",
+                choices: [
+                    { letter: "A", text: "Disparate impact alone is sufficient", correct: false },
+                    { letter: "B", text: "Discriminatory INTENT or purpose behind the law", correct: true },
+                    { letter: "C", text: "Any statistical disparity violates Equal Protection", correct: false },
+                    { letter: "D", text: "The law fails rational basis review", correct: false }
+                ],
+                explanation: "Washington v. Davis requires proof of discriminatory INTENT, not just disparate impact. This is the most significant barrier to EP claims - facially neutral laws with discriminatory effects survive unless intent is proven."
+            },
+            {
+                id: 13,
+                course: "conlaw",
+                chapter: "7-10 Fundamental Rights",
+                difficulty: "hard",
+                question: "A state charges a $75 fee to register to vote. Under Harper v. Virginia combined with San Antonio v. Rodriguez, this law:",
+                choices: [
+                    { letter: "A", text: "Is constitutional because wealth is not a suspect classification", correct: false },
+                    { letter: "B", text: "Is unconstitutional because it conditions a FUNDAMENTAL RIGHT on wealth", correct: true },
+                    { letter: "C", text: "Must pass intermediate scrutiny", correct: false },
+                    { letter: "D", text: "Is valid under rational basis", correct: false }
+                ],
+                explanation: "While wealth alone triggers only rational basis (Rodriguez), when a wealth barrier blocks a FUNDAMENTAL RIGHT (voting), strict scrutiny applies (Harper). A poll tax or voter registration fee is unconstitutional."
+            },
+            {
+                id: 14,
+                course: "conlaw",
+                chapter: "7-10 Economic Liberty",
+                difficulty: "hard",
+                question: "A state passes a maximum hours law for gig workers. A driver challenges it as violating economic liberty. Under post-Lochner doctrine:",
+                choices: [
+                    { letter: "A", text: "Strict scrutiny applies because economic liberty is fundamental", correct: false },
+                    { letter: "B", text: "Rational basis applies - economic regulation is presumed constitutional", correct: true },
+                    { letter: "C", text: "Intermediate scrutiny as a quasi-fundamental right", correct: false },
+                    { letter: "D", text: "The law is per se unconstitutional under Lochner", correct: false }
+                ],
+                explanation: "West Coast Hotel v. Parrish ended the Lochner era. Economic regulation now receives rational basis review and is presumed constitutional. Economic liberty is NOT a fundamental right."
+            },
+            {
+                id: 15,
+                course: "conlaw",
+                chapter: "7-10 Fundamental Rights",
+                difficulty: "hard",
+                question: "A law school requires a specific test for new fundamental rights. Under Washington v. Glucksberg, the test requires that the right be:",
+                choices: [
+                    { letter: "A", text: "Important to some people", correct: false },
+                    { letter: "B", text: "Deeply rooted in history and tradition OR implicit in ordered liberty", correct: true },
+                    { letter: "C", text: "Mentioned in the Constitution", correct: false },
+                    { letter: "D", text: "Supported by a majority of states", correct: false }
+                ],
+                explanation: "Glucksberg's restrictive test for new fundamental rights requires showing the right is 'deeply rooted in history and tradition' OR 'implicit in ordered liberty.' This very strict test means most claims for new rights fail."
+            },
+
+            // PROPERTY - Chapters 5-6
+            {
+                id: 16,
+                course: "property",
+                chapter: "5-6 Future Interests",
+                difficulty: "hard",
+                question: "A will says 'To A for life, then to B's children who reach age 30.' B has no children yet. Under the Rule Against Perpetuities, this gift to B's children:",
+                choices: [
+                    { letter: "A", text: "Is valid because children will eventually reach 30", correct: false },
+                    { letter: "B", text: "Violates RAP - could vest more than 21 years after lives in being", correct: true },
+                    { letter: "C", text: "Is valid because A's life is the measuring life", correct: false },
+                    { letter: "D", text: "Creates a vested remainder", correct: false }
+                ],
+                explanation: "RAP requires interests vest within lives in being + 21 years. After A dies, B could have a child who wouldn't reach 30 within 21 years after A or B's death. The interest could vest too remotely, violating RAP."
+            },
+            {
+                id: 17,
+                course: "property",
+                chapter: "5-6 Landlord-Tenant",
+                difficulty: "hard",
+                question: "Tenant notifies landlord in writing about a severe cockroach infestation. After 2 months of no action, the tenant moves out and stops paying rent. The landlord sues for remaining rent. The tenant's BEST defense is:",
+                choices: [
+                    { letter: "A", text: "The lease was unconscionable", correct: false },
+                    { letter: "B", text: "Constructive eviction - landlord's failure substantially interfered after notice", correct: true },
+                    { letter: "C", text: "The tenant has no defense and owes the rent", correct: false },
+                    { letter: "D", text: "Impossibility of performance", correct: false }
+                ],
+                explanation: "Constructive eviction requires: (1) landlord's act/failure - failure to address infestation; (2) substantial interference - cockroaches are health hazard; (3) notice - written notice given; (4) tenant vacated within reasonable time. All elements are met."
+            },
+            {
+                id: 18,
+                course: "property",
+                chapter: "5-6 Landlord-Tenant",
+                difficulty: "hard",
+                question: "Tom transfers his entire remaining 3-year lease to Jerry. This creates:",
+                choices: [
+                    { letter: "A", text: "A sublease because Tom is still the original tenant", correct: false },
+                    { letter: "B", text: "An assignment because Tom transferred his ENTIRE remaining interest", correct: true },
+                    { letter: "C", text: "A novation", correct: false },
+                    { letter: "D", text: "A license", correct: false }
+                ],
+                explanation: "Assignment = transfer of tenant's ENTIRE remaining interest. Sublease = transfer of LESS than entire interest. Since Tom transferred all 3 years remaining, this is an assignment. Jerry is now in privity of estate with the landlord."
+            },
+            {
+                id: 19,
+                course: "property",
+                chapter: "5-6 Real Covenants",
+                difficulty: "hard",
+                question: "An HOA recorded covenant prohibits 'commercial vehicles in driveways.' Under Nahrstedt, the covenant is:",
+                choices: [
+                    { letter: "A", text: "Unenforceable because it restricts property use", correct: false },
+                    { letter: "B", text: "Presumed valid if recorded and not unreasonable", correct: true },
+                    { letter: "C", text: "Only enforceable against original purchasers", correct: false },
+                    { letter: "D", text: "Subject to strict scrutiny", correct: false }
+                ],
+                explanation: "Under Nahrstedt v. Lakeside Village, recorded HOA restrictions are presumed valid and enforceable unless they are wholly arbitrary, violate public policy, or impose burdens that far outweigh benefits."
+            },
+            {
+                id: 20,
+                course: "property",
+                chapter: "5-6 Future Interests",
+                difficulty: "hard",
+                question: "The distinction between a fee simple determinable and a fee simple subject to condition subsequent is:",
+                choices: [
+                    { letter: "A", text: "There is no meaningful difference", correct: false },
+                    { letter: "B", text: "Determinable automatically terminates; condition subsequent requires grantor to re-enter", correct: true },
+                    { letter: "C", text: "Determinable lasts longer", correct: false },
+                    { letter: "D", text: "Condition subsequent is more valuable", correct: false }
+                ],
+                explanation: "Fee simple determinable ('so long as') automatically terminates when the condition occurs - the estate reverts by operation of law. Fee simple subject to condition subsequent ('but if...grantor may re-enter') requires the grantor to affirmatively exercise the right of re-entry."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = [];
+        let currentCourse = "all";
+        let selectedAnswer = null;
+
+        function getFilteredQuestions() {
+            if (currentCourse === "all") {
+                return questions;
+            }
+            return questions.filter(q => q.course === currentCourse);
+        }
+
+        function getCurrentQuestion() {
+            const filtered = getFilteredQuestions();
+            return filtered[currentQuestionIndex];
+        }
+
+        function displayQuestion() {
+            const filtered = getFilteredQuestions();
+            if (currentQuestionIndex >= filtered.length) {
+                showGameOver(filtered.length);
+                return;
+            }
+
+            const q = getCurrentQuestion();
+            selectedAnswer = null;
+
+            document.getElementById("qNum").textContent = currentQuestionIndex + 1;
+            document.getElementById("totalQ").textContent = filtered.length;
+            document.getElementById("progressFill").style.width = ((currentQuestionIndex / filtered.length) * 100) + "%";
+
+            document.getElementById("courseTag").textContent = q.course.toUpperCase() + " LAW";
+            document.getElementById("courseTag").className = "meta-tag meta-course";
+            if (q.course === "criminal") {
+                document.getElementById("courseTag").textContent = "CRIMINAL LAW";
+            } else if (q.course === "conlaw") {
+                document.getElementById("courseTag").textContent = "CON LAW";
+            } else if (q.course === "property") {
+                document.getElementById("courseTag").textContent = "PROPERTY";
+            }
+
+            document.getElementById("diffTag").textContent = q.difficulty.toUpperCase();
+            document.getElementById("diffTag").className = "meta-tag meta-difficulty";
+            if (q.difficulty === "hard") {
+                document.getElementById("diffTag").classList.add("hard");
+            } else if (q.difficulty === "medium") {
+                document.getElementById("diffTag").classList.add("medium");
+            }
+
+            document.getElementById("questionText").textContent = q.question;
+
+            const choicesHtml = q.choices.map(choice => `
+                <div class="choice" data-letter="${choice.letter}" data-correct="${choice.correct}">
+                    <span class="choice-label">${choice.letter})</span>
+                    ${choice.text}
+                </div>
+            `).join("");
+            document.getElementById("choicesContainer").innerHTML = choicesHtml;
+
+            document.getElementById("explanationBox").classList.remove("show");
+            document.getElementById("submitBtn").style.display = "block";
+            document.getElementById("skipBtn").style.display = "inline-block";
+            document.getElementById("nextButtonGroup").style.display = "none";
+
+            document.querySelectorAll(".choice").forEach(choice => {
+                choice.addEventListener("click", function () {
+                    document.querySelectorAll(".choice").forEach(c => c.classList.remove("selected"));
+                    this.classList.add("selected");
+                    selectedAnswer = this.dataset.letter;
+                });
+            });
+        }
+
+        function submitAnswer() {
+            if (!selectedAnswer) {
+                alert("Please select an answer");
+                return;
+            }
+
+            const q = getCurrentQuestion();
+            const chosen = q.choices.find(c => c.letter === selectedAnswer);
+            const correct = chosen.correct;
+
+            answered.push({
+                question: q.id,
+                correct: correct
+            });
+
+            if (correct) {
+                score += 5;
+            }
+
+            document.getElementById("score").textContent = score;
+            document.querySelectorAll(".choice").forEach(choice => {
+                const isCorrect = choice.dataset.correct === "true";
+                const isSelected = choice.classList.contains("selected");
+
+                if (isCorrect) {
+                    choice.classList.add("correct");
+                    if (isSelected) choice.classList.add("choice-mark");
+                } else if (isSelected) {
+                    choice.classList.add("incorrect");
+                }
+                choice.style.pointerEvents = "none";
+            });
+
+            document.getElementById("explanationBox").classList.add("show");
+            document.getElementById("explanationText").textContent = q.explanation;
+
+            document.getElementById("submitBtn").style.display = "none";
+            document.getElementById("skipBtn").style.display = "none";
+            document.getElementById("nextButtonGroup").style.display = "flex";
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            selectedAnswer = null;
+            displayQuestion();
+        }
+
+        function skipQuestion() {
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        function showGameOver(total) {
+            document.getElementById("gameArea").style.display = "none";
+            document.getElementById("gameOverScreen").style.display = "block";
+
+            const correct = answered.filter(a => a.correct).length;
+            const percent = Math.round((correct / total) * 100);
+
+            document.getElementById("finalScore").textContent = score + " pts";
+
+            let breakdownHtml = `
+                <div class="breakdown-item">
+                    <span>Correct Answers:</span>
+                    <span>${correct} / ${total}</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Accuracy:</span>
+                    <span>${percent}%</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Total Points:</span>
+                    <span style="color: #d4af37; font-weight: 700;">${score}</span>
+                </div>
+            `;
+
+            document.getElementById("scoreBreakdown").innerHTML = breakdownHtml;
+        }
+
+        function restart() {
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = [];
+            selectedAnswer = null;
+            document.getElementById("score").textContent = "0";
+            document.getElementById("gameArea").style.display = "block";
+            document.getElementById("gameOverScreen").style.display = "none";
+            displayQuestion();
+        }
+
+        document.querySelectorAll(".tab-btn").forEach(btn => {
+            btn.addEventListener("click", function () {
+                document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+                currentCourse = this.dataset.course;
+                currentQuestionIndex = 0;
+                score = 0;
+                answered = [];
+                selectedAnswer = null;
+                document.getElementById("score").textContent = "0";
+                displayQuestion();
+            });
+        });
+
+        document.getElementById("submitBtn").addEventListener("click", submitAnswer);
+        document.getElementById("skipBtn").addEventListener("click", skipQuestion);
+        document.getElementById("nextBtn").addEventListener("click", nextQuestion);
+        document.getElementById("restartBtn").addEventListener("click", restart);
+
+        displayQuestion();
+    </script>
+</body>
+</html>

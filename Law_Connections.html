@@ -439,7 +439,7 @@
     <div class="container">
         <header>
             <h1>Law Connections</h1>
-            <p class="puzzle-counter">Puzzle <span id="puzzleNumber">1</span> of 25</p>
+            <p class="puzzle-counter">Puzzle <span id="puzzleNumber">1</span> of 32</p>
             <div class="lives-display">
                 <div class="life-dot active"></div>
                 <div class="life-dot active"></div>
@@ -692,6 +692,70 @@
                     { difficulty: 'green', category: 'Criminal Policies', items: ['Retribution', 'Deterrence', 'Incapacitation', 'Rehabilitation'] },
                     { difficulty: 'blue', category: 'Con Law Policies', items: ['Federalism', 'Separation of powers', 'Individual rights', 'Democratic accountability'] },
                     { difficulty: 'purple', category: 'Competing Values', items: ['Liberty vs Security', 'Efficiency vs Fairness', 'Majority rule vs Minority rights', 'Federal vs State power'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Attempt Elements', items: ['Specific Intent', 'Substantial Step', 'Beyond Preparation', 'Proximity to Crime'] },
+                    { difficulty: 'green', category: 'Complicity Requirements', items: ['Knowledge of Criminal Purpose', 'Intent to Facilitate', 'Aid or Encouragement', 'Accomplice Mens Rea'] },
+                    { difficulty: 'blue', category: 'Conspiracy Elements', items: ['Agreement Between Two+', 'Intent to Agree', 'Overt Act', 'Intent to Commit Target Crime'] },
+                    { difficulty: 'purple', category: 'Impossibility Defenses', items: ['Factual Impossibility', 'Legal Impossibility', 'Inherent Impossibility', 'Empty Pocket Doctrine'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Larceny Elements', items: ['Trespassory Taking', 'Carrying Away', 'Personal Property', 'Intent to Permanently Deprive'] },
+                    { difficulty: 'green', category: 'Embezzlement Elements', items: ['Lawful Possession', 'Fraudulent Conversion', 'Employee Access', 'Breach of Trust'] },
+                    { difficulty: 'blue', category: 'Robbery Elements', items: ['Larceny Plus Force', 'Threat of Force', 'During Taking', 'From Person\'s Presence'] },
+                    { difficulty: 'purple', category: 'Mail Fraud Elements', items: ['Scheme to Defraud', 'Use of Mails', 'Material Misrepresentation', 'Intent to Deceive'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Abandonment/Renunciation', items: ['Complete Renunciation', 'Voluntary Withdrawal', 'Good Faith', 'Not Fear of Detection'] },
+                    { difficulty: 'green', category: 'Withdrawal from Conspiracy', items: ['Affirmative Action', 'Notice to Co-conspirators', 'Before Target Crime', 'Still Liable for Prior Acts'] },
+                    { difficulty: 'blue', category: 'Perjury Defenses', items: ['Ambiguity of Question', 'Lack of Materiality', 'Good Faith Mistake', 'No Oath Administered'] },
+                    { difficulty: 'purple', category: 'Entrapment Elements', items: ['Government Inducement', 'Predisposition Test', 'Not Merely Opportunity', 'Manufactured Crime'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: '13th Amendment', items: ['Abolished Slavery', 'Involuntary Servitude', 'Applies to Private Actors', 'Self-Executing'] },
+                    { difficulty: 'green', category: '14th Amendment Clauses', items: ['Citizenship Clause', 'Due Process Clause', 'Equal Protection Clause', 'Privileges or Immunities'] },
+                    { difficulty: 'blue', category: '15th Amendment', items: ['Right to Vote', 'Regardless of Race', 'Color, Previous Servitude'] },
+                    { difficulty: 'purple', category: 'State Action Doctrine', items: ['Cruikshank Limit', 'Only Constrains Government', 'Private Discrimination Excluded', 'Section 5 Enforcement'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Strict Scrutiny Triggers', items: ['Race Classification', 'National Origin', 'Alienage', 'Fundamental Rights'] },
+                    { difficulty: 'green', category: 'Intermediate Scrutiny Triggers', items: ['Gender Classification', 'Legitimacy', 'Important Interest', 'Substantially Related'] },
+                    { difficulty: 'blue', category: 'Rational Basis Elements', items: ['Legitimate Purpose', 'Rational Relationship', 'Presumed Constitutional', 'Almost Always Upheld'] },
+                    { difficulty: 'purple', category: 'Intent Requirement Cases', items: ['Washington v. Davis', 'Discriminatory Purpose', 'Not Just Impact', 'Village of Arlington Heights'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Fundamental Rights (Protected)', items: ['Marriage', 'Family/Parenting', 'Privacy/Contraception', 'Voting/Travel'] },
+                    { difficulty: 'green', category: 'Lochner Era (Abandoned)', items: ['Economic Liberty', 'Freedom of Contract', 'Substantive Due Process', 'Court Strikes Regulation'] },
+                    { difficulty: 'blue', category: 'Privacy Doctrine Evolution', items: ['Griswold Penumbras', 'Roe Trimester Framework', 'Casey Undue Burden', 'Dobbs Overruled Roe'] },
+                    { difficulty: 'purple', category: 'Glucksberg Test for New Rights', items: ['Deeply Rooted in History', 'Implicit in Ordered Liberty', 'Very Restrictive', 'Most Claims Fail'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Fee Simple Absolute', items: ['Highest Estate', 'Indefinite Duration', 'Fully Alienable', 'No Future Interest'] },
+                    { difficulty: 'green', category: 'Life Estate', items: ['Duration of Life', 'Waste Doctrine Applies', 'Pur Autre Vie', 'Remainderman Rights'] },
+                    { difficulty: 'blue', category: 'Defeasible Fees', items: ['Fee Simple Determinable', 'Automatic Forfeiture', 'Fee Simple Subject to Condition', 'Grantor Must Re-enter'] },
+                    { difficulty: 'purple', category: 'Future Interests', items: ['Reversion', 'Remainder', 'Executory Interest', 'Rule Against Perpetuities'] }
+                ]
+            },
+            {
+                groups: [
+                    { difficulty: 'yellow', category: 'Constructive Eviction Elements', items: ['Landlord Act or Failure', 'Substantial Interference', 'Notice Given', 'Tenant Vacates'] },
+                    { difficulty: 'green', category: 'Warranty of Habitability', items: ['Non-Waivable Right', 'Material Defect', 'Applies to Residential', 'Javins v. First National'] },
+                    { difficulty: 'blue', category: 'Assignment vs. Sublease', items: ['Transfer All Interest', 'Transfer Partial Interest', 'Privity of Estate', 'Privity of Contract'] },
+                    { difficulty: 'purple', category: 'Fair Housing Act', items: ['Protected Classes', 'Discriminatory Treatment', 'Disparate Impact', 'Texas v. Inclusive Communities'] }
                 ]
             }
         ];

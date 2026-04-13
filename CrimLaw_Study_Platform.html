@@ -935,48 +935,6 @@
     ]
   },
   {
-    id: 40,
-    name: 'Affirmative Consent (Sexual Assault)',
-    shortName: 'Affirmative Consent',
-    analogy: '🏀 Affirmative consent works like the NBA\'s challenge system. You don\'t just assume a call is correct because nobody protested—you affirmatively confirm it through review. Silence or passivity isn\'t consent, just like the absence of a challenge doesn\'t validate a bad call. The modern framework requires a "yes," not just the absence of a "no." Active, knowing, voluntary agreement.',
-    icon: '🏀',
-    elements: [
-      'Requires affirmative agreement',
-      'Silence or passivity not consent',
-      'Absence of "no" doesn\'t equal "yes"',
-      'Clear, affirmative words or actions',
-      'Freely and knowingly given'
-    ]
-  },
-  {
-    id: 41,
-    name: 'No Duty to Resist (Sexual Assault)',
-    shortName: 'No Duty to Resist',
-    analogy: '🏀 Traditional "utmost resistance" requirement was like telling a player they had to physically fight the referee to contest a call, or the call stands. Modern law recognizes that people freeze under threat. A player might not contest a call because the power dynamic makes resistance feel futile or dangerous. Similarly, a victim who doesn\'t physically fight back still hasn\'t consented—resistance isn\'t a prerequisite for establishing lack of consent.',
-    icon: '🏀',
-    elements: [
-      'Victim has no duty to physically resist',
-      'Freezing/paralysis common under threat',
-      'Power dynamics affect resistance capacity',
-      'Lack of consent separate from resistance',
-      'Absence of resistance doesn\'t equal consent'
-    ]
-  },
-  {
-    id: 42,
-    name: 'Incapacity to Consent (Sexual Assault)',
-    shortName: 'Incapacity to Consent',
-    analogy: '🌌 In Rick and Morty, Unity (the hive-mind) raises consent questions. When Unity controls an entire planet\'s population, can any individual consent? They lack individual autonomous capacity. It\'s like extreme intoxication or mental incapacity—the individual can\'t exercise knowing, voluntary agreement. Capacity is a prerequisite for consent; without it, consent is impossible.',
-    icon: '🌌',
-    elements: [
-      'Incapacity vitiates consent',
-      'Extreme intoxication/unconsciousness',
-      'Age below legal threshold',
-      'Mental illness/disability affecting capacity',
-      'Incapacity is objective, not subjective belief'
-    ]
-  },
-  {
     id: 43,
     name: 'Justification vs. Excuse',
     shortName: 'Just. vs. Excuse',
@@ -1195,7 +1153,152 @@
       'Used in proportionality analysis',
       'Community standards of reasonableness'
     ]
+  },
+  {
+    id: 43,
+    name: 'Attempt - Specific Intent & Substantial Step',
+    category: 'Attempt',
+    elements: ['Specific intent to commit target crime', 'Substantial step toward commission', 'No liability for mere preparation', 'State v. Lyerla: can't attempt reckless crimes'],
+    explanation: 'Attempt requires two elements: (1) SPECIFIC INTENT to commit the target crime, and (2) ACTUS REUS—a SUBSTANTIAL STEP toward commission. State v. Lyerla: Cannot attempt second-degree murder because attempt requires intent to cause death, but 2d murder requires recklessness. Specific intent is mandatory. Substantial step = act strongly corroborative of intent to commit crime.',
+    analogyHint: '⚔️ Vader gathering Death Star materials intending completion = attempt. Gathering metal for lawful purposes = preparation.'
+  },
+  {
+    id: 44,
+    name: 'Attempt - MPC Substantial Step vs. Common Law Proximity',
+    category: 'Attempt',
+    elements: ['MPC: substantial step = strongly corroborative of intent', 'Includes lying in wait, acquiring tools', 'Broader than common law', 'Common law: dangerous proximity required'],
+    explanation: 'MPC § 5.01 defines substantial step as act strongly corroborative of firmness of intent. Lists non-exclusive examples: lying in wait, searching for victim, acquiring instrument for crime, supplying substance. BROADER than common law. Example: Smallwood purchased gun, ammunition, silencer materials intending to kill—substantial step under MPC even if not proximate under common law. Common law proximity tests: (1) Last act test, (2) Proximity test, (3) Indispensability test, (4) Dangerousness test. Example: People v. Rizzo—robbers identified victim, located him—HELD: mere preparation, not attempt.',
+    analogyHint: '🎬 Buying tools = substantial step (MPC). Casing joint = preparation. MPC reaches further.'
+  },
+  {
+    id: 45,
+    name: 'Attempt - Factual vs. Legal Impossibility',
+    category: 'Attempt',
+    elements: ['Factual impossibility: plan fails due to unknown facts', 'Legal impossibility: conduct not crime if successful', 'Factual = PUNISHABLE', 'Legal = NOT punishable'],
+    explanation: 'FACTUAL IMPOSSIBILITY—plan fails because of unknown facts. Examples: Clark v. State (stealing from empty pocket), People v. Dlugash (murdering already-dead person), United States v. Oviedo (distributing fake heroin). RULE: Factual impossibility NOT a defense—subjective intent controls. LEGAL IMPOSSIBILITY—conduct would not constitute crime even if successful. Examples: taking own property, consensual intercourse. RULE: Legal impossibility IS a defense. POLICY: Factual punished (shows dangerousness); legal not punished (conduct not criminal).',
+    analogyHint: '🌌 Stealing Morty-shaped object that's orange (factual—punishable). Stealing own invention (legal—not punishable).'
+  },
+  {
+    id: 46,
+    name: 'Attempt - Abandonment/Renunciation Defense (MPC § 5.04)',
+    category: 'Attempt',
+    elements: ['Complete renunciation of criminal purpose', 'Withdrawal in good faith', 'Motive must be voluntary, not fear of detection', 'Common law: NO defense', 'MPC: Affirmative defense'],
+    explanation: 'COMMON LAW: Abandonment is NOT a defense once substantial step taken. MPC § 5.04: Affirmative defense if defendant completely renounces purpose AND withdraws in good faith. CRITICAL: Renunciation must be VOLUNTARY—not merely because police approaching. Must be genuine change of mind. RATIONALE: Encourages offenders to back out.',
+    analogyHint: '🏀 Technical for fighting + refuses to continue. If stopped because realized wrong: abandonment. If benched by coach: not abandonment.'
+  },
+  {
+    id: 47,
+    name: 'Complicity - Accomplice Liability Elements',
+    category: 'Complicity',
+    elements: ['Principal commits crime', 'Accomplice aids/abets/encourages', 'Knowledge of unlawful purpose', 'Intent to facilitate/encourage', 'Accomplice doesn't directly commit actus reus'],
+    explanation: 'Accomplice liable when: (1) Principal commits crime, (2) Accomplice aids/abets, (3) Accomplice KNOWS of purpose, (4) Accomplice INTENDS to facilitate. People v. Beeman: Accomplice must act "with knowledge of criminal purpose and intent to commit, encourage, facilitate." Knowledge sufficient to help is INSUFFICIENT—must INTEND to aid.',
+    analogyHint: '🦇 Batman driving Gordon for detective work (intent to aid). If didn't know Gordon was chasing criminal, no accomplice liability.'
+  },
+  {
+    id: 48,
+    name: 'Complicity - Natural & Probable Consequences (Declining Doctrine)',
+    category: 'Complicity',
+    elements: ['Accomplice liable for natural/probable consequences', 'Some jurisdictions hold', 'California rejected (People v. Beeman)', 'Trend: toward intent-based approach'],
+    explanation: 'NATURAL & PROBABLE CONSEQUENCES DOCTRINE—accomplice liable for ANY crime that is natural/probable consequence of aided crime, even if unintended. Example: Commonwealth v. Welansky (nightclub owner liable for manslaughter). MODERN TREND: Courts REJECTING this. California abolished (People v. Beeman, 1984). Accomplice must EXPLICITLY intend to aid each crime.',
+    analogyHint: '⚔️ Give Vader hyperdrive for Star Destroyer. Vader blows up Alderaan. Old: liable for genocide. New: only liable for hyperdrive aid unless intended genocide.'
+  },
+  {
+    id: 49,
+    name: 'Complicity - Pinkerton Doctrine',
+    category: 'Complicity',
+    elements: ['Co-conspirators liable for all conspiracy crimes', 'Even if didn't intend specific crime', 'Crime committed during conspiracy', 'In furtherance of conspiracy', 'Reasonably foreseeable consequence'],
+    explanation: 'Pinkerton v. United States (1966): Member of conspiracy liable for ANY CRIME committed by co-conspirator during conspiracy and in furtherance, even if didn't intend specific crime. Example: A & B conspire to rob bank. During robbery, B kills guard. A liable for MURDER. REQUIREMENTS: (1) Crime during conspiracy, (2) In furtherance, (3) Reasonably foreseeable. CRITICISM: Controversial, imposes liability for unintended crimes.',
+    analogyHint: '⚔️ Plan bank robbery with Vader. Vader kills guard (unplanned). Pinkerton: liable if foreseeable.'
+  },
+  {
+    id: 50,
+    name: 'Conspiracy - Elements & Bilateral Requirement',
+    category: 'Conspiracy',
+    elements: ['Agreement between 2+ persons', 'Intent to agree', 'Intent to accomplish target crime', 'Bilateral: both must intend conspiracy', 'Some jurisdictions: unilateral possible'],
+    explanation: 'Conspiracy = INCHOATE offense—complete when agreement made, even if target crime never committed. BILATERAL REQUIREMENT: Both parties must intend conspiracy. Gebardi v. United States: If one party is undercover agent without intent, no conspiracy under bilateral. UNILATERAL APPROACH: Some modern jurisdictions allow "unilateral conspiracy"—one person's intent, even if other is undercover agent.',
+    analogyHint: '🌌 Rick agrees with Morty to steal Federation ship. BOTH must intend conspiracy. If Morty is Federation agent pretending: traditional no; newer maybe yes.'
+  },
+  {
+    id: 51,
+    name: 'Conspiracy - Overt Act & Wharton's Rule',
+    category: 'Conspiracy',
+    elements: ['Federal: overt act required (18 U.S.C. § 371)', 'Act need not be illegal', 'Must be in furtherance', 'Many states: no overt act required', 'Wharton's Rule: no conspiracy if parties necessary to crime'],
+    explanation: 'FEDERAL CONSPIRACY requires OVERT ACT by any conspirator in furtherance. Act can be ANY act, even lawful, if furthers conspiracy. Example: Agreeing to rob bank + taking bus to scout location = overt act. Many STATE CONSPIRACIES do NOT require overt act. WHARTON'S RULE: When crime necessarily involves 2+ persons, those persons cannot be convicted of conspiracy. Examples: dueling, bigamy. MODERN: Courts narrow/reject Wharton's Rule.',
+    analogyHint: '🏀 Agreement to technical foul. Federal: must actually commit foul (overt act). State: agreement alone might be conspiracy.'
+  },
+  {
+    id: 52,
+    name: 'Conspiracy - Withdrawal & Termination',
+    category: 'Conspiracy',
+    elements: ['Can withdraw before conspiracy complete', 'Requires affirmative action + notice', 'Mere non-participation insufficient', 'Withdraws from future crimes only', 'Remains liable for prior acts'],
+    explanation: 'WITHDRAWAL FROM CONSPIRACY: Can withdraw before conspiracy complete. REQUIREMENTS: (1) AFFIRMATIVE ACTION—do something affirmative, (2) NOTICE—communicate withdrawal to other conspirators, (3) TIMING—before conspiracy complete. EFFECT: Eliminates future liability. Remains liable for PRIOR crimes. Example: A, B, C conspire to rob bank. After week one, B tells A & C "I'm out." A & C rob two weeks later. B NOT liable for robbery (withdrew). But liable for week-one work.',
+    analogyHint: '🎬 Agree to build Death Star. Week one: work. Week two: tell Vader "I'm out" (affirmative + notice). Not liable for Alderaan.'
+  },
+  {
+    id: 53,
+    name: 'Theft - Larceny Elements',
+    category: 'Theft',
+    elements: ['Unlawful taking (trespass)', 'Carrying away (asportation)', 'Personal property of another', 'Intent to permanently deprive', 'Intent at taking controls'],
+    explanation: 'LARCENY = Unlawful taking and carrying away of personal property of another with intent to permanently deprive. TRESPASSORY TAKING: Taking WITHOUT owner consent. King v. Pear (1779)—Rented horse for joy ride and return. HELD: Larceny. Trespass at taking, not use. Intent at taking controls. ASPORTATION: Property must move, even slightly. PERSONAL PROPERTY: Only tangible property (not real estate). Must belong to another. INTENT TO PERMANENTLY DEPRIVE: Must intend permanent deprivation. Borrowing with intent to return is NOT larceny.',
+    analogyHint: '🎬 Greedo takes Han's Falcon without permission (trespass), moves it (asportation), belongs to Han (another's), intending to keep (permanent deprivation) = larceny.'
+  },
+  {
+    id: 54,
+    name: 'Theft - Larceny by Trick, False Pretenses, Embezzlement',
+    category: 'Theft',
+    elements: ['Larceny by trick: possession transferred by deception', 'False pretenses: title transferred by deception', 'Embezzlement: lawful possession converted', 'Modern statutes: unified theft covers all'],
+    explanation: 'THREE VARIATIONS: (1) LARCENY BY TRICK—Owner deceived into transferring POSSESSION (not title). Owner still owns legally. (2) FALSE PRETENSES—Defendant obtains TITLE through fraud. Both possession AND title transfer. (3) EMBEZZLEMENT—Employee with lawful possession converts to own use. Taking NOT trespassory (authorized to have it). Crime is conversion after lawful possession. Example: Accountant embezzling company funds.',
+    analogyHint: '📦 Trick: trick Jabba into giving box. Pretenses: tell Jabba you're selling his box. Embezzlement: hired as treasurer; pocket money trusted to you.'
+  },
+  {
+    id: 55,
+    name: 'Theft - Receiving Stolen Property',
+    category: 'Theft',
+    elements: ['Property is actually stolen', 'Defendant receives property', 'Knows it is stolen', 'Intends permanent deprivation', 'Cannot attempt to receive'],
+    explanation: 'RECEIVING STOLEN PROPERTY—Separate crime from larceny. ELEMENTS: (1) Property actually stolen, (2) Defendant RECEIVES property, (3) KNOWS stolen, (4) INTENDS permanent deprivation. Crime complete upon receipt—NO "attempt to receive" because receipt IS completion. Booth v. State: Defendant sought to receive believed-stolen property, but property never stolen (undercover setup). HELD: No receiving because property never stolen.',
+    analogyHint: '🌌 Morty receives stolen crystals from Rick, knowing stolen = receiving stolen property (complete crime). Can't attempt; once he has them, he's guilty.'
+  },
+  {
+    id: 56,
+    name: 'Perjury - Elements & Oath Requirement',
+    category: 'Perjury',
+    elements: ['Oath or affirmation required', 'Official proceeding', 'False statement (factually false)', 'Knowledge of falsity', 'Willfulness (specific intent)', 'Materiality required'],
+    explanation: 'PERJURY = Willfully giving false testimony under oath in official proceeding, knowing it false and material. OATH: Brogan v. United States—Lying to unsworn federal agents is NOT perjury. Must be formal oath. OFFICIAL PROCEEDING: Trial, deposition, grand jury, administrative hearing. FALSE STATEMENT: Must be factually false. United States v. Farmer—If question fundamentally ambiguous, witness not required to guess meaning. KNOWLEDGE: Must know false. Innocent mistake = no perjury. WILLFULNESS: Intentional false statement. MATERIALITY: Broadly interpreted.',
+    analogyHint: '⚖️ Testify under oath you saw Batman (lie; didn't) = perjury if knew truth and mattered. Lie to police (no oath): not perjury.'
+  },
+  {
+    id: 57,
+    name: 'Perjury - Two-Witness Rule & Recantation',
+    category: 'Perjury',
+    elements: ['Two-witness rule: some jurisdictions require corroboration', 'Federal: no two-witness rule', 'Recantation: correcting false testimony', 'May be defense if before proceeding ends'],
+    explanation: 'TWO-WITNESS RULE: Some jurisdictions require corroboration by two witnesses. Federal courts do NOT require it. RECANTATION DEFENSE: In some jurisdictions, if witness recants (admits falsity and corrects) BEFORE proceeding ends, may be defense. Rationale: Truth ultimately prevailed. PERJURY BY CONTRADICTION: Two sworn statements contradict; one false. Government must prove which is false.',
+    analogyHint: '⚖️ Testify "I saw Batman" (lie). Three days later testify "I did not see Batman" (truth). Recantation: some courts allow defense.'
+  },
+  {
+    id: 58,
+    name: 'Perjury - Ambiguity Defense & Materiality',
+    category: 'Perjury',
+    elements: ['Ambiguous questions protect witness', 'Witness not required to guess meaning', 'Materiality broadly construed', 'Could affect outcome = material'],
+    explanation: 'AMBIGUITY DEFENSE: If question FUNDAMENTALLY AMBIGUOUS, witness not required to guess meaning. United States v. Farmer—If question admits multiple interpretations and witness's answer true under one interpretation, no perjury. Burden on government to ask clear questions. MATERIALITY: Broadly interpreted. Could statement have affected outcome? Usually easily satisfied.',
+    analogyHint: '⚖️ Asked "Did you see suspect around crime scene area?" Could mean immediate or general neighborhood. Answer true under one interpretation = no perjury.'
+  },
+  {
+    id: 59,
+    name: 'Perjury - Subornation & Federal False Statements',
+    category: 'Perjury',
+    elements: ['Subornation: persuading another to commit perjury', 'Requires successful persuasion', 'Conspiracy to suborn: separate crime', '18 U.S.C. § 1001: false statements to federal officials'],
+    explanation: 'SUBORNATION OF PERJURY: Persuading/inducing another to commit perjury. ELEMENTS: (1) Other person commits perjury, (2) Suborner knew witness would, (3) Suborner intends to cause. Subornation REQUIRES SUCCESSFUL persuasion. CONSPIRACY TO SUBORN: Can conspire even if unsuccessful (United States v. Heater, 1995). FEDERAL FALSE STATEMENTS (18 U.S.C. § 1001): BROADER than perjury—no oath required. False statements to federal officials/agencies. Fills gap that Brogan created.',
+    analogyHint: '⚖️ Convince witness to lie under oath (subornation). Agree to have witness lie (conspiracy). Lie to IRS agent (not perjury, but § 1001 violation).'
+  },
+  {
+    id: 60,
+    name: 'Inchoate Crimes - Policy & Common Elements',
+    category: 'Inchoate Crimes',
+    elements: ['Attempt, Conspiracy, Complicity are inchoate', 'Punish preliminary conduct', 'Early intervention by law enforcement', 'Show dangerous intent/disposition'],
+    explanation: 'INCHOATE CRIMES (Attempt, Conspiracy, Complicity) punish conduct preliminary to completed crime. POLICY RATIONALES: (1) EARLY INTERVENTION—Police stop crime before completion. (2) DANGEROUSNESS—Shows defendant's criminal disposition and intent. (3) JUSTICE—Punish intent manifested through conduct, not mere thoughts. (4) LUCK REDUCTION—Punishment doesn't depend on fortuity of success. COMPLICITY adds: Secondary liability extends responsibility to facilitators; deters helping crimes. Distinguishes accomplice (knows + intends) from mere accessory after fact (helps after completion).',
+    analogyHint: '⚔️ Plotting invasion (conspiracy), gathering troops (attempt), supplying weapons (complicity)—all punishable even if invasion fails.'
   }
+
 ];
 
     const LEVEL1_QUESTIONS = [
@@ -1647,46 +1750,9 @@
     analogyHint: 'Like proving NBA referees call fouls differently by race, but the league says you must prove the ref was biased against you specifically in your game, not just that a pattern exists.',
     explanation: 'McCleskey is controversial because it prevents systemic remedies despite clear statistical evidence of bias. Understanding its limitation is exam-critical.'
   },
-
-  // Sexual Assault
-  {
-    id: 41,
-    type: 'elementBreakdown',
-    doctrine: 'Affirmative Consent (Sexual Assault)',
-    ruleId: 40,
-    question: 'Explain the affirmative consent standard and why silence or passivity do not constitute consent.',
-    answer: 'AFFIRMATIVE CONSENT requires clear, affirmative agreement—words or actions showing the person willingly and knowingly agrees to sexual contact. SILENCE OR PASSIVITY ARE NOT CONSENT because: (1) A person may be frozen in fear, trauma, or shock and unable to resist, (2) Power dynamics can make verbal objection feel unsafe or impossible, (3) The absence of "no" does not mean "yes," (4) The old "no means no" standard shifted to "yes means yes" because it\'s insufficient to assume consent when someone doesn\'t object. AFFIRMATIVE CONSENT requires an active, knowing agreement, not merely the absence of refusal. A person can freeze under threat without consenting, and freezing is a well-documented trauma response.',
-    analogyHint: 'Like the NBA challenge system—you don\'t assume a call is correct just because nobody protested. You affirmatively review it.',
-    elements: ['Clear affirmative agreement', 'Silence not consent', 'Passivity not consent', 'Active, knowing agreement required', 'Absence of "no" ≠ "yes"']
-  },
-  {
-    id: 42,
-    type: 'truefalse',
-    doctrine: 'No Duty to Resist (Sexual Assault)',
-    ruleId: 41,
-    question: 'True or False: Under modern sexual assault law, a victim must physically resist or fight back for lack of consent to be legally recognized.',
-    answer: false,
-    justification: 'FALSE. Modern law rejects the "utmost resistance" standard. A victim has no legal duty to physically resist. People commonly freeze when threatened, and freezing is a recognized trauma response, not consent. The absence of physical resistance does not imply consent. Consent requires affirmative agreement; lack of consent can be established without evidence of resistance. Power dynamics, threats, and incapacity can prevent resistance without eliminating lack of consent.',
-    analogyHint: 'Like telling a player they have to physically fight the referee to contest a call—the resistance standard is rejected because it\'s unrealistic.',
-    explanation: 'This is a critical modern reform. Understanding that freezing is not consent is important for sexual assault exams.'
-  },
-  {
-    id: 43,
-    type: 'ruleMatching',
-    doctrine: 'Incapacity to Consent (Sexual Assault)',
-    ruleId: 42,
-    question: 'A person is extremely intoxicated (but not completely unconscious) and cannot exercise knowing, voluntary agreement to sexual contact. Can they consent?',
-    analogyHint: 'Like Unity the hive-mind lacking individual autonomous capacity—the person cannot exercise knowing, voluntary agreement.',
-    options: [
-      { text: 'Yes—if the intoxicated person did not explicitly say "no," consent is implied', correct: false, reasoning: 'Incapacity to consent means the person cannot exercise knowing, voluntary agreement, regardless of what they say or don\'t say. Extreme intoxication is incapacity.' },
-      { text: 'No—incapacity to consent vitiates consent; an incapacitated person cannot consent, regardless of apparent agreement', correct: true, reasoning: 'Incapacity (extreme intoxication, unconsciousness, mental illness, age below threshold) prevents consent from being valid. The person lacks the capacity for knowing, voluntary agreement.' },
-      { text: 'Maybe—it depends on whether the intoxicated person initiated the sexual contact', correct: false, reasoning: 'Initiation does not overcome incapacity. An incapacitated person cannot consent, and the other person\'s reasonable knowledge of incapacity affects their culpability.' }
-    ]
-  },
-
   // Justification & Excuse
   {
-    id: 44,
+    id: 41,
     type: 'elementBreakdown',
     doctrine: 'Justification vs. Excuse',
     ruleId: 43,
@@ -1874,7 +1940,205 @@
     answer: 'FORESEEABILITY is the linchpin connecting multiple doctrines: (1) PROXIMATE CAUSATION—was this type of harm, to this type of victim, in this manner, foreseeable? (2) INTERVENING CAUSES—does an intervening act break the causal chain? Only if it\'s unforeseeable. (3) FELONY MURDER LIMITATIONS—is the death a foreseeable consequence of the dangerous felony? (4) SELF-DEFENSE—would a reasonable person foresee the necessity of force? All use the same foreseeability analysis. Examples: Dame\'s shot causing emotional devastation and car crash = not foreseeable (proximate cause fails). Joker planning Dent\'s transformation = foreseeable intervening cause (chain unbroken). Satellite falling during burglary = unforeseeable consequence (felony murder fails). A person reaching for a weapon after initial assault = foreseeable (reasonable person would predict it, so you must retreat if jurisdiction requires).',
     analogyHint: 'Foreseeability appears everywhere—causation, felony murder, self-defense. Run the same analysis across chapters.',
     elements: ['Proximate cause requires foreseeable harm', 'Foreseeable intervening causes don\'t break chain', 'Felony murder requires foreseeable death', 'Self-defense requires foreseeable necessity', 'Core question: was this consequence foreseeable?']
+  },
+  {
+    id: 61,
+    type: 'elementBreakdown',
+    doctrine: 'Attempt - Specific Intent & Substantial Step',
+    ruleId: 43,
+    question: 'Explain why specific intent is mandatory for attempt liability, using State v. Lyerla. Can you attempt second-degree murder?',
+    answer: 'State v. Lyerla (S.D. 1988): NO, you cannot attempt second-degree murder. REASON: Attempt requires SPECIFIC INTENT to commit the target crime. Second-degree murder requires only RECKLESSNESS (not intent to kill). These are internally inconsistent: you cannot "intentionally" commit a reckless act. The terminology itself is contradictory. Specific intent means the defendant must INTEND the crime's result (death for murder), not just intend the conduct. Recklessness means conscious disregard of substantial risk, not intent to cause the harm. Therefore, the specific intent requirement of attempt cannot be satisfied by reckless conduct. This is a critical limitation on attempt liability: you cannot attempt crimes that do not require specific intent.',
+    analogyHint: '🏀 You cannot "intentionally" shoot the three-pointer recklessly. The words contradict. Attempt requires specific intent-directed conduct.',
+    elements: ['Specific intent mandatory for attempt', 'Second-degree murder requires recklessness', 'Recklessness ≠ specific intent', 'Lyerla: cannot attempt reckless crimes', 'Attempt requires intent to cause result']
+  },
+  {
+    id: 62,
+    type: 'truefalse',
+    doctrine: 'Attempt - MPC Substantial Step vs. Common Law Proximity',
+    ruleId: 44,
+    question: 'True or False: Under the MPC substantial step test, a defendant who purchases a gun, ammunition, and silencer materials with intent to kill has committed an attempt to murder.',
+    answer: true,
+    justification: 'TRUE. Under the MPC § 5.01 substantial step test, acquiring instruments for crime can constitute a substantial step. Example: Smallwood (purchasing gun, ammunition, silencer materials with intent to kill = substantial step under MPC). The MPC is BROADER than common law proximity tests. Common law would wait for "dangerous proximity" (closer to actual commission); MPC reaches earlier to conduct that is "strongly corroborative of firmness of intent." The test asks: is this act corroborative of the defendant's intent to commit the crime? If yes, it can be a substantial step. However, note that mere preparation (buying items for lawful purposes) would not suffice—the prosecution must prove specific intent to use these items for crime.',
+    analogyHint: '🎬 Buying heist tools = substantial step under MPC. Common law waits for actual dangerous approach. MPC reaches further.',
+    explanation: 'MPC substantial step is broader and appears more frequently on exams. Understanding the jurisdictional difference is critical.'
+  },
+  {
+    id: 63,
+    type: 'ruleMatching',
+    doctrine: 'Attempt - Proximity Tests (Common Law)',
+    ruleId: 45,
+    question: 'In a common law proximity test, robbers identify their victim, locate him at a train station, and move toward him. They do not approach within visible distance. Is this attempt or preparation?',
+    analogyHint: 'People v. Rizzo: robbers located victim, moved toward him. HELD: mere preparation.',
+    options: [
+      { text: 'Attempt—they have identified the victim and begun moving toward him', correct: false, reasoning: 'People v. Rizzo HELD: NOT attempt. The conduct is mere preparation, not proximate to actual commission. Proximity requires nearness in time and place to ACTUAL COMMISSION (drawing gun, entering store, confronting victim).' },
+      { text: 'Preparation—they have not yet approached to dangerous proximity (e.g., drawn weapons, entered store, confronted victim)', correct: true, reasoning: 'Rizzo held that locating and moving toward victim is preparation, not attempt. Attempt requires dangerous proximity: the crime must be imminent and the defendant's acts must be close in time and place to actual commission. Just moving toward victim is not attempt.' },
+      { text: 'Depends on whether the jurisdiction has adopted MPC substantial step test', correct: false, reasoning: 'The question specifies common law proximity test, so jurisdiction choice matters, but among common law tests, Rizzo established that this is mere preparation.' }
+    ]
+  },
+  {
+    id: 64,
+    type: 'elementBreakdown',
+    doctrine: 'Attempt - Factual vs. Legal Impossibility',
+    ruleId: 46,
+    question: 'Distinguish between factual and legal impossibility, and explain why the law treats them differently. Give examples.',
+    answer: 'FACTUAL IMPOSSIBILITY: Defendant's plan would fail because of facts unknown to the defendant. Examples: (1) Clark v. State—attempting to steal from empty pocket (defendant thought pocket had money), (2) People v. Dlugash—attempting to murder already-dead person (defendant didn't know victim dead), (3) United States v. Oviedo—attempting to distribute non-heroin substance defendant thought was heroin. RULE: Factual impossibility is NOT a defense. The defendant's SUBJECTIVE INTENT controls, not objective fact. The defendant is liable because they intended the crime and took substantial step. LEGAL IMPOSSIBILITY: Defendant's conduct would not constitute crime even if successful. Examples: (1) Taking own property (no theft possible), (2) Having consensual intercourse (legal even if defendant thinks illegal), (3) Receiving stolen goods from undercover officer (property never actually stolen). RULE: Legal impossibility IS a defense. Conduct is not criminal even if successful. WHY THE DIFFERENCE? Factual impossibility shows the defendant is dangerous (intended crime, took step); legal impossibility shows conduct is not criminal. Punishing factual impossibility deters criminal intent; legal impossibility protection respects the limits of criminal law.',
+    analogyHint: '🌌 Rick stealing Morty-shaped orange (factual—punishable, he intended to steal Morty). Rick stealing his own invention (legal—not punishable, he owns it).',
+    elements: ['Factual impossibility = punishable', 'Legal impossibility = not punishable', 'Factual controlled by subjective intent', 'Legal controlled by whether conduct is criminal', 'Distinction reflects culpability and legal limits']
+  },
+  {
+    id: 65,
+    type: 'fillTheGap',
+    doctrine: 'Attempt - Abandonment/Renunciation (MPC § 5.04)',
+    ruleId: 47,
+    question: 'Under MPC § 5.04, abandonment is a defense if the defendant ___ the criminal purpose ___ and withdraws in ___. The key is that renunciation must be ___, not motivated by fear of ___.',
+    answer: 'completely renounces; (or: completely abandons); good faith; voluntary; detection',
+    analogyHint: '🏀 Player techs out, realizes wrong, refuses to continue = abandonment. Player techs out, gets benched = not abandonment (fear of punishment).',
+    options: null
+  },
+  {
+    id: 66,
+    type: 'truefalse',
+    doctrine: 'Complicity - Intent vs. Knowledge',
+    ruleId: 48,
+    question: 'True or False: Under People v. Beeman, an accomplice is liable if they knowingly provide aid that will facilitate a crime, even if they do not intend that the crime be committed.',
+    answer: false,
+    justification: 'FALSE. People v. Beeman established that knowledge ALONE is insufficient. Accomplice must act "with knowledge of criminal purpose and INTENT to commit, encourage, or facilitate the offense." The critical distinction: Knowing your aid will help a crime ≠ intending to aid the crime. Example: Gun shop owner sells gun to person who might commit robbery. Owner knows gun might be used for crime (knowledge). But if owner didn't intend to facilitate robbery, no accomplice liability (intent lacking). Intent means the accomplice wants the crime to happen and wants their conduct to help. Mere knowledge is insufficient.',
+    analogyHint: '🦇 Batman driving Gordon (intends to aid detective work). If Batman didn't know Gordon was chasing criminal, just thought leisure drive, no accomplice liability despite knowing it's possible.',
+    explanation: 'Beeman is the leading case and this distinction is heavily tested. Students often confuse knowledge with intent.'
+  },
+  {
+    id: 67,
+    type: 'elementBreakdown',
+    doctrine: 'Complicity - Natural & Probable Consequences (Declining)',
+    ruleId: 49,
+    question: 'Explain the natural and probable consequences doctrine in accomplice liability. How has modern law responded to it?',
+    answer: 'NATURAL & PROBABLE CONSEQUENCES DOCTRINE (old rule): Accomplice liable not only for crime aided but also for ANY CRIME that is a NATURAL AND PROBABLE CONSEQUENCE of that crime, even if unintended and unplanned. Example: Commonwealth v. Welansky—nightclub owner negligently allowed fire hazard; fire occurred; owner liable for manslaughter of those killed (natural consequence of dangerous condition). MODERN RESPONSE: Courts are REJECTING this doctrine as unfair. CALIFORNIA LEADERSHIP: People v. Beeman (1984) abolished this doctrine. Now accomplice must EXPLICITLY intend to aid EACH CRIME charged. Cannot be liable for unintended crimes just because they're foreseeable consequences. POLICY CHANGE: The old rule imposed liability for crimes the accomplice didn't intend and maybe didn't even know would occur. Example: Help friend rob store (no mention of violence). Friend shoots someone during robbery. Old rule: liable for murder (natural consequence). New rule: not liable for shooting unless you intended aid for that crime. TREND: Most jurisdictions moving toward intent-based approach (Beeman model).',
+    analogyHint: '⚔️ You help Vader with hyperspace transport for Star Destroyer. Vader blows up Alderaan (genocide). Old doctrine: you're liable for genocide (foreseeable consequence). Modern: you're only liable for transport aid, not genocide.',
+    elements: ['Natural & probable consequence = old rule', 'Accomplice liable for unintended crimes', 'Modern law: rejects doctrine', 'Requires explicit intent to aid', 'Fairness concern driven change']
+  },
+  {
+    id: 68,
+    type: 'ruleMatching',
+    doctrine: 'Complicity - Pinkerton Doctrine',
+    ruleId: 50,
+    question: 'Under Pinkerton doctrine, if two conspirators agree to commit burglary, and during the burglary one kills a security guard, is the other conspirator liable for murder?',
+    analogyHint: 'Plan robbery with co-conspirator. Co-conspirator kills guard. Pinkerton: liable if killing was foreseeable consequence.',
+    options: [
+      { text: 'No—the conspirator didn't intend the killing and didn't help commit it', correct: false, reasoning: 'Under Pinkerton, co-conspirators are liable for crimes committed by other co-conspirators in furtherance of the conspiracy, even if they didn't intend or aid that specific crime. Intent to aid the specific crime is NOT required under Pinkerton.' },
+      { text: 'Yes—under Pinkerton, the conspirator is liable for the murder if the killing was a reasonably foreseeable consequence of the burglary', correct: true, reasoning: 'Pinkerton v. United States: Member of conspiracy liable for ANY crime committed by co-conspirator during and in furtherance of conspiracy if reasonably foreseeable. Murder during burglary would be foreseeable consequence. Even though the conspirator didn't intend the killing, membership in conspiracy plus foreseeability of death during robbery = liability.' },
+      { text: 'It depends on whether the conspiracy explicitly included violent acts', correct: false, reasoning: 'While context matters, Pinkerton doesn't require that the specific crime (murder) be explicitly agreed to. Foreseeability is the test, not explicit agreement.' }
+    ]
+  },
+  {
+    id: 69,
+    type: 'elementBreakdown',
+    doctrine: 'Conspiracy - Elements & Bilateral Requirement',
+    ruleId: 51,
+    question: 'State the elements of conspiracy. Explain why Gebardi v. United States mattered for the bilateral requirement.',
+    answer: 'ELEMENTS OF CONSPIRACY: (1) AGREEMENT between 2+ persons, (2) INTENT TO AGREE to the agreement, (3) INTENT TO ACCOMPLISH the target crime. INCHOATE: Conspiracy is complete when agreement is made, even if target crime never committed. BILATERAL REQUIREMENT: Traditional rule requires that BOTH parties intend to enter into the conspiracy. Gebardi v. United States: Husband and wife couldn't both be prosecuted for single conspiracy because the law protected certain categories (spouses, principals) from dual prosecution for single conspiracy. The bilateral approach means: if one party is an undercover agent who doesn't intend conspiracy, there's no conspiracy. MODERN DEVELOPMENT: Some jurisdictions allow "unilateral conspiracy"—one person's intent to conspire with another suffices, even if other is undercover agent. This expands conspiracy liability. The bilateral vs. unilateral question appears on exams as a jurisdictional variation.',
+    analogyHint: '🌌 Rick agrees with Morty to steal Federation ship. BOTH must intend agreement (bilateral). If Morty is Federation agent pretending: traditional rule no conspiracy; newer rule maybe yes.',
+    elements: ['Agreement', 'Intent to agree', 'Intent to accomplish target crime', 'Bilateral: both must intend', 'Some jurisdictions: unilateral possible', 'Inchoate offense']
+  },
+  {
+    id: 70,
+    type: 'truefalse',
+    doctrine: 'Conspiracy - Overt Act Requirement (Federal)',
+    ruleId: 52,
+    question: 'True or False: In a federal conspiracy under 18 U.S.C. § 371, the overt act must be illegal in itself to satisfy the statute.',
+    answer: false,
+    justification: 'FALSE. Federal conspiracy requires an OVERT ACT by any conspirator in furtherance of the conspiracy, but the act need NOT be illegal itself. Example: Agreeing to rob a bank + taking a bus to scout the location = overt act. The bus ride is entirely lawful but serves as overt act because it furthers the conspiracy. The statute is: "If two or more persons conspire to commit any offense against the United States, and one or more of such persons do any overt act to further the conspiracy, each shall be fined or imprisoned." The overt act is just evidence the conspiracy is moving toward execution (not merely conversational). JURISDICTIONAL NOTE: Many STATE CONSPIRACIES do NOT require overt act—the agreement alone is sufficient.',
+    analogyHint: '🏀 Players agree to throw game. Just talking = conspiracy. Making even a legal play that furthers the agreement (missing easy shot) = overt act.',
+    explanation: 'Overt act requirement in federal law is key distinction from many state conspiracies. This appears frequently on comparative jurisdiction exams.'
+  },
+  {
+    id: 71,
+    type: 'ruleMatching',
+    doctrine: 'Conspiracy - Withdrawal/Abandonment',
+    ruleId: 53,
+    question: 'A conspirator to murder announces to the group: "I'm leaving this conspiracy. I want no part of this murder." The next day, the co-conspirators commit the murder. Is the withdrawing conspirator liable?',
+    analogyHint: 'Announce withdrawal before crime commences = eliminates future liability. But liable for prior acts.',
+    options: [
+      { text: 'Yes—membership in conspiracy is permanent; withdrawal doesn't eliminate liability', correct: false, reasoning: 'Withdrawal IS possible and eliminates future liability for crimes committed after withdrawal. The conspirator must, however, remain liable for the conspiracy itself and crimes committed before withdrawal.' },
+      { text: 'No—the conspirator withdrew by affirmatively announcing abandonment, so no liability for the murder committed after withdrawal', correct: true, reasoning: 'Withdrawal requires affirmative action (announcing) + notice (telling co-conspirators). Once effectively withdrawn before crime commences, liability for that future crime is eliminated. However, the conspirator remains liable for any crimes committed before withdrawal and for the conspiracy itself.' },
+      { text: 'It depends on whether the announcement was truly communicated to all co-conspirators', correct: false, reasoning: 'While notice is required, the answer assumes the conspirator tried to communicate withdrawal. If done affirmatively and in good faith, withdrawal is effective and eliminates future liability.' }
+    ]
+  },
+  {
+    id: 72,
+    type: 'fillTheGap',
+    doctrine: 'Theft - Larceny Elements',
+    ruleId: 54,
+    question: 'Larceny consists of: (1) ___ taking (requires ___); (2) ___ (even slight movement); (3) personal property of ___; (4) ___ to permanently deprive. The key case King v. Pear shows that intent at the ___ controls.',
+    answer: 'unlawful; trespass; carrying away/asportation; another; intent; time of taking',
+    analogyHint: '🎬 Greedo takes Falcon: without permission (trespass), moves it (asportation), belongs to Han (another's), intends to keep (deprivation).',
+    options: null
+  },
+  {
+    id: 73,
+    type: 'elementBreakdown',
+    doctrine: 'Theft - Larceny by Trick vs. False Pretenses vs. Embezzlement',
+    ruleId: 55,
+    question: 'Distinguish larceny by trick, false pretenses, and embezzlement. Why do modern statutes unify them?',
+    answer: 'LARCENY BY TRICK: Owner deceived into transferring POSSESSION (not title). Owner still owns legally; was just deceived about what he was handing over. Example: Fake identity to get merchandise from shop clerk. FALSE PRETENSES: Defendant obtains TITLE through fraud. Owner deceived into transferring both possession AND title (ownership). Example: Falsely claiming to be the owner and selling someone else's property. EMBEZZLEMENT: Employee with lawful possession converts property to own use. Taking is NOT trespassory because employee was authorized to have the property. Crime is the conversion—using lawfully-possessed property for own benefit contrary to trust. Example: Accountant embezzling company funds they were authorized to manage. MODERN UNIFICATION: These three historically required different prosecutions even though all involved fraudulent theft. Modern statutes create unified "theft" offense covering: (1) larceny, (2) embezzlement, (3) larceny by trick, (4) false pretenses, (5) receiving stolen property. This simplifies charging and prevents defendants from escaping liability on technical distinctions. For exams, understanding the distinctions helps analyze which crime applies, but in practice, most jurisdictions charge generically as "theft."',
+    analogyHint: '📦 Trick: deceive victim into giving you box (he thinks it's something else). Pretenses: deceive victim by claiming you own box (he gives title). Embezzlement: hired to store boxes; you pocket one you were authorized to handle.',
+    elements: ['Larceny by trick = possession deception', 'False pretenses = title deception', 'Embezzlement = lawful → unlawful conversion', 'Modern: unified theft statute', 'Distinctions matter for analysis but not charging']
+  },
+  {
+    id: 74,
+    type: 'truefalse',
+    doctrine: 'Theft - Receiving Stolen Property',
+    ruleId: 56,
+    question: 'True or False: A person can be convicted of "attempt to receive stolen property" if caught trying to accept goods they believed were stolen but which were actually seized by police.',
+    answer: false,
+    justification: 'FALSE. Receipt of stolen property is complete when the property is received. There is no "attempt to receive" stage. Booth v. State: Defendant sought to receive property he believed stolen, but the property was never actually stolen (it was police property in a sting operation). HELD: No crime because property was never actually stolen. Receipt IS the completion of the crime. The actus reus of receiving is the moment of receipt. Unlike larceny (which has taking and carrying away stages) or embezzlement (which has lawful possession then conversion), receiving is instantaneous upon receipt. Therefore, attempt is not possible for receiving.',
+    analogyHint: '🌌 Morty agrees to receive stolen crystals from Rick. Morty reaches out to grab them = receipt = crime complete. Can't "attempt" to receive.',
+    explanation: 'This is a critical distinction. Receiving is unique among theft offenses in having no attempt variant.'
+  },
+  {
+    id: 75,
+    type: 'elementBreakdown',
+    doctrine: 'Perjury - Elements & Oath Requirement',
+    ruleId: 57,
+    question: 'State the elements of perjury and explain why Brogan v. United States distinguished perjury from false statements to federal officials.',
+    answer: 'ELEMENTS OF PERJURY: (1) OATH or affirmation REQUIREMENT—must be under formal oath, (2) In OFFICIAL PROCEEDING (trial, deposition, grand jury, hearing), (3) FALSE STATEMENT (factually false, not opinion), (4) KNOWLEDGE of falsity (must know statement false), (5) WILLFULNESS (specific intent), (6) MATERIALITY (relevant to proceeding). BROGAN v. UNITED STATES DISTINCTION: Defendant lied to federal agents (not under oath) about his involvement in a crime. HELD: NOT perjury because no oath was administered. Lying to law enforcement/federal agents without oath is not perjury. However, it can violate 18 U.S.C. § 1001 (false statements to federal officials), which does NOT require an oath. This distinction is critical: PERJURY = oath required; FALSE STATEMENTS (§ 1001) = no oath, no official proceeding, just statement to federal official. The distinction filled a gap: before Brogan, unsworn lies to agents fell through. Now they're § 1001 violations.',
+    analogyHint: '⚖️ Testify under oath you saw Batman (lie) = perjury if knew truth and mattered. Lie to FBI agent on phone (no oath) = not perjury, but § 1001 violation.',
+    elements: ['Oath required', 'Official proceeding', 'False statement', 'Knowledge of falsity', 'Willfulness', 'Materiality', 'Brogan: oath requirement critical']
+  },
+  {
+    id: 76,
+    type: 'ruleMatching',
+    doctrine: 'Perjury - Ambiguity Defense',
+    ruleId: 58,
+    question: 'A witness is asked: "Did you see the defendant's car near the scene?" The question is ambiguous—the scene could refer to the crime scene or the neighborhood. The witness answers "yes" meaning the neighborhood. The defendant's car was in the neighborhood but not at the actual crime scene. Does the witness commit perjury?',
+    analogyHint: 'United States v. Farmer: if question ambiguous and answer true under one interpretation, no perjury.',
+    options: [
+      { text: 'Yes—the witness's answer contradicts the fact that the car was not at the crime scene', correct: false, reasoning: 'No. The question is fundamentally ambiguous. United States v. Farmer holds that witness is not required to guess meaning of ambiguous question. If answer is true under one reasonable interpretation (neighborhood), witness is protected even if false under another interpretation (actual crime scene).' },
+      { text: 'No—the ambiguous question protects the witness; if the answer could reasonably be true under one interpretation, no perjury', correct: true, reasoning: 'Farmer's ambiguity doctrine protects witnesses from perjury liability when questions are unclear. The burden is on the prosecutor to ask clear questions. If the answer is truthful under any reasonable interpretation of the ambiguous question, perjury is not established.' },
+      { text: 'It depends on whether the witness intended to deceive the court with the ambiguous answer', correct: false, reasoning: 'Specific intent to deceive is required for perjury, but the ambiguity defense protects the witness regardless of intent when the question itself is unclear.' }
+    ]
+  },
+  {
+    id: 77,
+    type: 'truefalse',
+    doctrine: 'Perjury - Recantation & Immunity',
+    ruleId: 59,
+    question: 'True or False: If a witness is granted immunity for their testimony, they can later be prosecuted for perjury if they recant and admit the original testimony was false.',
+    answer: false,
+    justification: 'FALSE. If a witness is granted immunity, that immunity typically prevents prosecution based on the substance of the testimony. United States v. Apfelbaum and Kastigar v. United States establish that immunity protects the witness from prosecution based on the immunized testimony. However, immunity DOES NOT prevent prosecution for false statements underlying the crime (e.g., if witness says "I didn't commit the murder" and is immune, but then later prosecuted for the murder itself based on other evidence, that's allowed). But perjury for recanting the immunized testimony is generally barred because it would directly contradict the immunity grant. NUANCE: If two statements are irreconcilable (one pre-immunity, one post-immunity), government must prove which is false. Generally, the post-immunity statement (when witness is safe from prosecution for underlying crime) is assumed false, and immunity protects the pre-immunity statement.',
+    analogyHint: '⚖️ Testify "I didn't kill him" (immunity granted). Later admit "Actually I did kill him." Immunity prevents prosecution for perjury on original statement (it protected that truth-seeking).',
+    explanation: 'Immunity and perjury interaction is complex but frequently tested.'
+  },
+  {
+    id: 78,
+    type: 'elementBreakdown',
+    doctrine: 'Inchoate Crimes - Policy & Cross-Chapter Doctrines',
+    ruleId: 60,
+    question: 'Explain the policy rationales for criminalizing inchoate crimes (attempt, conspiracy, complicity). Why does the law punish conduct that falls short of completed crime?',
+    answer: 'POLICY RATIONALES for INCHOATE CRIMES: (1) EARLY INTERVENTION—Police can apprehend and stop crime before completion. Allows prevention rather than just punishment. (2) DANGEROUSNESS OF DEFENDANT—Shows defendant's disposition toward crime; manifests criminal intent through conduct. Protects society from dangerous persons. (3) JUSTICE—Punish culpable intent that has been manifested through conduct, not mere thought crimes. The actor has shown they are serious about committing crime. (4) LUCK REDUCTION—Prevents punishment from depending on fortuity of success. Two defendants with identical intent and conduct shouldn't receive different punishments just because one's shot misses and victim survives while other's shot kills. (5) For COMPLICITY specifically: Extends liability to facilitators; deters helping others commit crimes; holds accountable those who aid wrongdoing. (6) For CONSPIRACY specifically: Addresses danger of combination; multiple actors coordinating poses greater threat than individual acting alone. CRITICAL INSIGHT: Inchoate crimes are about intervening before the harm occurs, while respecting the limit that the defendant must have taken some concrete step (not mere thought/plan). This balances early intervention against due process limits on criminalizing thought.',
+    analogyHint: '⚔️ Stop invasion before it happens (attempt). Arrest co-conspirators when planning (conspiracy). Hold supplier accountable (complicity). All punish before harm completes.',
+    elements: ['Early intervention rationale', 'Dangerousness of defendant', 'Justice for culpable intent', 'Luck reduction', 'Facilitator deterrence', 'Combination danger', 'Balanced with concrete step requirement']
   }
+
 ];
 
     const LEVEL2_HYPOS = [
@@ -2011,25 +2275,24 @@
       },
       {
         id: 5,
-        title: 'Sexual Assault + Consent + Intoxication + Fraud',
-        facts: 'Kyle and Jade meet at a college party. Both drink alcohol (estimated BAC 0.10-0.12, both somewhat impaired but conscious). Kyle tells Jade he\'s a senior pre-med student planning to attend Harvard Medical School. They go back to Kyle\'s apartment. They begin to kiss and engage in sexual activity. Jade asks "Are you using protection?" Kyle says "Yes," but he is not using a condom (he stopped partway through). Jade, believing she is protected, continues. Afterward, Jade finds out Kyle lied about protection and discovers his actual BAC was much higher (medical exam shows 0.15+). Jade also learns Kyle is a sophomore and not pre-med. Jade feels violated and reports assault.',
+        title: 'Conspiracy + Attempt + Accomplice Complexity',
+        facts: 'Sarah, Marcus, and Tyler agree to burglarize a warehouse to steal electronics. Sarah plans the heist, Marcus scouts the location, and Tyler agrees to be the getaway driver. During planning, Sarah and Marcus have a falling out. Sarah tells Marcus and Tyler: "I\'m out. Don\'t do this." She explicitly communicates this to both before the night of the burglary. However, Marcus and Tyler proceed with the burglary two days later. Marcus enters the warehouse and begins prying open office doors (making significant noise). A security guard, hearing the noise, apprehends Marcus before he can steal anything. Tyler, waiting in the car, sees police arriving and drives away, abandoning Marcus. Police later identify and charge all three: Sarah, Marcus, and Tyler.',
         triggerFacts: [
-          'Mutual intoxication',
-          'Initial apparent consent',
-          'Fraud about identity (pre-med vs. sophomore)',
-          'Fraud about protection (condom)',
-          'Escalation of intoxication',
-          'Consent dependent on false statement'
+          'Explicit withdrawal by Sarah',
+          'Continued conspiracy by Marcus and Tyler',
+          'Burglary attempted but not completed (Marcus caught before theft)',
+          'Accomplice abandonment (Tyler fled, didn\'t help)',
+          'Affirmative withdrawal communication'
         ],
         issues: [
-          'Did Jade\'s intoxication eliminate capacity to consent?',
-          'Does fraud about protection vitiate consent (different from fraud in factum)?',
-          'Does fraud about identity vitiate consent?',
-          'Is Kyle\'s intoxication a defense?',
-          'Recklessness or knowledge: did Kyle know Jade would not consent if she knew truth?',
-          'What is the charge: rape, sexual assault, no crime?'
+          'Is Sarah liable for conspiracy despite withdrawal before the crime?',
+          'Is Sarah liable for the burglary attempt given her withdrawal?',
+          'Is Marcus guilty of attempted burglary under MPC substantial step test?',
+          'Is Tyler an accomplice to the burglary attempt despite abandoning Marcus?',
+          'Does Tyler\'s flight constitute withdrawal or abandonment?',
+          'What is the scope of each person\'s liability?'
         ],
-        modelPrioritization: 'Prioritize: (1) Capacity to consent (both were intoxicated; was Jade incapacitated?), (2) Fraud vitiating consent (depends on jurisdiction—some recognize fraud about protection, others don\'t), (3) Identity fraud (less likely to vitiate consent unless identity goes to essence), (4) Kyle\'s intoxication (generally no defense for sexual assault). Most jurisdictions: fraud about protection may vitiate consent; fraud about identity typically doesn\'t.'
+        modelPrioritization: 'Prioritize: (1) Sarah\'s withdrawal—affirmative + notice before crime = no liability for attempted burglary, but may be liable for conspiracy formation (2) Marcus\'s attempt—prying open doors = substantial step under MPC, attempt liability despite lack of theft (3) Tyler\'s role—agreed to be getaway (accomplice), fled when police arrived (not true withdrawal with notice), likely liable (4) Distinguish withdrawal/abandonment from accomplice perspective.'
       },
       {
         id: 6,
@@ -2168,25 +2431,25 @@
       },
       {
         id: 2,
-        title: 'Fall 2025 Final Exam Simulation',
+        title: 'Fall 2025 Attempt/Complicity/Conspiracy Exam',
         essayPercent: 70,
         mcPercent: 30,
         totalTime: 240,
-        prompt: 'A college party leads to an alleged sexual assault. Analyze the mens rea, consent, and intoxication issues. Consider both the accuser\'s and accused\'s perspectives. Discuss defenses.',
-        scenario: 'Kyle (junior, economics major) met Jade (sophomore, undeclared major) at a fraternity party on Friday night. Both consumed alcohol—Jade drank about 4 beers over 3 hours; Kyle drank about 6 beers over the same period (estimated BAC: Jade 0.10-0.12; Kyle 0.15-0.17). They danced, kissed, and left the party together around midnight, going to Kyle\'s apartment. Jade later said she was "buzzed but coherent." Kyle\'s roommates heard them enter Kyle\'s bedroom. Jade and Kyle engaged in kissing and manual sexual stimulation. At some point, Kyle suggested they "go further." Jade asked, "Are you using protection?" Kyle responded, "Yeah, of course," but he was not using a condom. They engaged in sexual intercourse for about 3 minutes, after which Kyle lost his erection and stopped. Jade said "I think that\'s enough anyway" and they lay together for about 10 minutes. Jade got dressed and left around 1:30 AM. The next day, Jade told her friends she felt violated. She learned Kyle had lied about protection. She also discovered Kyle had told another woman at the party he "doesn\'t bother with condoms because girls don\'t notice." Jade reported the incident to campus police. Kyle\'s defense: Jade was willing, they were both intoxicated, and Jade initiated the kissing. Kyle said Jade never said "no" and seemed to enjoy it.',
-        rubric: 'Analyze: (1) Capacity to consent (both intoxicated; was Jade incapacitated?), (2) Affirmative consent (modern standard), (3) Fraud vitiating consent (lying about condom), (4) Recklessness re: consent (Kyle\'s prior statement), (5) Kyle\'s intoxication as defense, (6) Reasonable belief in consent (Kyle\'s perspective), (7) Jurisdictional variation in consent definition.',
+        prompt: 'A multi-actor criminal scheme involving planning, preparation, execution, and aftermath. Analyze attempt, complicity, and conspiracy doctrines. Identify all participants\' liability and applicable defenses.',
+        scenario: 'Marcus and Noah had a grudge against their college roommate Tyler, who owed them money and repeatedly refused to pay. Over three weeks, Marcus and Noah planned to scare Tyler into paying by burglarizing his apartment and stealing expensive items to sell. They recruited Alex, a acquaintance, who agreed to help in exchange for $500 of the proceeds. Marcus bought a crowbar, rope, and duct tape (all purchased from the same hardware store, on the same day). He also researched the apartment security system online. Noah did online recon and determined when Tyler would be at work. Alex provided a vehicle. The night of the planned burglary, the three drove to Tyler\'s apartment complex at 11 PM. Marcus and Alex entered the building together. Noah waited in the car, ready to drive away quickly if police came. As Marcus was prying open the apartment door with the crowbar (making significant noise), a neighbor, Mrs. Chen, heard the commotion and came into the hallway to investigate. Seeing Marcus with the crowbar, Mrs. Chen screamed. Marcus panicked and ran back to the car without completing the burglary. Alex, however, did not run—she confronted Mrs. Chen, shoved her against the wall, and said "If you call police, I will find you." Mrs. Chen suffered minor bruises. All three (Marcus, Noah, and Alex) escaped in the car and drove home. Police later identified all three from security footage. Questions: Is Marcus guilty of burglary attempt? Is Noah guilty of conspiracy? Is Alex liable for the assault on Mrs. Chen? Did anyone withdraw from the conspiracy? What is each person\'s liability?',
+        rubric: 'Analyze: (1) Marcus\'s attempt liability (did he take substantial step? Was entry sufficient?), (2) Conspiracy formation (agreement? When did conspiracy form? Is overt act required?), (3) Withdrawal/abandonment (did Marcus\'s flight constitute withdrawal? Did he have opportunity?), (4) Alex\'s assault liability (separate crime; is each conspirator liable?), (5) Natural and probable consequences doctrine (does conspiracy cover the assault?), (6) Noah\'s role (getaway driver; is he accomplice? Conspirator? Both?), (7) Defenses and jurisdictional variations.',
         essayMaxWords: 5500,
         mcQuestions: [
-          { q: 'Did Jade\'s BAC of 0.10-0.12 eliminate capacity to consent?', options: ['Yes, always incapacitated', 'No, she was conscious', 'Depends on jurisdiction and specific effects', 'Only if she said no'], answer: 2 },
-          { q: 'Does fraud about condom use vitiate consent in most jurisdictions?', options: ['Yes, always', 'No, never', 'Depends on whether jurisdiction recognizes fraud re protection', 'Only if disease transmitted'], answer: 2 },
-          { q: 'What is Jade\'s strongest argument for lack of consent?', options: ['She was intoxicated', 'Kyle lied about protection', 'She said she felt violated later', 'Kyle\'s prior statement about condoms'], answer: 1 },
-          { q: 'Is Kyle\'s intoxication a valid defense?', options: ['Yes, negates mens rea', 'No, generally not a defense for sexual assault', 'Yes, if more intoxicated than Jade', 'Depends on whether it was voluntary intoxication'], answer: 1 },
-          { q: 'Under modern affirmative consent standard, what is missing here?', options: ['Verbal consent to intercourse', 'Consent to specific acts', 'Communication before each act', 'All of the above could apply'], answer: 3 },
-          { q: 'What is the significance of Kyle\'s statement about condoms to another woman?', options: ['Proves intent to deceive', 'Shows pattern of recklessness', 'Shows knowledge that deception happens', 'Suggests consciousness of guilt'], answer: 1 },
-          { q: 'Can Kyle claim reasonable belief in consent?', options: ['Yes, Jade kissed him', 'No, he knew about the condom lie', 'Yes, if she didn\'t verbally refuse', 'Depends on whether reasonable person would believe'], answer: 3 },
-          { q: 'What crime is Kyle most likely charged with?', options: ['Rape', 'Sexual assault', 'Assault by deception', 'Battery'], answer: 1 },
-          { q: 'Did Kyle\'s intoxication affect his ability to form mens rea?', options: ['Yes, he\'s too drunk to have intent', 'No, sexual assault doesn\'t require specific intent', 'Possibly, depending on jurisdiction', 'No, voluntary intoxication doesn\'t apply'], answer: 3 },
-          { q: 'Is the "consent to one act = consent to all acts" doctrine valid?', options: ['Yes, always', 'No, modern law requires consent to each act', 'Yes, if parties continue', 'Depends on what acts preceded'], answer: 1 }
+          { q: 'Under the MPC substantial step test, has Marcus completed an attempt by prying open the door?', options: ['No, he didn\'t enter the apartment', 'Yes, acquiring tools + prying open = substantial step', 'Depends on whether door was significantly damaged', 'Only if he intended to permanently deprive'], answer: 1 },
+          { q: 'Under common law proximity test, is Marcus\'s conduct attempt or preparation?', options: ['Attempt—he is at dangerous proximity to completion', 'Preparation—prying open door is preliminary', 'Depends on the jurisdiction\'s test', 'Cannot determine without knowing if anything was stolen'], answer: 1 },
+          { q: 'When did the conspiracy form in this fact pattern?', options: ['When Marcus, Noah, and Alex first planned', 'When Marcus bought the tools', 'When they drove to the apartment', 'When Marcus began prying open the door'], answer: 0 },
+          { q: 'Did Marcus\'s flight from the apartment constitute a valid withdrawal from the conspiracy?', options: ['Yes, he abandoned the burglary', 'No, flight is not affirmative withdrawal with notice', 'Depends on whether he communicated his withdrawal to Noah and Alex', 'Only if he reported to police'], answer: 1 },
+          { q: 'Is Noah liable for conspiracy even though he stayed in the car?', options: ['No, he didn\'t enter the apartment', 'Yes, conspiracy does not require direct participation', 'Yes, but only if the conspiracy required an overt act', 'Depends on whether Noah was armed'], answer: 1 },
+          { q: 'Is Alex liable for the assault on Mrs. Chen under conspiracy doctrine?', options: ['Yes, the assault was a natural/probable consequence', 'No, assault was not part of the conspiracy agreement', 'Yes, if Pinkerton doctrine applies and assault is foreseeable', 'Only if Alex intended to assault when agreement formed'], answer: 2 },
+          { q: 'Under the Beeman test, is Noah an accomplice or conspirator or both?', options: ['Accomplice only—he aided the burglary', 'Conspirator only—he agreed to burglary', 'Both accomplice and conspirator', 'Depends on whether burglary completed'], answer: 2 },
+          { q: 'What is Marcus\'s highest charge?', options: ['Burglary (completed)', 'Attempted burglary', 'Conspiracy', 'Assault (if natural consequence)'], answer: 1 },
+          { q: 'Can Noah withdraw from the conspiracy after driving to the apartment?', options: ['Yes, he can withdraw at any time', 'No, conspiracy is complete upon agreement', 'Possibly, if he communicates withdrawal affirmatively', 'Only if he reports to police'], answer: 2 },
+          { q: 'Which statement is most accurate?', options: ['Alex is only liable for assault, not burglary', 'Noah is liable for burglary attempt through accomplice liability', 'Marcus\'s assault liability depends on whether he intended it', 'All three are liable for all three crimes (burglary, assault, conspiracy)'], answer: 1 }
         ]
       },
       {
